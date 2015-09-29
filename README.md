@@ -58,19 +58,19 @@ This was done with fastq-mcf
 ```bash
 	Read_F=raw_dna/paired/fusarium_ex_strawberry/FeChina/F/FeChina_S1_L001_R1_001.fastq.gz
 	Read_R=raw_dna/paired/fusarium_ex_strawberry/FeChina/R/FeChina_S1_L001_R1_001.fastq.gz
-	IluminaAdapters=/home/gomeza/git_repos/emr_repos/tools/seq_tools/illumina_full_adapters.fa
-	ProgDir=/home/gomeza/git_repos/emr_repos/tools/seq_tools/rna_qc
+	IluminaAdapters=/home/armita/git_repos/emr_repos/tools/seq_tools/illumina_full_adapters.fa
+	ProgDir=/home/armita/git_repos/emr_repos/tools/seq_tools/rna_qc
 	qsub $ProgDir/rna_qc_fastq-mcf.sh $Read_F $Read_R $IluminaAdapters DNA
 ```
-<!--
+
 
 Data quality was visualised once again following trimming:
 
 ```bash
-	for RawData in $(ls qc_dna/paired/*/*/*/*.fastq.gz); do
-	echo $RawData;
-	ProgDir=/home/gomeza/git_repos/emr_repos/tools/seq_tools/dna_qc;
-	qsub $ProgDir/run_fastqc.sh $RawData;
+	for RawData in $(ls qc_dna/paired/*/*/*/*.fq.gz); do
+  	echo $RawData;
+  	ProgDir=/home/armita/git_repos/emr_repos/tools/seq_tools/dna_qc;
+  	qsub $ProgDir/run_fastqc.sh $RawData;
   done
 ```
 
@@ -79,28 +79,59 @@ kmer counting was performed using kmc.
 This allowed estimation of sequencing depth and total genome size:
 
 ```bash
-	Trim_F=qc_dna/paired/N.ditissima/NG-R0905/F/NG-R0905_qc_F.fastq.gz
-	Trim_R=qc_dna/paired/N.ditissima/NG-R0905/R/NG-R0905_qc_R.fastq.gz
-	ProgDir=/home/gomeza/git_repos/emr_repos/tools/seq_tools/dna_qc
+	Trim_F=qc_dna/paired/fusarium_ex_strawberry/FeChina/F/FeChina_S1_L001_R1_001_trim.fq.gz
+	Trim_R=qc_dna/paired/fusarium_ex_strawberry/FeChina/R/FeChina_S1_L001_R1_001_trim.fq.gz
+	ProgDir=/home/armita/git_repos/emr_repos/tools/seq_tools/dna_qc
 	qsub $ProgDir/kmc_kmer_counting.sh $Trim_F $Trim_R
 ```
 
 ** Estimated Genome Size is: 48490129
 
-** Esimated Coverage is: 42
+** Esimated Coverage is: 35
 
-#Assembly
+# Assembly
 Assembly was performed using: Velvet / Abyss / Spades
 
+## Velvet Assembly
 A range of hash lengths were used and the best assembly selected for subsequent analysis
 
+```bash
 
+  ProgDir=/home/armita/git_repos/emr_repos/tools/seq_tools/assemblers/velvet
+  MinHash=41
+  MaxHash=81
+  HashStep=2
+  Trim_F=qc_dna/paired/fusarium_ex_strawberry/FeChina/F/FeChina_S1_L001_R1_001_trim.fq.gz
+	Trim_R=qc_dna/paired/fusarium_ex_strawberry/FeChina/R/FeChina_S1_L001_R1_001_trim.fq.gz
+  GenomeSz=36
+  echo $Strain
+  ExpCov=35
+  MinCov=10
+  InsLgth=600
+  qsub $ProgDir/submit_velvet_range.sh \
+  $MinHash $MaxHash $HashStep $Trim_F $Trim_R $GenomeSz $ExpCov $MinCov $InsLgth
+```
+
+## Spades Assembly
+
+First run error correction. (This job is CPU intensive rather than RAM intensive
+and will run on any node of the cluster).
+
+```bash
+	F_Read=qc_dna/paired/fusarium_ex_strawberry/FeChina/F/FeChina_S1_L001_R1_001_trim.fq.gz
+	R_Read=qc_dna/paired/fusarium_ex_strawberry/FeChina/R/FeChina_S1_L001_R1_001_trim.fq.gz
+	ProgDir=/home/armita/git_repos/emr_repos/tools/seq_tools/assemblers/spades
+	OutDir=qc_dna/paired/fusarium_ex_strawberry/FeChina/corrected
+  qsub $ProgDir/sub_spades_correction.sh $F_Read $R_Read $OutDir
+```
+
+<!--
 ```bash
 	F_Read=qc_dna/paired/N.ditissima/NG-R0905/F/NG-R0905_qc_F.fastq.gz
 	R_Read=qc_dna/paired/N.ditissima/NG-R0905/R/NG-R0905_qc_R.fastq.gz
-	ProgDir=/home/gomeza/git_repos/emr_repos/tools/seq_tools/assemblers/spades
+	ProgDir=/home/armita/git_repos/emr_repos/tools/seq_tools/assemblers/spades
 	OutDir=assembly/spades/N.ditissima/R0905_v2
-  	qsub $ProgDir/submit_SPAdes.sh $F_Read $R_Read $OutDir only-assembler
+  qsub $ProgDir/submit_SPAdes.sh $F_Read $R_Read $OutDir only-assembler
 ```
 
 Quast
@@ -152,7 +183,7 @@ Repeat masking was performed and used the following programs: Repeatmasker Repea
 The best assembly was used to perform repeatmasking
 
 ```bash
-	ProgDir=/home/gomeza/git_repos/emr_repos/tools/seq_tools/repeat_masking
+	ProgDir=/home/armita/git_repos/emr_repos/tools/seq_tools/repeat_masking
 	BestAss=/assembly/spades/N.ditissima/R0905_v2/filtered_contigs/contigs_min_500bp_10x_headers.fasta
 	qsub $ProgDir/rep_modeling.sh $BestAss
 	qsub $ProgDir/transposonPSI.sh $BestAss
@@ -172,7 +203,7 @@ Gene models were used to predict genes in the Neonectria genome. This used resul
 Quality of genome assemblies was assessed by looking for the gene space in the assemblies.
 
 ```bash
-  	ProgDir=/home/gomeza/git_repos/emr_repos/tools/gene_prediction/cegma
+  	ProgDir=/home/armita/git_repos/emr_repos/tools/gene_prediction/cegma
   	Assembly=/repeat_masked/spades/N.ditissima/R0905_v2/filtered_contigs_repmask/R0905_v2_contigs_unmasked.fa
   	qsub $ProgDir/sub_cegma.sh $Assembly dna
 ```
@@ -186,7 +217,7 @@ Gene prediction was performed for the neonectria genome.
 CEGMA genes were used as Hints for the location of CDS.
 
 ```bash
-	ProgDir=/home/gomeza/git_repos/emr_repos/tools/gene_prediction/augustus
+	ProgDir=/home/armita/git_repos/emr_repos/tools/gene_prediction/augustus
   	Assembly=/repeat_masked/spades/N.ditissima/R0905_v2/filtered_contigs_repmask/R0905_v2_contigs_unmasked.fa
   	GeneModel=fusarium
   	qsub $ProgDir/submit_augustus.sh $GeneModel $Assembly false
@@ -199,13 +230,13 @@ CEGMA genes were used as Hints for the location of CDS.
 Interproscan was used to give gene models functional annotations.
 
 ```bash
-	ProgDir=/home/gomeza/git_repos/emr_repos/tools/seq_tools/feature_annotation/interproscan/
+	ProgDir=/home/armita/git_repos/emr_repos/tools/seq_tools/feature_annotation/interproscan/
   	Genes=gene_pred/augustus/spades/N.ditissima/N.ditissima_aug_out.aa
   	$ProgDir/sub_interproscan.sh $Genes
 ```
 
 ```bash
-	ProgDir=/home/gomeza/git_repos/emr_repos/tools/seq_tools/feature_annotation/interproscan
+	ProgDir=/home/armita/git_repos/emr_repos/tools/seq_tools/feature_annotation/interproscan
 	Genes=gene_pred/augustus/spades/N.ditissima/N.ditissima_aug_out.aa
 	InterProRaw=gene_pred/interproscan/spades/N.ditissima/raw
 	ProgDir/append_interpro.sh $Genes $InterProRaw
@@ -219,7 +250,7 @@ The first analysis was based upon BLAST searches for genes known to be involved 
 Predicted gene models were searched against the PHIbase database using tBLASTx.
 
 ```bash
-	ProgDir=/home/gomeza/git_repos/emr_repos/tools/pathogen/blast
+	ProgDir=/home/armita/git_repos/emr_repos/tools/pathogen/blast
 	Query=../../phibase/v3.8/PHI_accessions.fa
 	Subject=repeat_masked/spades/N.ditissima/NG-R0905_repmask/N.ditissima_contigs_unmasked.fa
 	qsub $ProgDir/blast_pipe.sh $Query protein $Subject
@@ -233,4 +264,4 @@ Top BLAST hits were used to annotate gene models.
 
 ** Blast results of note: **
   * 'Result A'
-   -->
+-->
