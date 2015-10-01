@@ -33,7 +33,7 @@ and annotation.
     mkdir -p raw_dna/paired/fusarium_ex_strawberry/FeChina/R
     RawDat=/home/groups/harrisonlab/raw_data/raw_seq/raw_reads/150925_M01678_0029_AC669
     cp $RawDat/FeChina_S1_L001_R1_001.fastq.gz raw_dna/paired/fusarium_ex_strawberry/FeChina/F/.
-    cp $RawDat/FeChina_S1_L001_R1_001.fastq.gz raw_dna/paired/fusarium_ex_strawberry/FeChina/R/.
+    cp $RawDat/FeChina_S1_L001_R2_001.fastq.gz raw_dna/paired/fusarium_ex_strawberry/FeChina/R/.
 ```
 
 
