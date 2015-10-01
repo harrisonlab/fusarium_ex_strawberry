@@ -114,26 +114,14 @@ A range of hash lengths were used and the best assembly selected for subsequent 
 
 ## Spades Assembly
 
-First run error correction. (This job is CPU intensive rather than RAM intensive
-and will run on any node of the cluster).
-
 ```bash
-	F_Read=qc_dna/paired/fusarium_ex_strawberry/FeChina/F/FeChina_S1_L001_R1_001_trim.fq.gz
-	R_Read=qc_dna/paired/fusarium_ex_strawberry/FeChina/R/FeChina_S1_L001_R1_001_trim.fq.gz
+  F_Read=qc_dna/paired/fusarium_ex_strawberry/FeChina/F/FeChina_S1_L001_R1_001_trim.fq.gz
+  R_Read=qc_dna/paired/fusarium_ex_strawberry/FeChina/R/FeChina_S1_L001_R1_001_trim.fq.gz
 	ProgDir=/home/armita/git_repos/emr_repos/tools/seq_tools/assemblers/spades
-	OutDir=qc_dna/paired/fusarium_ex_strawberry/FeChina/corrected
-  qsub $ProgDir/sub_spades_correction.sh $F_Read $R_Read $OutDir
+	OutDir=assembly/spades/usarium_ex_strawberry/FeChina
+  qsub $ProgDir/submit_SPAdes.sh $F_Read $R_Read $OutDir correct
 ```
-
 <!--
-```bash
-	F_Read=qc_dna/paired/N.ditissima/NG-R0905/F/NG-R0905_qc_F.fastq.gz
-	R_Read=qc_dna/paired/N.ditissima/NG-R0905/R/NG-R0905_qc_R.fastq.gz
-	ProgDir=/home/armita/git_repos/emr_repos/tools/seq_tools/assemblers/spades
-	OutDir=assembly/spades/N.ditissima/R0905_v2
-  qsub $ProgDir/submit_SPAdes.sh $F_Read $R_Read $OutDir only-assembler
-```
-
 Quast
 
 ```bash
