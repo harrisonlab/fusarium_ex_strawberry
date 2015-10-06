@@ -57,7 +57,7 @@ This was done with fastq-mcf
 
 ```bash
 	Read_F=raw_dna/paired/fusarium_ex_strawberry/FeChina/F/FeChina_S1_L001_R1_001.fastq.gz
-	Read_R=raw_dna/paired/fusarium_ex_strawberry/FeChina/R/FeChina_S1_L001_R1_001.fastq.gz
+	Read_R=raw_dna/paired/fusarium_ex_strawberry/FeChina/R/FeChina_S1_L001_R2_001.fastq.gz
 	IluminaAdapters=/home/armita/git_repos/emr_repos/tools/seq_tools/illumina_full_adapters.fa
 	ProgDir=/home/armita/git_repos/emr_repos/tools/seq_tools/rna_qc
 	qsub $ProgDir/rna_qc_fastq-mcf.sh $Read_F $Read_R $IluminaAdapters DNA
@@ -80,12 +80,14 @@ This allowed estimation of sequencing depth and total genome size:
 
 ```bash
 	Trim_F=qc_dna/paired/fusarium_ex_strawberry/FeChina/F/FeChina_S1_L001_R1_001_trim.fq.gz
-	Trim_R=qc_dna/paired/fusarium_ex_strawberry/FeChina/R/FeChina_S1_L001_R1_001_trim.fq.gz
+	Trim_R=qc_dna/paired/fusarium_ex_strawberry/FeChina/R/FeChina_S1_L001_R2_001_trim.fq.gz
 	ProgDir=/home/armita/git_repos/emr_repos/tools/seq_tools/dna_qc
+  ls $Trim_F
+  ls $Trim_R
 	qsub $ProgDir/kmc_kmer_counting.sh $Trim_F $Trim_R
 ```
 
-** Estimated Genome Size is: 48490129
+** Estimated Genome Size is: 8156187 
 
 ** Esimated Coverage is: 35
 
@@ -102,9 +104,8 @@ A range of hash lengths were used and the best assembly selected for subsequent 
   MaxHash=81
   HashStep=2
   Trim_F=qc_dna/paired/fusarium_ex_strawberry/FeChina/F/FeChina_S1_L001_R1_001_trim.fq.gz
-	Trim_R=qc_dna/paired/fusarium_ex_strawberry/FeChina/R/FeChina_S1_L001_R1_001_trim.fq.gz
+	Trim_R=qc_dna/paired/fusarium_ex_strawberry/FeChina/R/FeChina_S1_L001_R2_001_trim.fq.gz
   GenomeSz=36
-  echo $Strain
   ExpCov=35
   MinCov=10
   InsLgth=600
@@ -116,11 +117,14 @@ A range of hash lengths were used and the best assembly selected for subsequent 
 
 ```bash
   F_Read=qc_dna/paired/fusarium_ex_strawberry/FeChina/F/FeChina_S1_L001_R1_001_trim.fq.gz
-  R_Read=qc_dna/paired/fusarium_ex_strawberry/FeChina/R/FeChina_S1_L001_R1_001_trim.fq.gz
+  R_Read=qc_dna/paired/fusarium_ex_strawberry/FeChina/R/FeChina_S1_L001_R2_001_trim.fq.gz
 	ProgDir=/home/armita/git_repos/emr_repos/tools/seq_tools/assemblers/spades
-	OutDir=assembly/spades/usarium_ex_strawberry/FeChina
-  qsub $ProgDir/submit_SPAdes.sh $F_Read $R_Read $OutDir correct
+	OutDir=assembly/dip-spades/fusarium_ex_strawberry/FeChina
+  qsub $ProgDir/submit_dipSPAdes.sh $F_Read $R_Read $OutDir correct
 ```
+
+## run out of memory.
+
 <!--
 Quast
 
