@@ -118,23 +118,26 @@ A range of hash lengths were used and the best assembly selected for subsequent 
 ```bash
   F_Read=qc_dna/paired/fusarium_ex_strawberry/FeChina/F/FeChina_S1_L001_R1_001_trim.fq.gz
   R_Read=qc_dna/paired/fusarium_ex_strawberry/FeChina/R/FeChina_S1_L001_R2_001_trim.fq.gz
-	ProgDir=/home/armita/git_repos/emr_repos/tools/seq_tools/assemblers/spades
-	OutDir=assembly/dip-spades/fusarium_ex_strawberry/FeChina
-  qsub $ProgDir/submit_dipSPAdes.sh $F_Read $R_Read $OutDir correct
+  ProgDir=/home/armita/git_repos/emr_repos/tools/seq_tools/assemblers/spades
+  OutDir=assembly/dip-spades/fusarium_ex_strawberry/FeChina/dip_spades
+  KmerCutoff=10
+  qsub $ProgDir/submit_dipSPAdes.sh $F_Read $R_Read $OutDir correct $KmerCutoff
+
+
 ```
 
 ## run out of memory.
 
-<!--
+
 Quast
 
 ```bash
 	ProgDir=/home/armita/git_repos/emr_repos/tools/seq_tools/assemblers/assembly_qc/quast
-	Assembly=assembly/spades/N.ditissima/R0905_v2/filtered_contigs/contigs_min_500bp.fasta
-	OutDir=assembly/spades/N.ditissima/R0905_v2/filtered_contigs
-	qsub $ProgDir/sub_quast.sh $Assembly $OutDir
+  Assembly=assembly/dip-spades/fusarium_ex_strawberry/FeChina/dipspades/filtered_contigs/consensus_contigs_min_500bp.fasta
+  OutDir=assembly/dip-spades/fusarium_ex_strawberry/FeChina/dipspades/filtered_contigs
+  qsub $ProgDir/sub_quast.sh $Assembly $OutDir
 ```
-
+<!--
 Assemblies were summarised to allow the best assembly to be determined by eye.
 
 ** Assembly stats are:
