@@ -137,7 +137,7 @@ Quast
   OutDir=assembly/dip-spades/fusarium_ex_strawberry/FeChina/dipspades/filtered_contigs
   qsub $ProgDir/sub_quast.sh $Assembly $OutDir
 ```
-<!--
+
 Assemblies were summarised to allow the best assembly to be determined by eye.
 
 ** Assembly stats are:
@@ -179,16 +179,16 @@ The best assembly was used to perform repeatmasking
 
 ```bash
 	ProgDir=/home/armita/git_repos/emr_repos/tools/seq_tools/repeat_masking
-	BestAss=/assembly/spades/N.ditissima/R0905_v2/filtered_contigs/contigs_min_500bp_10x_headers.fasta
-	qsub $ProgDir/rep_modeling.sh $BestAss
-	qsub $ProgDir/transposonPSI.sh $BestAss
+    BestAss=/assembly/dip-spades/fusarium_ex_strawberry/FeChina/dip_spades/filtered_contigs/scaffolds_filtered_1000.fasta
+    qsub $ProgDir/rep_modeling.sh $BestAss
+    qsub $ProgDir/transposonPSI.sh $BestAss
  ```
 
 ** % bases masked by repeatmasker: 11.73%
 
 ** % bases masked by transposon psi: **
 
-
+<!--
 # Gene Prediction
 Gene prediction followed two steps:
 Pre-gene prediction - Quality of genome assemblies were assessed using Cegma to see how many core eukaryotic genes can be identified.
