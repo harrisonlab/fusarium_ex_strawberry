@@ -123,7 +123,7 @@ A range of hash lengths were used and the best assembly selected for subsequent 
   KmerCutoff=10
   qsub $ProgDir/submit_dipSPAdes.sh $F_Read $R_Read $OutDir correct $KmerCutoff
 ```
-## Filter the sequence
+## Filter the contigs
 
 ```bash
     InDir=assembly/dip-spades/fusarium_ex_strawberry/FeChina/dip_spades/spades
