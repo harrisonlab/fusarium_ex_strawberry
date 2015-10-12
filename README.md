@@ -79,7 +79,7 @@ kmer counting was performed using kmc.
 This allowed estimation of sequencing depth and total genome size:
 
 ```bash
-Trim_F=qc_dna/paired/fusarium_ex_strawberry/FeChina/F/FeChina_S1_L001_R1_001_trim.fq.gz
+  Trim_F=qc_dna/paired/fusarium_ex_strawberry/FeChina/F/FeChina_S1_L001_R1_001_trim.fq.gz
 	Trim_R=qc_dna/paired/fusarium_ex_strawberry/FeChina/R/FeChina_S1_L001_R2_001_trim.fq.gz
 	ProgDir=/home/armita/git_repos/emr_repos/tools/seq_tools/dna_qc
   ls $Trim_F
@@ -99,7 +99,7 @@ A range of hash lengths were used and the best assembly selected for subsequent 
 
 ```bash
 
-ProgDir=/home/armita/git_repos/emr_repos/tools/seq_tools/assemblers/velvet
+ ProgDir=/home/armita/git_repos/emr_repos/tools/seq_tools/assemblers/velvet
   MinHash=41
   MaxHash=81
   HashStep=2
@@ -116,7 +116,7 @@ ProgDir=/home/armita/git_repos/emr_repos/tools/seq_tools/assemblers/velvet
 ## Spades Assembly
 
 ```bash
-F_Read=qc_dna/paired/fusarium_ex_strawberry/FeChina/F/FeChina_S1_L001_R1_001_trim.fq.gz
+ F_Read=qc_dna/paired/fusarium_ex_strawberry/FeChina/F/FeChina_S1_L001_R1_001_trim.fq.gz
   R_Read=qc_dna/paired/fusarium_ex_strawberry/FeChina/R/FeChina_S1_L001_R2_001_trim.fq.gz
   ProgDir=/home/armita/git_repos/emr_repos/tools/seq_tools/assemblers/spades
   OutDir=assembly/dip-spades/fusarium_ex_strawberry/FeChina/dip_spades
@@ -126,7 +126,7 @@ F_Read=qc_dna/paired/fusarium_ex_strawberry/FeChina/F/FeChina_S1_L001_R1_001_tri
 ## Filter the sequence
 
 ```bash
-InDir=assembly/dip-spades/fusarium_ex_strawberry/FeChina/dip_spades/spades
+  InDir=assembly/dip-spades/fusarium_ex_strawberry/FeChina/dip_spades/spades
     OutDir=assembly/dip-spades/fusarium_ex_strawberry/FeChina/dip_spades/filtered_contigs
     mkdir –p $OutDir
     ProgDir=/home/armita/git_repos/emr_repos/tools/seq_tools/assemblers/abyss
@@ -139,7 +139,7 @@ InDir=assembly/dip-spades/fusarium_ex_strawberry/FeChina/dip_spades/spades
 ##Quast
 
 ```bash
-ProgDir=/home/armita/git_repos/emr_repos/tools/seq_tools/assemblers/assembly_qc/quast
+  ProgDir=/home/armita/git_repos/emr_repos/tools/seq_tools/assemblers/assembly_qc/quast
   Assembly=assembly/dip-spades/fusarium_ex_strawberry/FeChina/dip_spades/filtered_contigs/scaffolds_filtered_1000.fasta
   OutDir=assembly/dip-spades/fusarium_ex_strawberry/FeChina/dip_spades/filtered_contigs 
   qsub $ProgDir/sub_quast.sh $Assembly $OutDir
@@ -151,7 +151,7 @@ Repeat masking was performed and used the following programs: Repeatmasker Repea
 The best assembly was used to perform repeatmasking
 
 ```bash
-ProgDir=/home/armita/git_repos/emr_repos/tools/seq_tools/repeat_masking
+  ProgDir=/home/armita/git_repos/emr_repos/tools/seq_tools/repeat_masking
     BestAss=/assembly/dip-spades/fusarium_ex_strawberry/FeChina/dip_spades/filtered_contigs/scaffolds_filtered_1000.fasta
     qsub $ProgDir/rep_modeling.sh $BestAss
     qsub $ProgDir/transposonPSI.sh $BestAss
