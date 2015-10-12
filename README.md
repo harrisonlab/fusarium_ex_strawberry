@@ -122,55 +122,28 @@ A range of hash lengths were used and the best assembly selected for subsequent 
   OutDir=assembly/dip-spades/fusarium_ex_strawberry/FeChina/dip_spades
   KmerCutoff=10
   qsub $ProgDir/submit_dipSPAdes.sh $F_Read $R_Read $OutDir correct $KmerCutoff
-
-
 ```
+## Filter the sequence
 
-## run out of memory.
-
-
-Quast
+```bash
+    InDir=assembly/dip-spades/fusarium_ex_strawberry/FeChina/dip_spades/spades
+    OutDir=assembly/dip-spades/fusarium_ex_strawberry/FeChina/dip_spades/filtered_contigs
+    mkdir –p $OutDir
+    ProgDir=/home/armita/git_repos/emr_repos/tools/seq_tools/assemblers/abyss
+    Assembly=$InDir/scaffolds.fasta
+    AssFiltered=$OutDir/scaffolds_filtered_500.fasta
+    $ProgDir/filter_abyss_contigs.py $Assembly 500 > $AssFiltered
+    AssFiltered=$OutDir/scaffolds_filtered_1000.fasta
+    $ProgDir/filter_abyss_contigs.py $Assembly 1000 > $AssFiltered
+```
+##Quast
 
 ```bash
 	ProgDir=/home/armita/git_repos/emr_repos/tools/seq_tools/assemblers/assembly_qc/quast
-  Assembly=assembly/dip-spades/fusarium_ex_strawberry/FeChina/dipspades/filtered_contigs/consensus_contigs_min_500bp.fasta
-  OutDir=assembly/dip-spades/fusarium_ex_strawberry/FeChina/dipspades/filtered_contigs
+  Assembly=assembly/dip-spades/fusarium_ex_strawberry/FeChina/dip_spades/filtered_contigs/scaffolds_filtered_1000.fasta
+  OutDir=assembly/dip-spades/fusarium_ex_strawberry/FeChina/dip_spades/filtered_contigs 
   qsub $ProgDir/sub_quast.sh $Assembly $OutDir
 ```
-
-Assemblies were summarised to allow the best assembly to be determined by eye.
-
-** Assembly stats are:
-  * Assembly size:
-  * N50:153669
-  * N80:
-  * N20:
-  * Longest contig:687738
-  **
-
-As SPADes was run with the option to autodetect a minimum coverage the assembly was assessed to identify the coverage of assembled contigs. This was done using the following command:
-
-	BestAss=assembly/spades/N.ditissima/R0905_v2/filtered_contigs/contigs_min_500bp.fasta
-	cat $BestAss | grep '>' | cut -f6 -d'_' | sort -n | cut -f1 -d '.' | sort -n | uniq -c | less
-
-From this it was determined that SPades could not be trusted to set its own minimum threshold for coverage.
-In future an option will be be used to set a coverage for spades.
-In the meantime contigs with a coverage lower than 10 were filtered out using the following commands:
-
-	Headers=assembly/spades/N.ditissima/R0905_v2/filtered_contigs/contigs_min_500bp_10x_headers.txt
-	cat $BestAss | grep '>' | grep -E -v 'cov_.\..*_' > $Headers
-	FastaMinCov=assembly/spades/N.ditissima/R0905_v2/filtered_contigs/contigs_min_500bp_10x_headers.fasta
-	cat $BestAss | sed -e 's/\(^>.*$\)/#\1#/' | tr -d "\r" | tr -d "\n" | sed -e 's/$/#/' | tr "#" "\n" | sed -e '/^$/d' | grep -A1 -f $Headers | grep -v -E '^\-\-' > $FastaMinCov
-
-```bash
-	~/git_repos/emr_repos/tools/seq_tools/assemblers/assembly_qc/remove_contaminants/remove_contaminants.py --inp ../neonectria_ditissima/assembly/spades/N.ditissima/R0905_v2/filtered_contigs/contigs_min_500bp_10x_headers.fasta  --out assembly/spades/N.galligena/R0905_v2/filtered_contigs/contigs_min_500bp_10x_filtered_renamed.fasta  --coord_file editfile.tab
-
-We run Quast again.
-
-	ProgDir=/home/armita/git_repos/emr_repos/tools/seq_tools/assemblers/assembly_qc/quast
-	Assembly=assembly/spades/N.ditissima/R0905_v2/filtered_contigs/contigs_min_500bp_10x_headers.fasta
-	OutDir=assembly/spades/N.ditissima/R0905_v2/contigs_min_500bp_10x_headers
-	qsub $ProgDir/sub_quast.sh $Assembly $OutDir
 
 # Repeat masking
 Repeat masking was performed and used the following programs: Repeatmasker Repeatmodeler
@@ -178,7 +151,7 @@ Repeat masking was performed and used the following programs: Repeatmasker Repea
 The best assembly was used to perform repeatmasking
 
 ```bash
-	ProgDir=/home/armita/git_repos/emr_repos/tools/seq_tools/repeat_masking
+	  ProgDir=/home/armita/git_repos/emr_repos/tools/seq_tools/repeat_masking
     BestAss=/assembly/dip-spades/fusarium_ex_strawberry/FeChina/dip_spades/filtered_contigs/scaffolds_filtered_1000.fasta
     qsub $ProgDir/rep_modeling.sh $BestAss
     qsub $ProgDir/transposonPSI.sh $BestAss
