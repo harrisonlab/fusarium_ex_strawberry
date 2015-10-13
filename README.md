@@ -145,6 +145,7 @@ A range of hash lengths were used and the best assembly selected for subsequent 
   qsub $ProgDir/sub_quast.sh $Assembly $OutDir
 ```
 
+-->
 # Repeat masking
 Repeat masking was performed and used the following programs: Repeatmasker Repeatmodeler
 
@@ -161,19 +162,19 @@ The best assembly was used to perform repeatmasking
 
 ** % bases masked by transposon psi: **
 
-<!--
+
 # Gene Prediction
 Gene prediction followed two steps:
 Pre-gene prediction - Quality of genome assemblies were assessed using Cegma to see how many core eukaryotic genes can be identified.
-Gene models were used to predict genes in the Neonectria genome. This used results from CEGMA as hints for gene models.
+Gene models were used to predict genes in the fusarium genome. This used results from CEGMA as hints for gene models.
 
 ## Pre-gene prediction
 Quality of genome assemblies was assessed by looking for the gene space in the assemblies.
 
 ```bash
-  	ProgDir=/home/armita/git_repos/emr_repos/tools/gene_prediction/cegma
-  	Assembly=/repeat_masked/spades/N.ditissima/R0905_v2/filtered_contigs_repmask/R0905_v2_contigs_unmasked.fa
-  	qsub $ProgDir/sub_cegma.sh $Assembly dna
+  	ProgDir=/home/gomeza/git_repos/emr_repos/tools/gene_prediction/cegma
+    Assembly=repeat_masked/FeChina/dip_spades/filtered_contigs_repmask/dip_spades_contigs_unmasked.fa
+    qsub $ProgDir/sub_cegma.sh $Assembly dna
 ```
 
 ** Number of cegma genes present and complete: 95.16
@@ -185,14 +186,15 @@ Gene prediction was performed for the neonectria genome.
 CEGMA genes were used as Hints for the location of CDS.
 
 ```bash
-	ProgDir=/home/armita/git_repos/emr_repos/tools/gene_prediction/augustus
-  	Assembly=/repeat_masked/spades/N.ditissima/R0905_v2/filtered_contigs_repmask/R0905_v2_contigs_unmasked.fa
-  	GeneModel=fusarium
-  	qsub $ProgDir/submit_augustus.sh $GeneModel $Assembly false
+	ProgDir=/home/gomeza/git_repos/emr_repos/tools/gene_prediction/augustus
+    Assembly=repeat_masked/FeChina/dip_spades/filtered_contigs_repmask/dip_spades_contigs_unmasked.fa（上面的程序Repeatmasker Repeatmodeler运行的结果）
+    GeneModel=fusarium
+    qsub $ProgDir/submit_augustus.sh $GeneModel $Assembly false
 ```
 
 ** Number of genes predicted: 12712
 
+<!--
 #Functional annotation
 
 Interproscan was used to give gene models functional annotations.
@@ -232,4 +234,4 @@ Top BLAST hits were used to annotate gene models.
 
 ** Blast results of note: **
   * 'Result A'
--->
+
