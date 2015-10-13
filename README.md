@@ -187,31 +187,32 @@ CEGMA genes were used as Hints for the location of CDS.
 
 ```bash
 	ProgDir=/home/gomeza/git_repos/emr_repos/tools/gene_prediction/augustus
-    Assembly=repeat_masked/FeChina/dip_spades/filtered_contigs_repmask/dip_spades_contigs_unmasked.fa（上面的程序Repeatmasker Repeatmodeler运行的结果）
+    Assembly=repeat_masked/FeChina/dip_spades/filtered_contigs_repmask/dip_spades_contigs_unmasked.fa
     GeneModel=fusarium
     qsub $ProgDir/submit_augustus.sh $GeneModel $Assembly false
 ```
 
 ** Number of genes predicted: 12712
 
-<!--
+
 #Functional annotation
 
 Interproscan was used to give gene models functional annotations.
 
 ```bash
-	ProgDir=/home/armita/git_repos/emr_repos/tools/seq_tools/feature_annotation/interproscan/
-  	Genes=gene_pred/augustus/spades/N.ditissima/N.ditissima_aug_out.aa
-  	$ProgDir/sub_interproscan.sh $Genes
+	ProgDir=/home/gomeza/git_repos/emr_repos/tools/seq_tools/feature_annotation/interproscan/
+
+    Genes=gene_pred/augustus/FeChina/dip_spades/dip_spades_EMR_aug_out.aa
+    $ProgDir/sub_interproscan.sh $Genes
 ```
 
 ```bash
-	ProgDir=/home/armita/git_repos/emr_repos/tools/seq_tools/feature_annotation/interproscan
-	Genes=gene_pred/augustus/spades/N.ditissima/N.ditissima_aug_out.aa
-	InterProRaw=gene_pred/interproscan/spades/N.ditissima/raw
-	ProgDir/append_interpro.sh $Genes $InterProRaw
+	ProgDir=/home/gomeza/git_repos/emr_repos/tools/seq_tools/feature_annotation/interproscan
+    Genes=gene_pred/augustus/spades/fusarium_oxysporium/fusarium_aug_out.aa
+    InterProRaw=gene_pred/interproscan/spades/fusarium_oxysporium/raw
+    ProgDir/append_interpro.sh $Genes $InterProRaw
 ```
-
+<!--
 #Genomic analysis
 The first analysis was based upon BLAST searches for genes known to be involved in toxin production
 
