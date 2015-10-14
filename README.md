@@ -214,7 +214,9 @@ Interproscan was used to give gene models functional annotations.
     ProgDir/append_interpro.sh $Genes $InterProRaw
 ```
 B) SwissProt
-    qlogin
+
+```bash
+  qlogin
     ProjDir=/home/groups/harrisonlab/project_files/fusarium_ex_strawberry
     cd $ProjDir
     OutDir=$ProjDir/gene_pred/augustus/spades/fusarium_oxysporium/swissplot
@@ -229,7 +231,7 @@ B) SwissProt
     -num_alignments 10
 <!--
 
-  
+
 #Genomic analysis
 The first analysis was based upon BLAST searches for genes known to be involved in toxin production
 
