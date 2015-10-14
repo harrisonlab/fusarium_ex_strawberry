@@ -197,6 +197,7 @@ CEGMA genes were used as Hints for the location of CDS.
 
 #Functional annotation
 
+A)Interproscan
 Interproscan was used to give gene models functional annotations.
 
 ```bash
@@ -212,6 +213,20 @@ Interproscan was used to give gene models functional annotations.
     InterProRaw=gene_pred/interproscan/spades/fusarium_oxysporium/raw
     ProgDir/append_interpro.sh $Genes $InterProRaw
 ```
+B) SwissProt
+    qlogin
+    ProjDir=/home/groups/harrisonlab/project_files/fusarium_ex_strawberry
+    cd $ProjDir
+    OutDir=$ProjDir/gene_pred/augustus/spades/fusarium_oxysporium/swissplot
+    mkdir -p $OutDir
+    blastp \
+    -db /home/groups/harrisonlab/uniprot/swissprot/uniprot_sprot \
+    -query $ProjDir/gene_pred/augustus/FeChina/dip_spades/dip_spades_EMR_aug_out.aa \
+    -out $OutDir/swissprot_v2015_10_hits.tbl \
+    -evalue 1e-100 \
+    -outfmt 6 \
+    -num_threads 16 \
+    -num_alignments 10
 <!--
 #Genomic analysis
 The first analysis was based upon BLAST searches for genes known to be involved in toxin production
