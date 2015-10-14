@@ -229,8 +229,7 @@ B) SwissProt
     -outfmt 6 \
     -num_threads 16 \
     -num_alignments 10
-<!--
-
+```
 
 #Genomic analysis
 The first analysis was based upon BLAST searches for genes known to be involved in toxin production
@@ -254,4 +253,4 @@ Top BLAST hits were used to annotate gene models.
 
 ** Blast results of note: **
   * 'Result A'
-
+<!--
