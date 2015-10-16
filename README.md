@@ -239,16 +239,25 @@ The first analysis was based upon BLAST searches for genes known to be involved 
 Predicted gene models were searched against the PHIbase database using tBLASTx.
 
 ```bash
-	ProgDir=/home/armita/git_repos/emr_repos/tools/pathogen/blast
 	Query=../../phibase/v3.8/PHI_accessions.fa
-	Subject=repeat_masked/spades/N.ditissima/NG-R0905_repmask/N.ditissima_contigs_unmasked.fa
-	qsub $ProgDir/blast_pipe.sh $Query protein $Subject
+  for Assembly in $(ls repeat_masked/FeChina/dip_spades/filtered_contigs_repmask/dip_spades_contigs_unmasked.fa); do
+        qsub /home/armita/git_repos/emr_repos/tools/pathogen/blast/blast_pipe.sh $Query protein $Assembly
+    done
 ```
 
 Top BLAST hits were used to annotate gene models.
 
-```bash
+The second analysis was based upon BLAST searches for genes known to be SIX genes 
 
+
+##Genes with homology to SIX genes
+Predicted gene models were searched against the SIX genes database using tBLASTx.
+
+```bash
+  ProgDir=/home/armita/git_repos/emr_repos/tools/pathogen/blast
+  Assembly=repeat_masked/FeChina/dip_spades/filtered_contigs_repmask/dip_spades_contigs_unmasked.fa
+  Query=../fusarium/analysis/blast_homology/six_genes/six-appended_parsed.fa
+  qsub $ProgDir/blast_pipe.sh $Query dna $Assembly
 ```
 
 ** Blast results of note: **
