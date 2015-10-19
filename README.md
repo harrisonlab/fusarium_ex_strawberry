@@ -283,6 +283,7 @@ for Genome in $(ls repeat_masked/*/*/*/*_contigs_unmasked.fa); do
 ```
 B) Augustus genes flanking Mimps
 
+```bash
 ProgDir=~/git_repos/tools/pathogen/mimp_finder
     for Mimps in $(ls -d analysis/mimps/*/*/*_mimps.gff3); do
         Organism=$(echo "$Mimps" | rev | cut -d '/' -f3 | rev)
