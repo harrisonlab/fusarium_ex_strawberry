@@ -281,4 +281,23 @@ for Genome in $(ls repeat_masked/*/*/*/*_contigs_unmasked.fa); do
         "$ProgDir"/mimp_finder.pl "$Genome" "$OutDir"/"$Strain"_mimps.fa "$OutDir"/"$Strain"_mimps.gff3 > "$OutDir"/"$Strain"_mimps.log
     done
 ```
+B) Augustus genes flanking Mimps
+
+ProgDir=~/git_repos/tools/pathogen/mimp_finder
+    for Mimps in $(ls -d analysis/mimps/*/*/*_mimps.gff3); do
+        Organism=$(echo "$Mimps" | rev | cut -d '/' -f3 | rev)
+        Strain=$(echo "$Mimps" | rev | cut -f2 -d '/' | rev)
+        OutDir=analysis/mimps_+-2000bp/$Organism/$Strain
+        mkdir -p $OutDir
+        MimpDir=$(dirname $Mimps)
+        echo "$Mimps"
+        "$ProgDir"/gffexpander.pl +- 2000 "$Mimps" > "$OutDir"/"$Strain"_mimps_2000bp_expanded.gff3
+        StrainAugModels=$(ls gene_pred/augustus/$Organism/"$Strain"/*_aug_preds.gff)
+        bedtools intersect -a "$StrainAugModels"  -b "$OutDir"/"$Strain"_mimps_2000bp_expanded.gff3 > "$OutDir"/"$Strain"_mimps_intersected_Aug_genes.gff
+        bedtools intersect -s -a "$StrainAugModels"  -b "$OutDir"/"$Strain"_mimps_2000bp_expanded.gff3 > "$OutDir"/"$Strain"_mimps_intersected_Aug_genes.gff
+        cat "$OutDir"/"$Strain"_mimps_intersected_Aug_genes.gff | grep 'gene' | rev | cut -f1 -d '=' | rev | sort | uniq > "$OutDir"/"$Strain"_mimps_intersected_Aug_genes_names.txt
+        cat "$OutDir"/"$Strain"_mimps_intersected_Aug_genes_names.txt | wc -l
+        echo ""
+    done
+```
 <!--
