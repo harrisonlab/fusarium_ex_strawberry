@@ -241,7 +241,7 @@ Predicted gene models were searched against the PHIbase database using tBLASTx.
 ```bash
 	Query=../../phibase/v3.8/PHI_accessions.fa
   for Assembly in $(ls repeat_masked/FeChina/dip_spades/filtered_contigs_repmask/dip_spades_contigs_unmasked.fa); do
-        qsub /home/armita/git_repos/emr_repos/tools/pathogen/blast/blast_pipe.sh $Query protein $Assembly
+      qsub /home/armita/git_repos/emr_repos/tools/pathogen/blast/blast_pipe.sh $Query protein $Assembly
     done
 ```
 
@@ -260,6 +260,25 @@ Predicted gene models were searched against the SIX genes database using tBLASTx
   qsub $ProgDir/blast_pipe.sh $Query dna $Assembly
 ```
 
-** Blast results of note: **
-  * 'Result A'
+##Mimps
+
+The presence of Mimp promotors in Fusarium genomes were identified. This was done in three steps:
+•Position of Mimps were identified in the genome
+•Genes within 1000bp downstream of the mimp were identified from Augustus predictions
+•ORFs within 1000bp downstream of the mimp were identified from ORF predictions
+
+A) Position of Mimps were identified
+
+Position of Mimps gff predictions for the position of mimps in the genome were identified Fus2 was performed separately to ensure mimps are predicted from the correct assembly
+
+```bash
+ProgDir="/home/armita/git_repos/emr_repos/tools/pathogen/mimp_finder"
+for Genome in $(ls repeat_masked/*/*/*/*_contigs_unmasked.fa); do
+        Organism=$(echo "$Genome" | rev | cut -d '/' -f4 | rev)
+        Strain=$(echo "$Genome" | rev | cut -d '/' -f3 | rev)
+        OutDir=analysis/mimps/$Organism/"$Strain"
+        mkdir -p "$OutDir"
+        "$ProgDir"/mimp_finder.pl "$Genome" "$OutDir"/"$Strain"_mimps.fa "$OutDir"/"$Strain"_mimps.gff3 > "$OutDir"/"$Strain"_mimps.log
+    done
+```
 <!--
