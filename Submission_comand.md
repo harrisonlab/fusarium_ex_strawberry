@@ -39,7 +39,7 @@ Vairables containing locations of files and options for scripts were set:
 ```bash
   	# Program locations:
     AnnieDir="/home/armita/prog/annie/genomeannotation-annie-c1e848b"
-    ProgDir="/home/zhiyun/git_repos/tools/genbank_submission"
+    ProgDir="/home/armita/git_repos/emr_repos/tools/genbank_submission"
     OutDir="genome_submission/fusarium_ex_strawberry/Fechina"
     # File locations:
     SbtFile="/home/groups/harrisonlab/project_files/fusarium_ex_strawberry/genome_submission/fusarium_ex_strawberry/Fechina/template.sbt"
@@ -137,7 +137,7 @@ them as incomplete ('unknown_UTR').
 
 ```bash
   	mkdir -p $OutDir/gag/edited
-  	$ProgDir/edit_tbl_file/ncbi_tbl_corrector.py --inp_tbl $OutDir/gag/round1/genome.tbl --inp_val $OutDir/tbl2asn/round1/genome.val --locus_tag $SubmissionID --lab_id $LabID --gene_id "remove" --add_inference "$GeneSource" "$IDSource" --edits stop pseudo unknown_UTR --out_tbl $OutDir/gag/edited/genome.tbl
+$ProgDir/edit_tbl_file/ncbi_tbl_corrector.py --inp_tbl $OutDir/gag/round1/genome.tbl --inp_val $OutDir/tbl2asn/round1/genome.val --locus_tag $SubmissionID --lab_id $LabID --gene_id "remove" --add_inference "$GeneSource" "$IDSource" --edits stop pseudo unknown_UTR --out_tbl $OutDir/gag/edited/genome.tbl --del_name_from_prod True --fix_kDa True
 ```
 
 ## Final run of tbl2asn
