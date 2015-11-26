@@ -87,14 +87,14 @@ This allowed estimation of sequencing depth and total genome size:
 	qsub $ProgDir/kmc_kmer_counting.sh $Trim_F $Trim_R
 ```
 
-** Estimated Genome Size is: 8156187 
+** Estimated Genome Size is: 8156187
 
 ** Esimated Coverage is: 35
 
 # Assembly
-Assembly was performed using: Velvet / Abyss / Spades
+Assembly was performed using: Spades
 
-## Velvet Assembly
+<!-- ## Velvet Assembly
 A range of hash lengths were used and the best assembly selected for subsequent analysis
 
 ```bash
@@ -111,9 +111,13 @@ A range of hash lengths were used and the best assembly selected for subsequent 
   InsLgth=600
   qsub $ProgDir/submit_velvet_range.sh \
   $MinHash $MaxHash $HashStep $Trim_F $Trim_R $GenomeSz $ExpCov $MinCov $InsLgth
-```
+``` -->
 
 ## Spades Assembly
+
+Spades was used to perform genome assembly. Spades assembly is run as part of
+the dip-spades assembly process. Dip-spades was used to perfrom assembly but the
+regular spades output used for analysis.
 
 ```bash
   F_Read=qc_dna/paired/fusarium_ex_strawberry/FeChina/F/FeChina_S1_L001_R1_001_trim.fq.gz
@@ -123,11 +127,13 @@ A range of hash lengths were used and the best assembly selected for subsequent 
   KmerCutoff=10
   qsub $ProgDir/submit_dipSPAdes.sh $F_Read $R_Read $OutDir correct $KmerCutoff
 ```
+
+
 ## Filter the contigs
 
 ```bash
     InDir=assembly/dip-spades/fusarium_ex_strawberry/FeChina/dip_spades/spades
-    OutDir=assembly/dip-spades/fusarium_ex_strawberry/FeChina/dip_spades/filtered_contigs
+    OutDir=assembly/dip-spades/fusarium_ex_strawberry/FeChina/dip_spades
     mkdir –p $OutDir
     ProgDir=/home/armita/git_repos/emr_repos/tools/seq_tools/assemblers/abyss
     Assembly=$InDir/scaffolds.fasta
@@ -136,16 +142,34 @@ A range of hash lengths were used and the best assembly selected for subsequent 
     AssFiltered=$OutDir/scaffolds_filtered_1000.fasta
     $ProgDir/filter_abyss_contigs.py $Assembly 1000 > $AssFiltered
 ```
+
+Contig names should be less than 20 characters in length to comply with NCBI
+standards. The following commands were run to order the contigs by size and
+rename them as '>contig_1' etc. This program also accepts commands to split
+contigs at given point, as instructed by NCBI upon submission.
+
+```bash
+  ProgDir=/home/armita/git_repos/emr_repos/tools/seq_tools/assemblers/assembly_qc/remove_contaminants
+  OutDir=assembly/dip-spades/fusarium_ex_strawberry/FeChina/dip_spades
+  AssFiltered=$OutDir/scaffolds_filtered_1000.fasta
+  AssRenamed=$OutDir/scaffolds_filtered_1000_renamed.fasta
+  printf '.\t.\t.\t.\n' > editfile.tab
+  $ProgDir/remove_contaminants.py --inp $AssFiltered --out $AssRenamed --coord_file editfile.tab
+  rm editfile.tab
+```
+
+
+
 ##Quast
 
 ```bash
   ProgDir=/home/armita/git_repos/emr_repos/tools/seq_tools/assemblers/assembly_qc/quast
-  Assembly=assembly/dip-spades/fusarium_ex_strawberry/FeChina/dip_spades/filtered_contigs/scaffolds_filtered_1000.fasta
-  OutDir=assembly/dip-spades/fusarium_ex_strawberry/FeChina/dip_spades/filtered_contigs 
+  OutDir=assembly/dip-spades/fusarium_ex_strawberry/FeChina/dip_spades
+  Assembly=$OutDir/scaffolds_filtered_1000_renamed.fasta
   qsub $ProgDir/sub_quast.sh $Assembly $OutDir
 ```
 
--->
+
 # Repeat masking
 Repeat masking was performed and used the following programs: Repeatmasker Repeatmodeler
 
@@ -153,7 +177,8 @@ The best assembly was used to perform repeatmasking
 
 ```bash
     ProgDir=/home/armita/git_repos/emr_repos/tools/seq_tools/repeat_masking
-    BestAss=/assembly/dip-spades/fusarium_ex_strawberry/FeChina/dip_spades/filtered_contigs/scaffolds_filtered_1000.fasta
+    AssDir=assembly/dip-spades/fusarium_ex_strawberry/FeChina/dip_spades
+    BestAss=$AssDir/scaffolds_filtered_1000_renamed.fasta
     qsub $ProgDir/rep_modeling.sh $BestAss
     qsub $ProgDir/transposonPSI.sh $BestAss
  ```
@@ -173,7 +198,7 @@ Quality of genome assemblies was assessed by looking for the gene space in the a
 
 ```bash
   	ProgDir=/home/gomeza/git_repos/emr_repos/tools/gene_prediction/cegma
-    Assembly=repeat_masked/FeChina/dip_spades/filtered_contigs_repmask/dip_spades_contigs_unmasked.fa
+    Assembly=<unmasked contigs>
     qsub $ProgDir/sub_cegma.sh $Assembly dna
 ```
 
@@ -187,7 +212,7 @@ CEGMA genes were used as Hints for the location of CDS.
 
 ```bash
 	ProgDir=/home/gomeza/git_repos/emr_repos/tools/gene_prediction/augustus
-    Assembly=repeat_masked/FeChina/dip_spades/filtered_contigs_repmask/dip_spades_contigs_unmasked.fa
+    Assembly=<unmasked contigs>
     GeneModel=fusarium
     qsub $ProgDir/submit_augustus.sh $GeneModel $Assembly false
 ```
@@ -201,15 +226,14 @@ A)Interproscan
 Interproscan was used to give gene models functional annotations.
 
 ```bash
-	ProgDir=/home/gomeza/git_repos/emr_repos/tools/seq_tools/feature_annotation/interproscan/
-
-    Genes=gene_pred/augustus/FeChina/dip_spades/dip_spades_EMR_aug_out.aa
+  	ProgDir=/home/gomeza/git_repos/emr_repos/tools/seq_tools/feature_annotation/interproscan/
+    Genes=<aug_out.aa>
     $ProgDir/sub_interproscan.sh $Genes
 ```
 
 ```bash
-	ProgDir=/home/gomeza/git_repos/emr_repos/tools/seq_tools/feature_annotation/interproscan
-    Genes=gene_pred/augustus/spades/fusarium_oxysporium/fusarium_aug_out.aa
+  	ProgDir=/home/gomeza/git_repos/emr_repos/tools/seq_tools/feature_annotation/interproscan
+    Genes=<aug_out.aa>
     InterProRaw=gene_pred/interproscan/spades/fusarium_oxysporium/raw
     ProgDir/append_interpro.sh $Genes $InterProRaw
 ```
@@ -223,7 +247,7 @@ B) SwissProt
     mkdir -p $OutDir
     blastp \
     -db /home/groups/harrisonlab/uniprot/swissprot/uniprot_sprot \
-    -query $ProjDir/gene_pred/augustus/FeChina/dip_spades/dip_spades_EMR_aug_out.aa \
+    -query $ProjDir/<aug_out.aa> \
     -out $OutDir/swissprot_v2015_10_hits.tbl \
     -evalue 1e-100 \
     -outfmt 6 \
@@ -240,14 +264,14 @@ Predicted gene models were searched against the PHIbase database using tBLASTx.
 
 ```bash
 	Query=../../phibase/v3.8/PHI_accessions.fa
-  for Assembly in $(ls repeat_masked/FeChina/dip_spades/filtered_contigs_repmask/dip_spades_contigs_unmasked.fa); do
+  for Assembly in $(ls <unmasked_contigs>); do
       qsub /home/armita/git_repos/emr_repos/tools/pathogen/blast/blast_pipe.sh $Query protein $Assembly
     done
 ```
 
 Top BLAST hits were used to annotate gene models.
 
-The second analysis was based upon BLAST searches for genes known to be SIX genes 
+The second analysis was based upon BLAST searches for genes known to be SIX genes
 
 
 ##Genes with homology to SIX genes
@@ -255,7 +279,7 @@ Predicted gene models were searched against the SIX genes database using tBLASTx
 
 ```bash
   ProgDir=/home/armita/git_repos/emr_repos/tools/pathogen/blast
-  Assembly=repeat_masked/FeChina/dip_spades/filtered_contigs_repmask/dip_spades_contigs_unmasked.fa
+  Assembly=<unmasked_contigs>
   Query=../fusarium/analysis/blast_homology/six_genes/six-appended_parsed.fa
   qsub $ProgDir/blast_pipe.sh $Query dna $Assembly
 ```
@@ -272,8 +296,8 @@ A) Position of Mimps were identified
 Position of Mimps gff predictions for the position of mimps in the genome were identified Fus2 was performed separately to ensure mimps are predicted from the correct assembly
 
 ```bash
-ProgDir="/home/armita/git_repos/emr_repos/tools/pathogen/mimp_finder"
-for Genome in $(ls repeat_masked/*/*/*/*_contigs_unmasked.fa); do
+  ProgDir="/home/armita/git_repos/emr_repos/tools/pathogen/mimp_finder"
+  for Genome in $(ls <unmasked_contigs>); do
         Organism=$(echo "$Genome" | rev | cut -d '/' -f4 | rev)
         Strain=$(echo "$Genome" | rev | cut -d '/' -f3 | rev)
         OutDir=analysis/mimps/$Organism/"$Strain"
@@ -301,4 +325,3 @@ ProgDir=~/git_repos/tools/pathogen/mimp_finder
         echo ""
     done
 ```
-<!--
