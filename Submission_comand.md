@@ -43,7 +43,7 @@ Vairables containing locations of files and options for scripts were set:
     OutDir="genome_submission/fusarium_ex_strawberry/Fechina"
     # File locations:
     SbtFile="/home/groups/harrisonlab/project_files/fusarium_ex_strawberry/genome_submission/fusarium_ex_strawberry/Fechina/template.sbt"
-    Assembly="repeat_masked/FeChina/dip_spades/filtered_contigs_repmask/dip_spades_contigs_unmasked.fa"
+    Assembly=<unmasked_contigs.fa>
     InterProTab="gene_pred/interproscan/FeChina/dip_spades/dip_spades_interproscan.tsv"
     SwissProtBlast="gene_pred/augustus/spades/fusarium_oxysporium/swissplot/swissprot_v2015_10_hits.tbl"
     SwissProtFasta="/home/groups/harrisonlab/uniprot/swissprot/uniprot_sprot.fasta"
