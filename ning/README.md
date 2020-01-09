@@ -4,7 +4,7 @@ Commands used in the analysis of Fusarium oxysporum isolates ex. strawberry.
 Fusarium oxysporum fsp. fragariae
 ====================
 
-Commands used during analysis of the Fusarium oxysporum fsp. fragariae genome. Note - all this work was performed in the directory: /home/groups/harrisonlab/project_files/Fusarium oxysporum fsp. fragariae
+Commands used during analysis of the Fusarium oxysporum fsp. fragariae genome. Note - all this work was performed in the directory: /home/groups/harrisonlab/project_files/fusarium_ex_strawberry_ning_2015
 
 The following is a summary of the work presented in this Readme:
 Data organisation:
@@ -25,8 +25,8 @@ Data was copied from the raw_data repository to a local directory for assembly
 and annotation.
 
 ```bash
-     mkdir -p /home/groups/harrisonlab/project_files/fusarium_ex_strawberry
-     cd /home/groups/harrisonlab/project_files/fusarium_ex_strawberry
+     mkdir -p /home/groups/harrisonlab/project_files/fusarium_ex_strawberry_ning_2015
+     cd /home/groups/harrisonlab/project_files/fusarium_ex_strawberry_ning_2015
      Species=F.oxysporum_fsp_fragariae
      Strain=FeChina
      mkdir -p raw_dna/paired/fusarium_ex_strawberry/FeChina/F
