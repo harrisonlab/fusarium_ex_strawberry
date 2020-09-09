@@ -18,6 +18,7 @@ RawReads=$1
 Prefix=$2
 OutDir=$3
 Size=$4
+
 echo  "Running flye with the following inputs:"
 echo "Raw Reads In - $RawReads"
 echo "Prefix - $Prefix"
@@ -43,8 +44,8 @@ out="$Prefix"reads_rename.fasta \
 prefix=$Prefix
 
 
-flye --nano-raw miniasm_test/OutDir/Hg199_miniasm_rename.fasta  \
---out-dir flye/OutDir --genome-size 37m --threads 8
+flye --nano-raw assembly/flye/F.oxysporum_fsp_lactucae/race_1/flye_trimmed_renamed.fasta  \
+--out-dir assembly/flye/F.oxysporum_fsp_lactucae/race_1/ --genome-size 60m --threads 8
 
   # Run Flyr
 

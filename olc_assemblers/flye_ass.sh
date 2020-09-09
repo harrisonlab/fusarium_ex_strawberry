@@ -1,7 +1,9 @@
 # Run in olc_assemblers
+#Log into node
 # flye assembly method
 # size= Expected genome size
 # DO in node and screen
+# Need to include qin=33 or qin=64
 
 for TrimReads in $(ls raw_dna/FAL69458.fastq.gz) ; do
     Organism=F.oxysporum_fsp_lactucae
@@ -10,9 +12,23 @@ for TrimReads in $(ls raw_dna/FAL69458.fastq.gz) ; do
     OutDir=assembly/flye/$Organism/$Strain
     mkdir -p $OutDir
     Size=60m
-    ProgDir=/home/gomeza/git_repos/scripts/bioinformatics_tools/Genome_assemblers
+    ProgDir=/home/akinya/git_repos/fusarium_ex_strawberry/olc_assemblers
     sbatch $ProgDir/flye.sh $TrimReads $Prefix $OutDir $Size
   done
+
+  #original flye directory - /home/gomeza/git_repos/scripts/bioinformatics_tools/Genome_assemblers
+  # edited flye directory /home/akinya/git_repos/fusarium_ex_strawberry/olc_assemblers
+  # qin=33 is a flag not an variable like "Organism" need to include differently
+  # attempted adding qin before TrimReads - caused error: made it read input
+  # added qin after Size - caused error as if it wasn't there
+  # added after OutDir - caused error: Estimated genome size - qin=33
+  # added to flye.sh script line 48 - caused error
+  # error was due to redirection to Antonio's data
+  # split script
+  # rename.sh qin=33 in=raw_dna/FAL69458.fastq.gz out=flye_trimmed_renamed.fasta prefix=FolR1
+  # then ran
+  # flye --nano-raw assembly/flye/F.oxysporum_fsp_lactucae/race_1/flye_trimmed_renamed.fasta --out-dir assembly/flye/F.oxysporum_fsp_lactucae/race_1/ --genome-size 60m --threads 8
+
 
 # step 1 - screen -a
 # step 2 - srun --partition long --time 0-06:00:00 --mem 10G --cpus-per-task 24 --pty bash (parameters force killed job increase memory)
