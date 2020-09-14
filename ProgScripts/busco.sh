@@ -62,7 +62,7 @@ cd $WorkDir
 
 ### Execute
 #run_BUSCO.py -o $Prefix -i $Filename -l $db -m geno -c 8 -sp fusarium_graminearum
-busco -o $Prefix -i $Filename -l $DatabaseOpt -m geno -c 8 --augustus_species fusarium_graminearum
+busco -o $Prefix -i $Filename -l $DatabaseOpt -m geno -c 8 --augustus_species fusarium_oxysporum
 
 ### Cleanup
 rm $Filename
