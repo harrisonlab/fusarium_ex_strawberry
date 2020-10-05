@@ -15,3 +15,5 @@
     ProgDir=/home/gomeza/git_repos/scripts/bioinformatics_tools/Genome_assemblers
     sbatch $ProgDir/SMARTdenovo.sh $TrimReads $Prefix $OutDir
   done
+
+# output = race_1_smartdenovo.dmo.lay.utg

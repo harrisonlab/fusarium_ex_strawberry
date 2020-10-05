@@ -6,6 +6,18 @@
 # Use porechop trimmed  output
 # Need to include qin=33 or qin=64
 
+for TrimReads in $(ls assembly/flye/F.oxysporum_fsp_lactucae/race_1/FAL_trim.fastq.gz); do
+       Organism=$(echo $TrimReads | rev | cut -f3 -d '/' | rev) ;
+       Strain=$(echo $TrimReads | rev | cut -f2 -d '/' | rev) ;
+       Prefix="$Strain"_flye;     TypeSeq=nanoraw;
+       OutDir=assembly/flye/$Organism/$Strain/flye_raw;
+       mkdir -p $OutDir;
+       Size=60m;
+       ProgDir=/home/gomeza/git_repos/scripts/bioinformatics_tools/Genome_assemblers/;
+       sbatch $ProgDir/flye.sh $TrimReads $Prefix $OutDir $Size $TypeSeq;
+     done
+
+
 for TrimReads in $(ls FAL_trim.fastq.gz) ; do
     Organism=F.oxysporum_fsp_lactucae
     Strain=race_1
@@ -28,7 +40,7 @@ for TrimReads in $(ls FAL_trim.fastq.gz) ; do
   # split script
   # rename.sh qin=33 in=raw_dna/FAL_trim.fastq.gz out=flye1_trimmed_renamed.fasta prefix=FolR1
   # then ran
-  # flye --nano-raw assembly/flye/F.oxysporum_fsp_lactucae/race_1/flye1_trimmed_renamed.fasta --out-dir assembly/flye/F.oxysporum_fsp_lactucae/race_1/ --genome-size 60m --threads 8
+  # flye --nano-raw assembly/flye/F.oxysporum_fsp_lactucae/race_1/FAL_trim.fastq.gz --out-dir assembly/flye/F.oxysporum_fsp_lactucae/race_1/ --genome-size 60m --threads 8
 
 
 # step 1 - screen -a
