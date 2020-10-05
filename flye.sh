@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 #SBATCH -J fye
 #SBATCH --partition=long
-#SBATCH --mem-per-cpu=16G
-#SBATCH --cpus-per-task=40
+#SBATCH --mem-per-cpu=8G
+#SBATCH --cpus-per-task=24
 
 # Assemble Long read data using flye
 
@@ -18,8 +18,6 @@ RawReads=$1
 Prefix=$2
 OutDir=$3
 Size=$4
-type=$5
-
 echo  "Running flye with the following inputs:"
 echo "Raw Reads In - $RawReads"
 echo "Prefix - $Prefix"
@@ -45,7 +43,10 @@ out="$Prefix"reads_rename.fasta \
 prefix=$Prefix
 
 
-# Run Flye
+flye --nano-raw miniasm_test/OutDir/Hg199_miniasm_rename.fasta  \
+--out-dir flye/OutDir --genome-size 37m --threads 8
+
+  # Run Flyr
 
   if [ $type == "pacbioraw" ]; then
    flye --pacbio-raw "$Prefix"reads_rename.fasta --out-dir $WorkDir --genome-size $Size
