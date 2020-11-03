@@ -1,8 +1,8 @@
 # Pilon is a software tool which can be used to:
 # Automatically improve draft assemblies and find variation among strains, including large event detection
 # RUN IN A SCREEN - step 1 can be longer than 3 hours so run in medium, long or himem partition
-srun --partition himem --time 0-023:00:00 --mem 40G --cpus-per-task 24 --pty bash
-
+# srun --partition himem --time 1-12:00:00 --mem-per-cpu 20G --cpus-per-task 24 --pty bash (long was full)
+srun --partition short --time 0-03:00:00 --mem-per-cpu 20G --cpus-per-task 24 --pty bash
 # First install pilon into conda env (I used olc_assemblers env)
 # conda install -c bioconda pilon
 
@@ -29,9 +29,8 @@ samtools view -Sb bwa_mapping_SDen.sam > bwa_mapping_SDen.bam
 # samtools view -Sb bwa_mapping_mini.sam > bwa_mapping_mini.bam
 
 # Step 3:Sort and index the BAM file for faster access using samtools
-samtools sort -o bwa_mapping.SDEN.sorted.bam bwa_mapping_SDen.bam
-samtools index bwa_mapping.SDEN.sorted.bam # indexing is very brief
+samtools sort –o bwa_mapping.SDEN.sorted.bam bwa_mapping_SDen.bam
+samtools index bwa_mapping.SDEN.sorted.bam
 
 # Step 4: Run Pilon using the genome assembly and the sorted and indexed bam file
-pilon --genome race_1_smartdenovo_racon_round_10_renamed.fasta \
---bam bwa_mapping.SDEN.sorted.bam --threads 2
+pilon --genome race_1_smartdenovo_racon_round_10_renamed.fasta --bam bwa_mapping.SDEN.sorted.bam --threads 2 # <-<- Doesn't work: causes memory errors- "Exception in thread "main" java.lang.OutOfMemoryError: Java heap space""
