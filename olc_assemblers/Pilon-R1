@@ -1,0 +1,7 @@
+for Assembly in $(ls pilon/race_1_smartdenovo_racon_round_10_renamed.fasta) do;
+BAM=$(pilon/bwa_mapping.SDEN.sorted.bam)
+OutDir=pilon/
+Iterations=2
+ProgDir=/home/akinya/git_repos/fusarium_ex_strawberry/olc_assemblers
+sbatch $ProgDir/Pilon_bam.sh $Assembly $BAM $OutDir $Iterations
+done
