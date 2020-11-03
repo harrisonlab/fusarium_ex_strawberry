@@ -1,4 +1,4 @@
-for Assembly in $(ls pilon/race_1_smartdenovo_racon_round_10_renamed.fasta) do;
+for Assembly in $(ls pilon/race_1_smartdenovo_racon_round_10_renamed.fasta); do
 BAM=$(pilon/bwa_mapping.SDEN.sorted.bam)
 OutDir=pilon/
 Iterations=2
