@@ -35,3 +35,4 @@ samtools index bwa_mapping.SDEN.sorted.bam
 # Step 4: Run Pilon using the genome assembly and the sorted and indexed bam file
 # pilon --genome race_1_smartdenovo_racon_round_10_renamed.fasta --bam bwa_mapping.SDEN.sorted.bam --threads 2 # <-<- Doesn't work: causes memory errors- "Exception in thread "main" java.lang.OutOfMemoryError: Java heap space""
 -Xmx380G -jar /scratch/software/pilon-1.23/pilon-1.23.jar --genome pilon/race_1_smartdenovo_racon_round_10_renamed.fasta --bam pilon/bwa_mapping.SDEN.sorted.bam --threads 2
+# it worked!!
