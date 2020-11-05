@@ -95,7 +95,7 @@ for i in $(seq 1 $Iterations); do
   cd $WorkDir
 done
 
-mv $WorkDir/best_assembly/assembly.fa $WorkDir/best_assembly/pilon.fasta
+mv $WorkDir/best_assembly/race_1_smartdenovo_racon_round_10_renamed.fasta $WorkDir/best_assembly/pilon.fasta
 
 # mkdir -p $CurDir/$OutDir
 # cp $WorkDir/best_assembly/* $CurDir/$OutDir/.
