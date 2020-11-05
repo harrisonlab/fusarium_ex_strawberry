@@ -47,18 +47,18 @@ mkdir -p $CurDir/$OutDir
 WorkDir=$TMPDIR/${SLURM_JOB_USER}_${SLURM_JOBID}
 mkdir -p $WorkDir
 cd $WorkDir
-cp $CurDir/$1 assembly.fa
+cp $CurDir/$1 race_1_smartdenovo_racon_round_10_renamed.fasta
 cp $CurDir/$2 $Read_F
 cp $CurDir/$3 $Read_R
 
 mkdir best_assembly
-cp assembly.fa best_assembly/.
+cp race_1_smartdenovo_racon_round_10_renamed.fasta best_assembly/.
 
 for i in $(seq 1 $Iterations); do
   echo "Running Iteration: $i"
   mkdir $WorkDir/"correction_$i"
   cd $WorkDir/correction_$i
-  cp $WorkDir/best_assembly/assembly.fa .
+  cp $WorkDir/best_assembly/race_1_smartdenovo_racon_round_10_renamed.fasta .
 
   # ---------------
   # Step 3.a
@@ -70,11 +70,11 @@ for i in $(seq 1 $Iterations); do
   # Sort the BAM file, in preparation for SNP calling:
   # Index the bam file
 
-  bowtie2-build assembly.fa assembly.fa.indexed
-  bowtie2 -p 12 -x assembly.fa.indexed -1 $WorkDir/$Read_F -2 $WorkDir/$Read_R  -S assembly.fa_aligned.sam
-  samtools view --threads $Threads -bS assembly.fa_aligned.sam -o assembly.fa_aligned.bam
-  samtools sort --threads $Threads assembly.fa_aligned.bam -o assembly.fa_aligned_sorted.bam
-  samtools index -@ $Threads assembly.fa_aligned_sorted.bam
+  bowtie2-build race_1_smartdenovo_racon_round_10_renamed.fasta race_1_smartdenovo_racon_round_10_renamed.fasta.indexed
+  bowtie2 -p 12 -x race_1_smartdenovo_racon_round_10_renamed.fasta.indexed -1 $WorkDir/$Read_F -2 $WorkDir/$Read_R  -S race_1_smartdenovo_racon_round_10_renamed.fasta_aligned.sam
+  samtools view --threads $Threads -bS race_1_smartdenovo_racon_round_10_renamed.fasta_aligned.sam -o race_1_smartdenovo_racon_round_10_renamed.fasta_aligned.bam
+  samtools sort --threads $Threads race_1_smartdenovo_racon_round_10_renamed.fasta_aligned.bam -o race_1_smartdenovo_racon_round_10_renamed.fasta_aligned_sorted.bam
+  samtools index -@ $Threads race_1_smartdenovo_racon_round_10_renamed.fasta_aligned_sorted.bam
 
   # ---------------
   # Step 3.b
@@ -82,20 +82,20 @@ for i in $(seq 1 $Iterations); do
   # ---------------
   # Run pilon to polish
   if [ $Ploidy == "haploid" ]; then
-    pilon --threads $Threads --genome assembly.fa --changes --frags assembly.fa_aligned_sorted.bam --outdir .
+    pilon --threads $Threads --genome race_1_smartdenovo_racon_round_10_renamed.fasta --changes --frags race_1_smartdenovo_racon_round_10_renamed.fasta_aligned_sorted.bam --outdir .
   elif [ $Ploidy == "diploid" ]; then
-    pilon --threads $Threads --genome assembly.fa --changes --diploid --frags assembly.fa_aligned_sorted.bam --outdir .
+    pilon --threads $Threads --genome race_1_smartdenovo_racon_round_10_renamed.fasta --changes --diploid --frags race_1_smartdenovo_racon_round_10_renamed.fasta_aligned_sorted.bam --outdir .
   else
     echo "ploidy not recognised"
   fi
-  cp pilon.fasta $WorkDir/best_assembly/assembly.fa
+  cp pilon.fasta $WorkDir/best_assembly/race_1_smartdenovo_racon_round_10_renamed.fasta
   # cp pilon.changes $WorkDir/best_assembly/pilon_$i.changes
   cp pilon.fasta $CurDir/$OutDir/pilon_$i.fasta
   cp pilon.changes $CurDir/$OutDir/pilon_$i.changes
   cd $WorkDir
 done
 
-mv $WorkDir/best_assembly/assembly.fa $WorkDir/best_assembly/pilon.fasta
+mv $WorkDir/best_assembly/race_1_smartdenovo_racon_round_10_renamed.fasta $WorkDir/best_assembly/pilon.fasta
 
 # mkdir -p $CurDir/$OutDir
 # cp $WorkDir/best_assembly/* $CurDir/$OutDir/.
