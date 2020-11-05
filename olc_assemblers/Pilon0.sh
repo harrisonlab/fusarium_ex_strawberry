@@ -39,3 +39,5 @@ java -Xmx380G -jar /scratch/software/pilon-1.23/pilon-1.23.jar --genome pilon/ra
 # Need to run 10 times(10 iterations) - run pilon on product of previous alignnment
 # i.e run1 product will be aligned against BAM file for run 2
 # java -Xmx380G -jar /scratch/software/pilon-1.23/pilon-1.23.jar --genome assembly/flye/F.oxysporum_fsp_lactucae/race_1/flye_raw/racon_10/medaka/assembly_r4_renamed_FR.fasta --bam assembly/flye/F.oxysporum_fsp_lactucae/race_1/flye_raw/Pilon/bwa_mapping.flyeR.sorted.bam --threads 2
+
+# Step 5: repeat steps 1-3 on output of step 4
