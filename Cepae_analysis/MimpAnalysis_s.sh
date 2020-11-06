@@ -1,11 +1,13 @@
-#MIMP analysis step
+# MIMP analysis step
+# Run in Repenv
 # used full paths for input files
+# Use diff out directory - non writable
 
-for Assembly in $(ls repeat_masked/F.oxysporum_fsp_fragariae/DSA15_041/ncbi_edits_repmask/DSA15_041_contigs_unmasked.fa); do
+for Assembly in $(ls repeat_masked/F.oxysporum_fsp_cepae/Fus2_canu_new/edited_contigs_repmask/Fus2_canu_contigs_softmasked_repeatmasker_TPSI_appended.fa); do
     Organism=$(echo "$Assembly" | rev | cut -d '/' -f4 | rev)
     Strain=$(echo "$Assembly" | rev | cut -d '/' -f3 | rev)
-    GeneGff=$(ls gene_pred/codingquary/F.oxysporum_fsp_fragariae/DSA15_041/final/final_genes_appended_renamed.gff3)
-    OutDir=analysis/mimps/$Organism/$Strain
+    GeneGff=$(ls gene_pred/final_genes/F.oxysporum_fsp_cepae/Fus2_canu_new/final/final_genes_appended_renamed.gff3)
+    OutDir=../../../../../fusarium_ex_strawberry/F.oxysporum_fsp_cepae/Fus2_canu_new/mimps/V2
     mkdir -p "$OutDir"
     echo "$Organism - $Strain"
     ProgDir=/home/gomeza/git_repos/scripts/bioinformatics_tools/Feature_annotation
