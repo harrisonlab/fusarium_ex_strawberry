@@ -1,4 +1,4 @@
-# Run in Salmon env
+# Run in Salmon envm (salmon)
 # This script simply loops through each sample and invokes salmon
 # Fus2_CzapekDox, Fus2_GlucosePeptone, Fus2_PDA and Fus2_PDB are RNAseq data of infected onions
 

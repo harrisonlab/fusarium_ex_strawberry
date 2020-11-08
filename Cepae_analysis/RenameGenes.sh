@@ -2,11 +2,11 @@
 #Run in conda env (Repenv)
 #Remove duplicate and rename genes
 
-  GffAppended=$(ls -d gene_pred/final_genes/F.oxysporum_fsp_cepae/Fus2_canu_new/final/final_genes_appended.gff3)
+  GffAppended=$(ls -d gene_pred/codingquary/F.oxysporum_fsp_fragariae/DSA15_041/final/final_genes_appended.gff3)
   Strain=$(echo $GffAppended | rev | cut -d '/' -f3 | rev)
   Organism=$(echo $GffAppended | rev | cut -d '/' -f4 | rev)
   echo "$Organism - $Strain"
-  FinalDir=gene_pred/final_genes/F.oxysporum_fsp_cepae/Fus2_canu_new/final
+  FinalDir=gene_pred/codingquary/F.oxysporum_fsp_fragariae/DSA15_041/final
 
   # Remove duplicated genes
   GffFiltered=$FinalDir/filtered_duplicates.gff
