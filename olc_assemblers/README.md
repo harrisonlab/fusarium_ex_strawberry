@@ -25,7 +25,7 @@ rename.sh qin=33 in=FAL_trim.fastq.gz out=trimmed_renamed.fasta prefix=FolR1
 #Need to run read against itself. IT IS NEEDED. it is going to do self mapping
 #Fast all-against-all overlap of raw reads
 
-home/gomeza/prog/minimap2/minimap2 -x ava-ont -t8 trimmed_renamed.fasta trimmed_renamed.fasta | gzip -1 > FolR1_fastq_allfiles.paf.gz
+minimap2 -x ava-ont -t8 trimmed_renamed.fasta trimmed_renamed.fasta | gzip -1 > FolR1_fastq_allfiles.paf.gz
 
 # For ONT long read sequences use miniasm to assemble genome
 # Run in a screen and a node in the
