@@ -64,7 +64,7 @@ miniasm -f raw_dna/Fof14RT_renamed.fasta raw_dna/Fof14_fastq_allfiles.paf.gz > a
 
 # Step 6
 # Convert gfa file to fasta file
-awk '/^S/{print ">"$2"\n"$3}' reads.gfa | fold > $Prefix.fa
+awk '/^S/{print ">"$2"\n"$3}' reads.gfa | fold > Fof14_miniasm.fa
 
 ####################
 # Flye assembly
@@ -86,9 +86,9 @@ for TrimReads in $(ls raw_dna/Fof14RT.fastq.gz); do
 # SMARTDenovo assembly
 ######################
 
-     for TrimReads in $(ls assembly/flye/F.oxysporum_fsp_lactucae/race_1/FAL_trim.fastq.gz); do
-       Organism=F.oxysporum_fsp_lactucae
-       Strain=race_1
+     for TrimReads in $(ls raw_dna/Fof14RT.fastq.gz); do
+       Organism=F.oxysporum_fsp_fragariae
+       Strain=DSA14_003
        Prefix="$Strain"_smartdenovo
        OutDir=assembly/SMARTdenovo/$Organism/$Strain
        mkdir -p $OutDir
@@ -102,11 +102,12 @@ for TrimReads in $(ls raw_dna/Fof14RT.fastq.gz); do
 
 
 # quast QC assembly check
+# Run in conda env with python 2.7 (betaenv)
 
 ProgDir=/home/akinya/git_repos/tools/seq_tools/assemblers/assembly_qc/quast
-  for Assembly in $(ls assembly/miniasm/F.oxysporum_fsp_fragariae/DSA14_003/.fasta); do
-    Strain=$(echo $Assembly | rev | cut -f3 -d '/' | rev)
-    Organism=$(echo $Assembly | rev | cut -f4 -d '/' | rev)  
+  for Assembly in $(ls assembly/miniasm/F.oxysporum_fsp_fragariae/DSA14_003/Fof14_miniasm.fa); do
+    Strain=$(echo $Assembly | rev | cut -f2 -d '/' | rev)
+    Organism=$(echo $Assembly | rev | cut -f3 -d '/' | rev)  
     OutDir=assembly/miniasm/$Organism/$Strain/ncbi_edits
     sbatch $ProgDir/sub_quast.sh $Assembly $OutDir
   done
