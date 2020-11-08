@@ -81,3 +81,17 @@ for TrimReads in $(ls raw_dna/Fof14RT.fastq.gz); do
        ProgDir=/home/gomeza/git_repos/scripts/bioinformatics_tools/Genome_assemblers/;
        sbatch $ProgDir/flye.sh $TrimReads $Prefix $OutDir $Size $TypeSeq;
      done
+
+######################
+# SMARTDenovo assembly
+######################
+
+     for TrimReads in $(ls assembly/flye/F.oxysporum_fsp_lactucae/race_1/FAL_trim.fastq.gz); do
+       Organism=F.oxysporum_fsp_lactucae
+       Strain=race_1
+       Prefix="$Strain"_smartdenovo
+       OutDir=assembly/SMARTdenovo/$Organism/$Strain
+       mkdir -p $OutDir
+       ProgDir=/home/gomeza/git_repos/scripts/bioinformatics_tools/Genome_assemblers
+       sbatch $ProgDir/SMARTdenovo.sh $TrimReads $Prefix $OutDir
+     done
