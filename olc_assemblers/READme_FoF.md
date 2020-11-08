@@ -95,3 +95,32 @@ for TrimReads in $(ls raw_dna/Fof14RT.fastq.gz); do
        ProgDir=/home/gomeza/git_repos/scripts/bioinformatics_tools/Genome_assemblers
        sbatch $ProgDir/SMARTdenovo.sh $TrimReads $Prefix $OutDir
      done
+
+#####################
+# QC steps
+#####################
+
+
+# quast QC assembly check
+
+ProgDir=/home/akinya/git_repos/tools/seq_tools/assemblers/assembly_qc/quast
+  for Assembly in $(ls assembly/miniasm/F.oxysporum_fsp_fragariae/DSA14_003/.fasta); do
+    Strain=$(echo $Assembly | rev | cut -f3 -d '/' | rev)
+    Organism=$(echo $Assembly | rev | cut -f4 -d '/' | rev)  
+    OutDir=assembly/miniasm/$Organism/$Strain/ncbi_edits
+    sbatch $ProgDir/sub_quast.sh $Assembly $OutDir
+  done
+#Updated entire script using https://github.com/harrisonlab/bioinformatics_tools/blob/master/Gene_prediction/README.md
+#Look into BuscoDB direc - directory exists
+#Run in conda env - BUSCOenv
+#Ran on genome(softmasked) and gene models (final_genes_appended_renamed.gene.fasta)
+
+for Assembly in $(ls assembly/SMARTdenovo/F.oxysporum_fsp_lactucae/race_1/Pilon_SDen/FolR1_SDen_pilon.fasta); do
+Strain=$(echo $Assembly| rev | cut -d '/' -f3 | rev)
+Organism=$(echo $Assembly | rev | cut -d '/' -f4 | rev)
+echo "$Organism - $Strain"
+ProgDir=~/git_repos/fusarium_ex_strawberry/ProgScripts
+BuscoDB=$(ls -d /projects/dbBusco/sordariomycetes_odb10)
+OutDir=$(dirname $Assembly)/busco_sordariomycetes_obd10
+sbatch $ProgDir/busco.sh $Assembly $BuscoDB $OutDir
+done
