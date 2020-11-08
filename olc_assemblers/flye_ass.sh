@@ -9,7 +9,8 @@
 for TrimReads in $(ls assembly/flye/F.oxysporum_fsp_lactucae/race_1/FAL_trim.fastq.gz); do
        Organism=$(echo $TrimReads | rev | cut -f3 -d '/' | rev) ;
        Strain=$(echo $TrimReads | rev | cut -f2 -d '/' | rev) ;
-       Prefix="$Strain"_flye;     TypeSeq=nanoraw;
+       Prefix="$Strain"_flye;
+       TypeSeq=nanoraw;
        OutDir=assembly/flye/$Organism/$Strain/flye_raw;
        mkdir -p $OutDir;
        Size=60m;

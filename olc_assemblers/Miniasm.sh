@@ -9,7 +9,7 @@ for TrimReads in $(ls FAL_trim.fastq.gz); do
     Prefix="$Strain"_miniasm
     OutDir=assembly/miniasm/$Organism/$Strain
     mkdir -p $OutDir
-    ProgDir=/home/gomeza/git_repos/scripts/bioinformatics_tools/Genome_assemblers
+    ProgDir=/home/akinya/git_repos/fusarium_ex_strawberry/ProgScripts
     sbatch $ProgDir/miniasm.sh $TrimReads $Prefix $OutDir
   done
 

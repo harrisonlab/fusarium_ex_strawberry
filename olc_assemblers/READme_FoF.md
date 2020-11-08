@@ -7,7 +7,7 @@
 ####################
 # Step 1
 # Open a screen - scrren -r
-# Login to node srun --partition long --time 0-06:00:00 --mem 40G --cpus-per-task 24 --pty bash
+# Login to node srun --partition long --time 0-18:00:00 --mem-per-cpu 20G --cpus-per-task 24 --pty bash
 # Concatenate sequence reads first
 # Use command below if you are working in the same directory as the raw sequence reads
 
@@ -60,8 +60,24 @@ minimap2 -x ava-ont -t8 Fof14RT_renamed.fasta Fof14RT_renamed.fasta | gzip -1 > 
 # Step 5
 # Concatenate pieces of read sequences to generate the final sequences
 # Can run like this instead: miniasm -f trimmed_renamed.fasta FolR1_fastq_allfiles.paf.gz > reads.gfa
-miniasm -f "$Prefix"_rename.fasta $Prefix.paf.gz > reads.gfa
+miniasm -f raw_dna/Fof14RT_renamed.fasta raw_dna/Fof14_fastq_allfiles.paf.gz > assembly/miniasm/F.oxysporum_fsp_fragariae/DSA14_003/reads.gfa
 
 # Step 6
 # Convert gfa file to fasta file
 awk '/^S/{print ">"$2"\n"$3}' reads.gfa | fold > $Prefix.fa
+
+####################
+# Flye assembly
+####################
+
+for TrimReads in $(ls raw_dna/Fof14RT.fastq.gz); do
+      Organism=F.oxysporum_fsp_fragariae
+      Strain=DSA14_003
+       Prefix="$Strain"_flye;     
+       TypeSeq=nanoraw;
+       OutDir=assembly/flye/$Organism/$Strain/;
+       mkdir -p $OutDir;
+       Size=60m; # size= Expected genome size
+       ProgDir=/home/gomeza/git_repos/scripts/bioinformatics_tools/Genome_assemblers/;
+       sbatch $ProgDir/flye.sh $TrimReads $Prefix $OutDir $Size $TypeSeq;
+     done
