@@ -2,7 +2,7 @@
 #SBATCH -J SMARTdenovo
 #SBATCH --partition=long
 #SBATCH --mem-per-cpu=20G
-#SBATCH --cpus-per-task=20
+#SBATCH --cpus-per-task=10
 
 # Assemble Long read data using SMRTdenovo
 
