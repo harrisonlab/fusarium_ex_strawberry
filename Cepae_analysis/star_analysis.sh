@@ -16,9 +16,10 @@ for Assembly in $(ls repeat_masked/F.oxysporum_fsp_cepae/Fus2_canu_new/edited_co
     Timepoint=$(echo $FileF | rev | cut -d '/' -f3 | rev)
     echo "$Timepoint"
     Sample_Name=$(echo $FileF | rev | cut -d '/' -f1 | rev | sed 's/_1_trim.fq.gz//g')
-    OutDir=alignment/star/$Organism/$Strain/$Timepoint/$Sample_Name
+    OutDir=projects/fusarium_ex_strawberry/F.oxysporum_fsp_cepae/Fus2_canu_new/alignment/star/$Organism/$Strain/$Timepoint/$Sample_Name
+    mkdir -p "$OutDir"
     Preindex=13
     ProgDir=/home/akinya/git_repos/fusarium_ex_strawberry/ProgScripts
-    sbatch $ProgDir/STAR_1.sh $Assembly $FileF $FileR $OutDir
+    sbatch $ProgDir/STAR_1.sh $Assembly $FileF $FileR $OutDir $Preindex
   done
 done
