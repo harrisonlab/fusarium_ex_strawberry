@@ -92,7 +92,7 @@ for TrimReads in $(ls raw_dna/Fof14RT.fastq.gz); do
        Prefix="$Strain"_smartdenovo
        OutDir=assembly/SMARTdenovo/$Organism/$Strain
        mkdir -p $OutDir
-       ProgDir=/home/gomeza/git_repos/scripts/bioinformatics_tools/Genome_assemblers
+       ProgDir=/home/akinya/git_repos/fusarium_ex_strawberry/ProgScripts
        sbatch $ProgDir/SMARTdenovo.sh $TrimReads $Prefix $OutDir
      done
 
