@@ -97,3 +97,34 @@ for TrimReads in $(ls assembly/flye/F.oxysporum_fsp_lactucae/race_1/FAL_trim.fas
   done
 
 # output = race_1_smartdenovo.dmo.lay.utg
+
+#####################
+# QC steps
+#####################
+
+
+# quast QC assembly check
+# Run in conda env with python 2.7 (betaenv)
+# Run on each assembly
+
+ProgDir=/home/akinya/git_repos/tools/seq_tools/assemblers/assembly_qc/quast
+  for Assembly in $(ls assembly/flye/F.oxysporum_fsp_lactucae/race_1/assembly.fasta); do
+    Strain=$(echo $Assembly | rev | cut -f2 -d '/' | rev)
+    Organism=$(echo $Assembly | rev | cut -f3 -d '/' | rev)  
+    OutDir=assembly/miniasm/$Organism/$Strain/ncbi_edits
+    sbatch $ProgDir/sub_quast.sh $Assembly $OutDir
+  done
+#Updated entire script using https://github.com/harrisonlab/bioinformatics_tools/blob/master/Gene_prediction/README.md
+#Look into BuscoDB direc - directory exists
+#Run in conda env - BUSCOenv
+#Ran on genome(softmasked) and gene models (final_genes_appended_renamed.gene.fasta)
+
+for Assembly in $(ls assembly/flye/F.oxysporum_fsp_lactucae/race_1/assembly.fasta); do
+  Strain=$(echo $Assembly| rev | cut -d '/' -f2 | rev)
+  Organism=$(echo $Assembly | rev | cut -d '/' -f3 | rev)
+  echo "$Organism - $Strain"
+  ProgDir=/home/akinya/git_repos/fusarium_ex_strawberry/ProgScripts
+  BuscoDB=$(ls -d /projects/dbBusco/sordariomycetes_odb10)
+  OutDir=$(dirname $Assembly)/busco_sordariomycetes_obd10
+  sbatch $ProgDir/busco.sh $Assembly $BuscoDB $OutDir
+done

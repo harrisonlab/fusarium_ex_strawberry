@@ -96,6 +96,8 @@ for TrimReads in $(ls raw_dna/Fof14RT.fastq.gz); do
        sbatch $ProgDir/SMARTdenovo.sh $TrimReads $Prefix $OutDir
      done
 
+# output = *_smartdenovo.dmo.lay.utg
+
 #####################
 # QC steps
 #####################
@@ -103,6 +105,7 @@ for TrimReads in $(ls raw_dna/Fof14RT.fastq.gz); do
 
 # quast QC assembly check
 # Run in conda env with python 2.7 (betaenv)
+# Run on each assembly
 
 ProgDir=/home/akinya/git_repos/tools/seq_tools/assemblers/assembly_qc/quast
   for Assembly in $(ls assembly/miniasm/F.oxysporum_fsp_fragariae/DSA14_003/Fof14_miniasm.fa); do
