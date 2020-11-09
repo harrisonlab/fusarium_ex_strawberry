@@ -1,4 +1,4 @@
-#Results show this is best STAR script - it worked :)
+#Results show this is best STAR script - it worked for F.oxysporum_fsp_cepae:)
 # Run in Repenv - condaenv
 #Fus2_CzapekDox, Fus2_GlucosePeptone, Fus2_PDA and Fus2_PDB are RNAseq data of infected onions
 #Only data samples that will map genes of F.oxy accurately
