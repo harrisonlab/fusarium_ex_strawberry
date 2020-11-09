@@ -18,7 +18,7 @@ for Assembly in $(ls repeat_masked/F.oxysporum_fsp_cepae/Fus2_canu_new/edited_co
     Sample_Name=$(echo $FileF | rev | cut -d '/' -f1 | rev | sed 's/_1_trim.fq.gz//g')
     OutDir=alignment/star/$Organism/$Strain/$Timepoint/$Sample_Name
     Preindex=13
-    ProgDir=/home/akinya/git_repos/assembly_fusarium_ex/ProgScripts
+    ProgDir=/home/akinya/git_repos/fusarium_ex_strawberry/ProgScripts
     sbatch $ProgDir/STAR_1.sh $Assembly $FileF $FileR $OutDir
   done
 done
