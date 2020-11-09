@@ -6,9 +6,10 @@
 ####################
 # Miniasm assembly
 ####################
+
 ## Step 1
-#Open a screen - scrren -r
-#Login to node srun --partition long --time 0-18:00:00 --mem-per-cpu 20G --cpus-per-task 24 --pty bash
+Open a screen - scrren -r
+Login to node srun --partition long --time 0-18:00:00 --mem-per-cpu 20G --cpus-per-task 24 --pty bash
 #Concatenate sequence reads first
 #Use command below if you are working in the same directory as the raw sequence reads
 
