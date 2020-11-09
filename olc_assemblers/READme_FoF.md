@@ -1,7 +1,7 @@
 # Use for long read assembly programs
 
 ## Method was used for Fusarium oxysporum fsp lactucae
-#### 1 # , then you have a header, ## subheading , ### small heading
+#### 1 # , then you have a header, ## subheading , ### small heading - use "tab" key to identify script info
 
 ####################
 # Miniasm assembly
