@@ -2,7 +2,7 @@
 #SBATCH -J racon
 #SBATCH --partition=long
 #SBATCH --mem-per-cpu=16G
-#SBATCH --cpus-per-task=8
+#SBATCH --cpus-per-task=12
 
 # Alignment of minion reads to a minion assembly prior to running nanopolish variants
 
