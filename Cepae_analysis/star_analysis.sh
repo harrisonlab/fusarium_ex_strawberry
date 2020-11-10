@@ -10,8 +10,8 @@ for Assembly in $(ls repeat_masked/F.oxysporum_fsp_cepae/Fus2_canu_new/edited_co
     Strain=$(echo $Assembly | rev | cut -f3 -d '/' | rev)
     Organism=$(echo $Assembly | rev | cut -f4 -d '/' | rev)
     echo "$Organism - $Strain"
-    FileF=qc_rna/paired/F.oxysporum_fsp_cepae/Fus2_GlucosePeptone/F/*_trim.fq.gz
-    FileR=qc_rna/paired/F.oxysporum_fsp_cepae/Fus2_GlucosePeptone/R/*_trim.fq.gz
+    FileF=qc_rna/paired/F.oxysporum_fsp_cepae/Fus2_PDB/F/*_trim.fq.gz
+    FileR=qc_rna/paired/F.oxysporum_fsp_cepae/Fus2_PDB/R/*_trim.fq.gz
     echo $FileF
     echo $FileR
     Timepoint=$(echo $FileF | rev | cut -d '/' -f3 | rev)
