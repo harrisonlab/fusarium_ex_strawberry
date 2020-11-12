@@ -125,7 +125,6 @@ Run on each assembly
 #Updated entire script using https://github.com/harrisonlab/bioinformatics_tools/blob/master/Gene_prediction/README.md
 #Look into BuscoDB direc - directory exists
 #Run in conda env - BUSCOenv
-#Ran on genome(softmasked) and gene models (final_genes_appended_renamed.gene.fasta)
 
     for Assembly in $(ls assembly/flye/F.oxysporum_fsp_lactucae/race_1/assembly.fasta); do
       Strain=$(echo $Assembly| rev | cut -d '/' -f2 | rev)
@@ -164,3 +163,64 @@ DO for each iteration
         OutDir=$(dirname $Assembly)/ncbi_edits/round_1
         sbatch $ProgDir/sub_quast.sh $Assembly $OutDir
       done
+
+#Ended up here for some reason assembly/flye/F.oxysporum_fsp_lactucae/race_1/ncbi_edits/round_*
+
+    for Assembly in $(ls assembly/flye/F.oxysporum_fsp_lactucae/race_1/flye_raw/racon_10/assembly_racon_round_1.fasta); do
+      Strain=$(echo $Assembly| rev | cut -d '/' -f4 | rev)
+      Organism=$(echo $Assembly | rev | cut -d '/' -f5 | rev)
+      echo "$Organism - $Strain"
+      ProgDir=/home/akinya/git_repos/fusarium_ex_strawberry/ProgScripts
+      BuscoDB=$(ls -d /projects/dbBusco/sordariomycetes_odb10)
+      OutDir=$(dirname $Assembly)/busco_sordariomycetes_obd10/round_1
+      sbatch $ProgDir/busco.sh $Assembly $BuscoDB $OutDir
+    done
+
+#Contigs must be renamed before medaka can be run
+Rename contigs for genome
+If split or remove contigs is needed, provide FCSreport file by NCBI.
+
+    ProgDir=/home/gomeza/git_repos/scripts/bioinformatics_tools/Assembly_qc
+        touch tmp.txt
+        for Assembly in $(ls assembly/SMARTdenovo/F.oxysporum_fsp_lactucae/race_1/racon_10/race_1_smartdenovo_racon_round_1.fasta); do
+            OutDir=$(dirname $Assembly)
+            $ProgDir/remove_contaminants.py --inp $Assembly --out $OutDir/race_1_smartdenovo_racon_round_1_renamed.fasta --coord_file tmp.txt > $OutDir/log.txt
+        done
+        rm tmp.txt
+
+## Medaka
+#Using the best iteration shown by the Quast and BUSCO scores, Medaka was conducted to further polish the genome
+
+#Run in medaka env
+#A tool to create a consensus sequence from nanopore sequencing data.
+#This task is performed using neural networks applied from a pileup of individual sequencing reads against a draft assembly.
+#It outperforms graph-based methods operating on basecalled data, and can be competitive with state-of-the-art signal-based methods, whilst being much faster.
+
+    for Assembly in $(ls assembly/SMARTdenovo/F.oxysporum_fsp_lactucae/race_1/racon_10/*_renamed.fasta); do
+      ReadsFq=$(ls assembly/flye/F.oxysporum_fsp_lactucae/race_1/FAL_trim.fastq.gz)
+      OutDir=$(dirname $Assembly)/medaka
+      ProgDir=/home/gomeza/git_repos/scripts/bioinformatics_tools/Genome_assemblers
+      sbatch $ProgDir/medaka.sh $Assembly $ReadsFq $OutDir
+    done
+
+Run QC checks with QUAST and BUSCO again to see any changes
+
+## Pilon
+Automatically improves draft assemblies and find variation among strains, including large event detection
+Run in conda env (olc_assemblers)
+
+    for Assembly in $(ls race_1_smartdenovo_racon_round_10_renamed.fasta); do
+      Organism=F.oxysporum_fsp_lactucae
+      Strain=AJ520
+      IlluminaDir=$(ls -d $Strain)
+      echo $Strain
+      echo $Organism
+      TrimF1_Read=$(ls $IlluminaDir/F/*_trim.fq.gz | head -n2 | tail -n1);
+      TrimR1_Read=$(ls $IlluminaDir/R/*_trim.fq.gz | head -n2 | tail -n1);
+      echo $TrimF1_Read
+      echo $TrimR1_Read
+      OutDir=$(dirname $Assembly)
+      Iterations=10
+      ProgDir=/home/gomeza/git_repos/scripts/bioinformatics_tools/Genome_assemblers/pilon
+      sbatch $ProgDir/sub_pilon.sh $Assembly $TrimF1_Read $TrimR1_Read $OutDir $Iterations
+    done
