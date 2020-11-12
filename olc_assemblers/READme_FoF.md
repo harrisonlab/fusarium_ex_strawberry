@@ -124,7 +124,7 @@ Can run like this instead: miniasm -f trimmed_renamed.fasta FolR1_fastq_allfiles
       for Assembly in $(ls assembly/flye/F.oxysporum_fsp_fragariae/DSA14_003/assembly.fasta); do
         Strain=$(echo $Assembly | rev | cut -f2 -d '/' | rev)
         Organism=$(echo $Assembly | rev | cut -f3 -d '/' | rev)  
-        OutDir=assembly/miniasm/$Organism/$Strain/ncbi_edits
+        OutDir=assembly/flye/$Organism/$Strain/ncbi_edits
         sbatch $ProgDir/sub_quast.sh $Assembly $OutDir
       done
 #Updated entire script using https://github.com/harrisonlab/bioinformatics_tools/blob/master/Gene_prediction/README.md
@@ -132,7 +132,7 @@ Can run like this instead: miniasm -f trimmed_renamed.fasta FolR1_fastq_allfiles
 #Run in conda env - BUSCOenv
 #Ran on genome(softmasked) and gene models (final_genes_appended_renamed.gene.fasta)
 
-    for Assembly in $(ls assembly/flye/F.oxysporum_fsp_fragariae/DSA14_003/assembly.fasta); do
+    for Assembly in $(ls assembly/SMARTdenovo/F.oxysporum_fsp_fragariae/DSA14_003/DSA14_003_smartdenovo.dmo.lay.utg); do
       Strain=$(echo $Assembly| rev | cut -d '/' -f2 | rev)
       Organism=$(echo $Assembly | rev | cut -d '/' -f3 | rev)
       echo "$Organism - $Strain"
@@ -141,3 +141,30 @@ Can run like this instead: miniasm -f trimmed_renamed.fasta FolR1_fastq_allfiles
       OutDir=$(dirname $Assembly)/busco_sordariomycetes_obd10
       sbatch $ProgDir/busco.sh $Assembly $BuscoDB $OutDir
     done
+
+#####################
+# Racon
+#####################
+
+#Racon generates 10 iterations which have polished the genome
+Need to do for Miniasm*, Flye* and SMARTdenovo* output files
+#Run in condaenv with racon installed (olc_assemblers) - *=complete
+
+    for Assembly in $(ls assembly/miniasm/F.oxysporum_fsp_fragariae/DSA14_003/Fof14_miniasm.fa); do
+        ReadsFq=$(ls raw_dna/Fof14RT_trim.fastq.gz)
+        Iterations=10
+        OutDir=$(dirname $Assembly)"/racon_$Iterations"
+        ProgDir=/home/akinya/git_repos/fusarium_ex_strawberry/ProgScripts
+        sbatch $ProgDir/racon.sh $Assembly $ReadsFq $Iterations $OutDir
+      done
+
+#Quality check each iteration with Quast and BUSCO
+DO for each iteration
+
+      ProgDir=/home/akinya/git_repos/tools/seq_tools/assemblers/assembly_qc/quast
+        for Assembly in $(ls assembly/flye/F.oxysporum_fsp_fragariae/DSA14_003/assembly_round1.fasta); do
+          Strain=$(echo $Assembly | rev | cut -f2 -d '/' | rev)
+          Organism=$(echo $Assembly | rev | cut -f3 -d '/' | rev)  
+          OutDir=assembly/flye/$Organism/$Strain/ncbi_edits/round_1
+          sbatch $ProgDir/sub_quast.sh $Assembly $OutDir
+        done

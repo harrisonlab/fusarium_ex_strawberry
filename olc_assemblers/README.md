@@ -9,10 +9,11 @@
 
 ## Step 1
 #Login to node srun --partition long --time 0-06:00:00 --mem 40G --cpus-per-task 24 --pty bash
-Concatenate sequence reads first
+Concatenate sequence reads first (there is old seq data that was basecalled again include it)
 #Use command below if you are working in the same directory as the raw sequence reads
 
     cat *fastq | gzip -cf > FAL69458.fastq.gz
+    /archives/2020_niabemr_nanopore/F.oxyspporum_lactucae_Race1/20180426_AJ520_GA30000$ cat *.fastq.gz | gzip -cf > /projects/fusarium_EX_Lactucae/raw_dna/FoLR12018NBC.fastq.gz
 
 ## Step 2
 #Run Porechop before assembly
@@ -117,7 +118,7 @@ Run on each assembly
       for Assembly in $(ls assembly/flye/F.oxysporum_fsp_lactucae/race_1/assembly.fasta); do
         Strain=$(echo $Assembly | rev | cut -f2 -d '/' | rev)
         Organism=$(echo $Assembly | rev | cut -f3 -d '/' | rev)  
-        OutDir=assembly/miniasm/$Organism/$Strain/ncbi_edits
+        OutDir=assembly/flye/$Organism/$Strain/ncbi_edits
         sbatch $ProgDir/sub_quast.sh $Assembly $OutDir
       done
 
@@ -135,3 +136,31 @@ Run on each assembly
       OutDir=$(dirname $Assembly)/busco_sordariomycetes_obd10
       sbatch $ProgDir/busco.sh $Assembly $BuscoDB $OutDir
     done
+
+#####################
+# Assembly Polishing
+#####################
+
+## Racon
+#Racon generates 10 iterations which have polished the genome
+Need to do for Miniasm*, Flye* and SMARTdenovo* output files
+#Run in condaenv with racon installed (olc_assemblers) - *=complete
+
+    for Assembly in $(ls assembly/SMARTdenovo/F.oxysporum_fsp_lactucae/race_1/race_1_smartdenovo.dmo.lay.utg); do
+        ReadsFq=$(ls assembly/flye/F.oxysporum_fsp_lactucae/race_1/FAL_trim.fastq.gz)
+        Iterations=10
+        OutDir=$(dirname $Assembly)"/racon_$Iterations"
+        ProgDir=~/git_repos/assembly_fusarium_ex/ProgScripts
+        sbatch $ProgDir/racon.sh $Assembly $ReadsFq $Iterations $OutDir
+      done
+
+#Quality check each iteration with Quast and BUSCO
+DO for each iteration
+
+    ProgDir=/home/akinya/git_repos/tools/seq_tools/assemblers/assembly_qc/quast
+      for Assembly in $(ls assembly/flye/F.oxysporum_fsp_lactucae/race_1/flye_raw/racon_10/assembly_racon_round_1.fasta); do
+        Strain=$(echo $Assembly | rev | cut -f4 -d '/' | rev)
+        Organism=$(echo $Assembly | rev | cut -f5 -d '/' | rev)  
+        OutDir=$(dirname $Assembly)/ncbi_edits/round_1
+        sbatch $ProgDir/sub_quast.sh $Assembly $OutDir
+      done
