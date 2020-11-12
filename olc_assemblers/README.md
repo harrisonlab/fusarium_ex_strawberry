@@ -15,6 +15,10 @@ Concatenate sequence reads first (there is old seq data that was basecalled agai
     cat *fastq | gzip -cf > FAL69458.fastq.gz
     /archives/2020_niabemr_nanopore/F.oxyspporum_lactucae_Race1/20180426_AJ520_GA30000$ cat *.fastq.gz | gzip -cf > /projects/fusarium_EX_Lactucae/raw_dna/FoLR12018NBC.fastq.gz
 
+    cat *.fastq.gz | gzip -cf > /projects/fusarium_EX_Lactucae/raw_dna/FoLR1-18nbc.fastq.gz
+
+    cat FAL69458.fastq.gz FoLR1-18nbc.fastq.gz FoLR12018NBC.fastq.gz > FolR1_conc.fastq.gz
+
 ## Step 2
 #Run Porechop before assembly
 

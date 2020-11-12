@@ -159,12 +159,25 @@ Need to do for Miniasm*, Flye* and SMARTdenovo* output files
       done
 
 #Quality check each iteration with Quast and BUSCO
+Run in correct conda env (betaenv)
 DO for each iteration
 
       ProgDir=/home/akinya/git_repos/tools/seq_tools/assemblers/assembly_qc/quast
-        for Assembly in $(ls assembly/flye/F.oxysporum_fsp_fragariae/DSA14_003/assembly_round1.fasta); do
-          Strain=$(echo $Assembly | rev | cut -f2 -d '/' | rev)
-          Organism=$(echo $Assembly | rev | cut -f3 -d '/' | rev)  
-          OutDir=assembly/flye/$Organism/$Strain/ncbi_edits/round_1
+        for Assembly in $(ls assembly/SMARTdenovo/F.oxysporum_fsp_fragariae/DSA14_003/racon_10/DSA14_003_smartdenovo_racon_round_1.fasta); do
+          Strain=$(echo $Assembly | rev | cut -f3 -d '/' | rev)
+          Organism=$(echo $Assembly | rev | cut -f4 -d '/' | rev)  
+          OutDir=assembly/SMARTdenovo/$Organism/$Strain/racon_10/ncbi_edits/round_1
           sbatch $ProgDir/sub_quast.sh $Assembly $OutDir
         done
+
+Run in correct conda env (BUSCOenv)
+
+    for Assembly in $(ls assembly/SMARTdenovo/F.oxysporum_fsp_fragariae/DSA14_003/racon_10/DSA14_003_smartdenovo_racon_round_1.fasta); do
+      Strain=$(echo $Assembly| rev | cut -d '/' -f3 | rev)
+      Organism=$(echo $Assembly | rev | cut -d '/' -f4 | rev)
+      echo "$Organism - $Strain"
+      ProgDir=/home/akinya/git_repos/fusarium_ex_strawberry/ProgScripts
+      BuscoDB=$(ls -d /projects/dbBusco/sordariomycetes_odb10)
+      OutDir=assembly/SMARTdenovo/F.oxysporum_fsp_fragariae/DSA14_003/racon_10/busco_sordariomycetes_obd10/round_1
+      sbatch $ProgDir/busco.sh $Assembly $BuscoDB $OutDir
+    done
