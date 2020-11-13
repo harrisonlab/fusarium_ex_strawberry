@@ -160,7 +160,10 @@ Need to do for Miniasm*, Flye* and SMARTdenovo* output files
 
 #Quality check each iteration with Quast and BUSCO
 Run in correct conda env (betaenv)
-DO for each iteration
+Run for each round of each assembly:
+*assembly/flye/F.oxysporum_fsp_fragariae/DSA14_003/racon_10/assembly_racon_round_1.fasta
+*assembly/SMARTdenovo/F.oxysporum_fsp_fragariae/DSA14_003/racon_10/DSA14_003_smartdenovo_racon_round_1.fasta
+*assembly/miniasm/F.oxysporum_fsp_fragariae/DSA14_003/racon_10/Fof14_miniasm_racon_round_1.fasta
 
       ProgDir=/home/akinya/git_repos/tools/seq_tools/assemblers/assembly_qc/quast
         for Assembly in $(ls assembly/SMARTdenovo/F.oxysporum_fsp_fragariae/DSA14_003/racon_10/DSA14_003_smartdenovo_racon_round_1.fasta); do
@@ -171,13 +174,17 @@ DO for each iteration
         done
 
 Run in correct conda env (BUSCOenv)
+Run for each round of each assembly:
+*assembly/flye/F.oxysporum_fsp_fragariae/DSA14_003/racon_10/assembly_racon_round_1.fasta
+*assembly/SMARTdenovo/F.oxysporum_fsp_fragariae/DSA14_003/racon_10/DSA14_003_smartdenovo_racon_round_1.fasta
+*assembly/miniasm/F.oxysporum_fsp_fragariae/DSA14_003/racon_10/Fof14_miniasm_racon_round_1.fasta
 
-    for Assembly in $(ls assembly/SMARTdenovo/F.oxysporum_fsp_fragariae/DSA14_003/racon_10/DSA14_003_smartdenovo_racon_round_1.fasta); do
+    for Assembly in $(ls assembly/miniasm/F.oxysporum_fsp_fragariae/DSA14_003/racon_10/Fof14_miniasm_racon_round_1.fasta); do
       Strain=$(echo $Assembly| rev | cut -d '/' -f3 | rev)
       Organism=$(echo $Assembly | rev | cut -d '/' -f4 | rev)
       echo "$Organism - $Strain"
       ProgDir=/home/akinya/git_repos/fusarium_ex_strawberry/ProgScripts
       BuscoDB=$(ls -d /projects/dbBusco/sordariomycetes_odb10)
-      OutDir=assembly/SMARTdenovo/F.oxysporum_fsp_fragariae/DSA14_003/racon_10/busco_sordariomycetes_obd10/round_1
+      OutDir=assembly/miniasm/F.oxysporum_fsp_fragariae/DSA14_003/racon_10/busco_sordariomycetes_obd10/round_1
       sbatch $ProgDir/busco.sh $Assembly $BuscoDB $OutDir
     done
