@@ -8,21 +8,40 @@
 ####################
 
 ## Step 1
-#Login to node srun --partition long --time 0-06:00:00 --mem 40G --cpus-per-task 24 --pty bash
+#Login to node srun --partition himem --time 0-06:00:00 --mem 40G --cpus-per-task 24 --pty bash
 Concatenate sequence reads first (there is old seq data that was basecalled again include it)
 #Use command below if you are working in the same directory as the raw sequence reads
 
     cat *fastq | gzip -cf > FAL69458.fastq.gz
     /archives/2020_niabemr_nanopore/F.oxyspporum_lactucae_Race1/20180426_AJ520_GA30000$ cat *.fastq.gz | gzip -cf > /projects/fusarium_EX_Lactucae/raw_dna/FoLR12018NBC.fastq.gz
-
     cat *.fastq.gz | gzip -cf > /projects/fusarium_EX_Lactucae/raw_dna/FoLR1-18nbc.fastq.gz
-
     cat FAL69458.fastq.gz FoLR1-18nbc.fastq.gz FoLR12018NBC.fastq.gz > FolR1_conc.fastq.gz
+
+#Method above caused error in porechop (died 3 times without running possibly due to concatenating 3 big gz files???)
+
+Tried method 2 - gave same error
+    cat 20180426_AJ520_GA30000/*.fastq.gz basecalling-all/*.fastq.gz fastq_pass/*.fastq | gzip -cf > /projects/fusarium_EX_Lactucae/raw_dna/FoLr1cont.fastq.gz
 
 ## Step 2
 #Run Porechop before assembly
 
     /scratch/software/Porechop-0.2.3/porechop-runner.py -i FAL69458.fastq.gz -o FAL_trim.fastq.gz --threads 16 > FAL_trim_log.txt
+    #/scratch/software/Porechop-0.2.3/porechop-runner.py -i FolR1_conc.fastq.gz -o FolR1_conc_trim.fastq.gz --threads 16 > FolR1_conc_trim_log.txt - method failed (multiple times)
+    #/scratch/software/Porechop-0.2.3/porechop-runner.py -i FoLr1cont.fastq.gz -o FoLr1cont_trim.fastq.gz --threads 16 > FoLr1cont_trim_log.txt - same error
+
+    Traceback (most recent call last):
+      File "/scratch/software/Porechop-0.2.3/porechop-runner.py", line 9, in <module>
+        main()
+      File "/scratch/software/Porechop-0.2.3/porechop/porechop.py", line 34, in main
+        reads, check_reads, read_type = load_reads(args.input, args.verbosity, args.print_dest,
+      File "/scratch/software/Porechop-0.2.3/porechop/porechop.py", line 230, in load_reads
+        reads, read_type = load_fasta_or_fastq(input_file_or_directory)
+      File "/scratch/software/Porechop-0.2.3/porechop/misc.py", line 114, in load_fasta_or_fastq
+        file_type = get_sequence_file_type(filename)
+      File "/scratch/software/Porechop-0.2.3/porechop/misc.py", line 106, in get_sequence_file_type
+        raise ValueError('File is neither FASTA or FASTQ')
+    ValueError: File is neither FASTA or FASTQ
+
 
 ## Step 3
 #Need to rename all reads

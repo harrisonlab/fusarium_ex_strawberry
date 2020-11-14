@@ -188,3 +188,42 @@ Run for each round of each assembly:
       OutDir=assembly/miniasm/F.oxysporum_fsp_fragariae/DSA14_003/racon_10/busco_sordariomycetes_obd10/round_1
       sbatch $ProgDir/busco.sh $Assembly $BuscoDB $OutDir
     done
+
+Select iteration from each assembly with the best BUSCO scores for the next step
+
+
+#####################
+# Medaka
+#####################
+
+## Rename contigs for genome
+# If split or remove contigs is needed, provide FCSreport file by NCBI.
+
+*assembly/SMARTdenovo/F.oxysporum_fsp_fragariae/DSA14_003/racon_10/DSA14_003_smartdenovo_racon_round_4.fasta
+*assembly/miniasm/F.oxysporum_fsp_fragariae/DSA14_003/racon_10/Fof14_miniasm_racon_round_7.fasta
+*assembly/flye/F.oxysporum_fsp_fragariae/DSA14_003/racon_10/assembly_racon_round_3.fasta
+
+    ProgDir=/home/gomeza/git_repos/scripts/bioinformatics_tools/Assembly_qc
+        touch tmp.txt
+        for Assembly in $(ls assembly/flye/F.oxysporum_fsp_fragariae/DSA14_003/racon_10/assembly_racon_round_3.fasta); do
+            OutDir=$(dirname $Assembly)
+            $ProgDir/remove_contaminants.py --inp $Assembly --out $OutDir/assembly_racon_round_3_renamed.fasta --coord_file tmp.txt > $OutDir/log.txt
+        done
+        rm tmp.txt
+
+
+## Run in conda env with medaka installed (medaka)
+A tool to create a consensus sequence from nanopore sequencing data.
+This task is performed using neural networks applied from a pileup of individual sequencing reads against a draft assembly.
+It outperforms graph-based methods operating on basecalled data, and can be competitive with state-of-the-art signal-based methods, whilst being much faster.
+
+*assembly/SMARTdenovo/F.oxysporum_fsp_fragariae/DSA14_003/racon_10/DSA14_003_smartdenovo_racon_round_4_renamed.fasta
+*assembly/miniasm/F.oxysporum_fsp_fragariae/DSA14_003/racon_10/Fof14_miniasm_racon_round_7_renamed.fasta
+*assembly/flye/F.oxysporum_fsp_fragariae/DSA14_003/racon_10/assembly_racon_round_3_renamed.fasta
+
+    for Assembly in $(ls assembly/SMARTdenovo/F.oxysporum_fsp_fragariae/DSA14_003/racon_10/DSA14_003_smartdenovo_racon_round_4_renamed.fasta); do
+      ReadsFq=$(ls raw_dna/Fof14RT_trim.fastq.gz)
+      OutDir=assembly/SMARTdenovo/F.oxysporum_fsp_fragariae/DSA14_003/medaka
+      ProgDir=/home/gomeza/git_repos/scripts/bioinformatics_tools/Genome_assemblers
+      sbatch $ProgDir/medaka.sh $Assembly $ReadsFq $OutDir
+    done
