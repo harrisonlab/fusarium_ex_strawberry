@@ -227,3 +227,33 @@ It outperforms graph-based methods operating on basecalled data, and can be comp
       ProgDir=/home/gomeza/git_repos/scripts/bioinformatics_tools/Genome_assemblers
       sbatch $ProgDir/medaka.sh $Assembly $ReadsFq $OutDir
     done
+
+Run BUSCO and quast on medaka and pick best 1 out of 3 for pilon polishing
+
+
+#####################
+# Pilon
+#####################
+
+Aligning illumina reads against pilon data to polish
+Run in conda env
+Make sure script is executable
+   chmod u+x ./sub_pilon.sh
+
+
+
+    for Assembly in $(ls race_1_smartdenovo_racon_round_10_renamed.fasta); do
+      Organism=F.oxysporum_fsp_lactucae
+      Strain=AJ520
+      IlluminaDir=$(ls -d $Strain)
+      echo $Strain
+      echo $Organism
+      TrimF1_Read=$(ls $IlluminaDir/F/*_trim.fq.gz | head -n2 | tail -n1);
+      TrimR1_Read=$(ls $IlluminaDir/R/*_trim.fq.gz | head -n2 | tail -n1);
+      echo $TrimF1_Read
+      echo $TrimR1_Read
+      OutDir=$(dirname $Assembly)
+      Iterations=10
+      ProgDir=/home/gomeza/git_repos/scripts/bioinformatics_tools/Genome_assemblers/pilon
+      sbatch $ProgDir/sub_pilon.sh $Assembly $TrimF1_Read $TrimR1_Read $OutDir $Iterations
+    done
