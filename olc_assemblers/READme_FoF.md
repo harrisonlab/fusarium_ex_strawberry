@@ -230,6 +230,15 @@ It outperforms graph-based methods operating on basecalled data, and can be comp
 
 Run BUSCO and quast on medaka and pick best 1 out of 3 for pilon polishing
 
+    for Assembly in $(ls assembly/SMARTdenovo/F.oxysporum_fsp_fragariae/DSA14_003/medaka/DSA14_003_smartdenovo_racon_round_4_renamed.fasta); do
+      Strain=$(echo $Assembly| rev | cut -d '/' -f3 | rev)
+      Organism=$(echo $Assembly | rev | cut -d '/' -f4 | rev)
+      echo "$Organism - $Strain"
+      ProgDir=/home/akinya/git_repos/fusarium_ex_strawberry/ProgScripts
+      BuscoDB=$(ls -d /projects/dbBusco/sordariomycetes_odb10)
+      OutDir=assembly/SMARTdenovo/F.oxysporum_fsp_fragariae/DSA14_003/medaka/busco_sordariomycetes_obd10
+      sbatch $ProgDir/busco.sh $Assembly $BuscoDB $OutDir
+    done
 
 #####################
 # Pilon
@@ -240,19 +249,19 @@ Run in conda env
 Make sure script is executable
    chmod u+x ./sub_pilon.sh
 
+The best medaka product was from the miniasm assembly - Fof14_miniasm_racon_round_7_renamed.fasta
 
-
-    for Assembly in $(ls race_1_smartdenovo_racon_round_10_renamed.fasta); do
-      Organism=F.oxysporum_fsp_lactucae
-      Strain=AJ520
-      IlluminaDir=$(ls -d $Strain)
+    for Assembly in $(ls assembly/miniasm/F.oxysporum_fsp_fragariae/DSA14_003/medaka/Fof14_miniasm_racon_round_7_renamed.fasta); do
+      Organism=$(echo $Assembly | rev | cut -d '/' -f4 | rev)
+      Strain=$(echo $Assembly | rev | cut -d '/' -f3 | rev)
+      IlluminaDir=$(ls -d ../raw_dna/paired/F.oxysporum_fsp_fragariae/DSA14_003)
       echo $Strain
       echo $Organism
-      TrimF1_Read=$(ls $IlluminaDir/F/*_trim.fq.gz | head -n2 | tail -n1);
-      TrimR1_Read=$(ls $IlluminaDir/R/*_trim.fq.gz | head -n2 | tail -n1);
+      TrimF1_Read=$(ls $IlluminaDir/F/*.fastq.gz | head -n2 | tail -n1);
+      TrimR1_Read=$(ls $IlluminaDir/R/*.fastq.gz | head -n2 | tail -n1);
       echo $TrimF1_Read
       echo $TrimR1_Read
-      OutDir=$(dirname $Assembly)
+      OutDir=assembly/miniasm/F.oxysporum_fsp_fragariae/DSA14_003/pilon
       Iterations=10
       ProgDir=/home/gomeza/git_repos/scripts/bioinformatics_tools/Genome_assemblers/pilon
       sbatch $ProgDir/sub_pilon.sh $Assembly $TrimF1_Read $TrimR1_Read $OutDir $Iterations
