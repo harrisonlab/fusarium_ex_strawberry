@@ -214,8 +214,8 @@ Select iteration from each assembly with the best BUSCO scores for the next step
 
 ## Run in conda env with medaka installed (medaka)
 A tool to create a consensus sequence from nanopore sequencing data.
-This task is performed using neural networks applied from a pileup of individual sequencing reads against a draft assembly.
-It outperforms graph-based methods operating on basecalled data, and can be competitive with state-of-the-art signal-based methods, whilst being much faster.
+*This task is performed using neural networks applied from a pileup of individual sequencing reads against a draft assembly.
+*It outperforms graph-based methods operating on basecalled data, and can be competitive with state-of-the-art signal-based methods, whilst being much faster.
 
 *assembly/SMARTdenovo/F.oxysporum_fsp_fragariae/DSA14_003/racon_10/DSA14_003_smartdenovo_racon_round_4_renamed.fasta
 *assembly/miniasm/F.oxysporum_fsp_fragariae/DSA14_003/racon_10/Fof14_miniasm_racon_round_7_renamed.fasta
@@ -245,9 +245,9 @@ Run BUSCO and quast on medaka and pick best 1 out of 3 for pilon polishing
 #####################
 
 Aligning illumina reads against pilon data to polish
-Run in conda env
-INSTALL BOWTIE2 - conda install -c bioconda bowtie2
-Make sure script is executable
+*Run in conda env
+*INSTALL BOWTIE2 - conda install -c bioconda bowtie2
+*Make sure script is executable
 #Alternate prog directory /home/gomeza/git_repos/scripts/bioinformatics_tools/Genome_assemblers/pilon
    chmod u+x ./sub_pilon.sh
 
@@ -273,3 +273,24 @@ Script failed with pilon_1_lib.sh
 Edited script inputs in pilon_2_lib.sh script - failed in conda env
 failed outside conda env - died after 15s
 Installed bowtie2 in olc_assemblers env
+
+#####################
+# Repeat Masking
+#####################
+
+Repeat identification and masking is conducted before gene prediction and annotation steps.
+The term 'masking' means transforming every nucleotide identified as a repeat to an 'N', 'X' or to a lower case a, t, g or c
+
+## Repeat mask
+Run in conda env (Repenv or seq_tools)
+
+    for Assembly in $(ls assembly/spades/*/*/ncbi_edits/contigs_min_500bp_renamed.fasta | grep -v '_2' | grep -v '11055'); do
+    Strain=$(echo $Assembly | rev | cut -f3 -d '/' | rev)
+    Organism=$(echo $Assembly | rev | cut -f4 -d '/' | rev)
+    echo "$Organism"
+    echo "$Strain"
+    OutDir=repeat_masked/$Organism/$Strain/ncbi_edits_repmask
+    ProgDir=/home/akinya/git_repos/tools/seq_tools/repeat_masking
+    sbatch $ProgDir/rep_modeling.sh $Assembly $OutDir
+    sbatch $ProgDir/transposonPSI.sh $Assembly $OutDir
+    done
