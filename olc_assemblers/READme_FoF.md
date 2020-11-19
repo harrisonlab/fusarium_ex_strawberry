@@ -197,7 +197,7 @@ Select iteration from each assembly with the best BUSCO scores for the next step
 #####################
 
 ## Rename contigs for genome
-# If split or remove contigs is needed, provide FCSreport file by NCBI.
+If split or remove contigs is needed, provide FCSreport file by NCBI.
 
 *assembly/SMARTdenovo/F.oxysporum_fsp_fragariae/DSA14_003/racon_10/DSA14_003_smartdenovo_racon_round_4.fasta
 *assembly/miniasm/F.oxysporum_fsp_fragariae/DSA14_003/racon_10/Fof14_miniasm_racon_round_7.fasta
@@ -214,8 +214,8 @@ Select iteration from each assembly with the best BUSCO scores for the next step
 
 ## Run in conda env with medaka installed (medaka)
 A tool to create a consensus sequence from nanopore sequencing data.
-*This task is performed using neural networks applied from a pileup of individual sequencing reads against a draft assembly.
-*It outperforms graph-based methods operating on basecalled data, and can be competitive with state-of-the-art signal-based methods, whilst being much faster.
+This task is performed using neural networks applied from a pileup of individual sequencing reads against a draft assembly.
+It outperforms graph-based methods operating on basecalled data, and can be competitive with state-of-the-art signal-based methods, whilst being much faster.
 
 *assembly/SMARTdenovo/F.oxysporum_fsp_fragariae/DSA14_003/racon_10/DSA14_003_smartdenovo_racon_round_4_renamed.fasta
 *assembly/miniasm/F.oxysporum_fsp_fragariae/DSA14_003/racon_10/Fof14_miniasm_racon_round_7_renamed.fasta
@@ -244,11 +244,16 @@ Run BUSCO and quast on medaka and pick best 1 out of 3 for pilon polishing
 # Pilon
 #####################
 
-Aligning illumina reads against pilon data to polish
-*Run in conda env
-*INSTALL BOWTIE2 - conda install -c bioconda bowtie2
-*Make sure script is executable
-#Alternate prog directory /home/gomeza/git_repos/scripts/bioinformatics_tools/Genome_assemblers/pilon
+Aligning illumina reads against pilon data to polish.
+Alternate prog directory /home/gomeza/git_repos/scripts/bioinformatics_tools/Genome_assemblers/pilon
+Run in conda env.
+
+INSTALL BOWTIE2 -
+
+    conda install -c bioconda bowtie2
+
+Make sure script is executable
+
    chmod u+x ./sub_pilon.sh
 
 The best medaka product was from the miniasm assembly - Fof14_miniasm_racon_round_7_renamed.fasta
@@ -279,7 +284,7 @@ Installed bowtie2 in olc_assemblers env
 #####################
 
 Repeat identification and masking is conducted before gene prediction and annotation steps.
-The term 'masking' means transforming every nucleotide identified as a repeat to an 'N', 'X' or to a lower case a, t, g or c
+The term 'masking' means transforming every nucleotide identified as a repeat to an 'N', 'X' or to a lower case a, t, g or c.
 
 ## Repeat mask
 Run in conda env (Repenv or seq_tools)
@@ -294,3 +299,31 @@ Run in conda env (Repenv or seq_tools)
     sbatch $ProgDir/rep_modeling.sh $Assembly $OutDir
     sbatch $ProgDir/transposonPSI.sh $Assembly $OutDir
     done
+
+## Soft mask
+Soft masking means transforming every nucleotide identified as a repeat to a lower case a, t, g or c to be included in later gene prediction stages.
+
+Gives number of masked N's in sequence  - Take physical and digital note of the results.
+
+    for File in $(ls repeat_masked/*/*/*/*_contigs_softmasked.fa); do
+      OutDir=$(dirname $File)
+      TPSI=$(ls $OutDir/*_contigs_unmasked.fa.TPSI.allHits.chains.gff3)
+      OutFile=$(echo $File | sed 's/_contigs_softmasked.fa/_contigs_softmasked_repeatmasker_TPSI_appended.fa/g')
+      echo "$OutFile"
+      bedtools maskfasta -soft -fi $File -bed $TPSI -fo $OutFile
+      echo "Number of masked bases:"
+      cat $OutFile | grep -v '>' | tr -d '\n' | awk '{print $0, gsub("[a-z]", ".")}' | cut -f2 -d ' '
+    done
+
+## Hard Mask
+Hard masking  means transforming every nucleotide identified as a repeat to an 'N' or 'X'.
+
+    for File in $(ls repeat_masked/*/*/*/*_contigs_hardmasked.fa); do
+      OutDir=$(dirname $File)
+      TPSI=$(ls $OutDir/*_contigs_unmasked.fa.TPSI.allHits.chains.gff3)
+      OutFile=$(echo $File | sed 's/_contigs_hardmasked.fa/_contigs_hardmasked_repeatmasker_TPSI_appended.fa/g')
+      echo "$OutFile"
+      bedtools maskfasta -fi $File -bed $TPSI -fo $OutFile
+    done
+
+Run BUSCO and Quast qc checks on the softmasked, unmasked and hardmasked assemblies
