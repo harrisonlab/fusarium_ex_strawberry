@@ -246,7 +246,9 @@ Run BUSCO and quast on medaka and pick best 1 out of 3 for pilon polishing
 
 Aligning illumina reads against pilon data to polish
 Run in conda env
+INSTALL BOWTIE2 - conda install -c bioconda bowtie2
 Make sure script is executable
+#Alternate prog directory /home/gomeza/git_repos/scripts/bioinformatics_tools/Genome_assemblers/pilon
    chmod u+x ./sub_pilon.sh
 
 The best medaka product was from the miniasm assembly - Fof14_miniasm_racon_round_7_renamed.fasta
@@ -263,6 +265,11 @@ The best medaka product was from the miniasm assembly - Fof14_miniasm_racon_roun
       echo $TrimR1_Read
       OutDir=assembly/miniasm/F.oxysporum_fsp_fragariae/DSA14_003/pilon
       Iterations=10
-      ProgDir=/home/gomeza/git_repos/scripts/bioinformatics_tools/Genome_assemblers/pilon
-      sbatch $ProgDir/sub_pilon.sh $Assembly $TrimF1_Read $TrimR1_Read $OutDir $Iterations
+      ProgDir=/home/akinya/git_repos/fusarium_ex_strawberry/ProgScripts
+      sbatch $ProgDir/pilon_2_lib.sh $Assembly $TrimF1_Read $TrimR1_Read $OutDir $Iterations
     done
+
+Script failed with pilon_1_lib.sh
+Edited script inputs in pilon_2_lib.sh script - failed in conda env
+failed outside conda env - died after 15s
+Installed bowtie2 in olc_assemblers env
