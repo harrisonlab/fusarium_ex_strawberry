@@ -277,7 +277,31 @@ The best medaka product was from the miniasm assembly - Fof14_miniasm_racon_roun
 Script failed with pilon_1_lib.sh
 Edited script inputs in pilon_2_lib.sh script - failed in conda env
 failed outside conda env - died after 15s
-Installed bowtie2 in olc_assemblers env
+Installed bowtie2 in olc_assemblers env - worked
+
+Run quast and BUSCO analysis on each iteration
+QUAST
+
+    ProgDir=/home/akinya/git_repos/tools/seq_tools/assemblers/assembly_qc/quast
+      for Assembly in $(ls assembly/miniasm/F.oxysporum_fsp_fragariae/DSA14_003/pilon/pilon_*.fasta); do
+        Strain=$(echo $Assembly | rev | cut -f3 -d '/' | rev)
+        Organism=$(echo $Assembly | rev | cut -f4 -d '/' | rev)  
+        OutDir=assembly/miniasm/$Organism/$Strain/pilon/ncbi_edits/round_*
+        sbatch $ProgDir/sub_quast.sh $Assembly $OutDir
+      done
+
+BUSCO
+
+    for Assembly in $(ls assembly/miniasm/F.oxysporum_fsp_fragariae/DSA14_003/pilon/pilon_*.fasta); do
+      Strain=$(echo $Assembly| rev | cut -d '/' -f3 | rev)
+      Organism=$(echo $Assembly | rev | cut -d '/' -f4 | rev)
+      echo "$Organism - $Strain"
+      ProgDir=/home/akinya/git_repos/fusarium_ex_strawberry/ProgScripts
+      BuscoDB=$(ls -d /projects/dbBusco/sordariomycetes_odb10)
+      OutDir=assembly/miniasm/F.oxysporum_fsp_fragariae/DSA14_003/pilon/busco_sordariomycetes_obd10/round_*
+      sbatch $ProgDir/busco.sh $Assembly $BuscoDB $OutDir
+    done
+
 
 #####################
 # Repeat Masking
