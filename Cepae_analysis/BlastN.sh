@@ -10,8 +10,8 @@ for Assembly in $(ls F.oxysporum_fsp_cepae/Fus2_canu_new/final/final_genes_combi
   Strain=$(echo $Assembly| rev | cut -d '/' -f3 | rev)
   Organism=$(echo $Assembly | rev | cut -d '/' -f4 | rev)
   echo "$Organism - $Strain"
-  Query=/projects/oldhome/groups/harrisonlab/project_files/fusarium/analysis/blast_homology/six_genes/six-appended_parsed.fa
-  ProgDir=/home/akinya/git_repos/fusarium_ex_strawberry/ProgScripts
+  Query=../oldhome/groups/harrisonlab/project_files/fusarium/analysis/blast_homology/six_genes/six-appended_parsed.fa
+  ProgDir=/home/gomeza/git_repos/scripts/bioinformatics_tools/Feature_analysis
   sbatch $ProgDir/blast_pipe.sh $Query dna $Assembly
 done
 
