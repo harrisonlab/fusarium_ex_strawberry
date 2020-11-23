@@ -22,8 +22,16 @@ Concatenate sequence reads first (there is old seq data that was basecalled agai
 Tried method 2 - gave same error
     cat 20180426_AJ520_GA30000/*.fastq.gz basecalling-all/*.fastq.gz fastq_pass/*.fastq | gzip -cf > /projects/fusarium_EX_Lactucae/raw_dna/FoLr1cont.fastq.gz
 
+copied gzip files to /projects/fusarium_EX_Lactucae/raw_dna/concatenated
+Unzipped the gzip files.
+    gzip -d *fastq.gz
+
+Ran pore chop on the unzipped files in the conctenated/ directory
+    /scratch/software/Porechop-0.2.3/porechop-runner.py -i concatenated/ -o FoL_CONC_trim.fastq.gz --threads 16 > FAL_CONC_trim_log.txt
+
 ## Step 2
 #Run Porechop before assembly
+Kept the errors to show what can go wrong with trying to run porechop on gzipped re-basecalled runs
 
     /scratch/software/Porechop-0.2.3/porechop-runner.py -i FAL69458.fastq.gz -o FAL_trim.fastq.gz --threads 16 > FAL_trim_log.txt
     #/scratch/software/Porechop-0.2.3/porechop-runner.py -i FolR1_conc.fastq.gz -o FolR1_conc_trim.fastq.gz --threads 16 > FolR1_conc_trim_log.txt - method failed (multiple times)
@@ -41,6 +49,22 @@ Tried method 2 - gave same error
       File "/scratch/software/Porechop-0.2.3/porechop/misc.py", line 106, in get_sequence_file_type
         raise ValueError('File is neither FASTA or FASTQ')
     ValueError: File is neither FASTA or FASTQ
+
+Attempted to run porechop on conctenated gzip folders in directory
+error below
+    /scratch/software/Porechop-0.2.3/porechop-runner.py -i concatenated/ -o FoL_CONC_trim.fastq.gz --threads 16 > FAL_CONC_trim_log.txt
+    Traceback (most recent call last):
+    File "/scratch/software/Porechop-0.2.3/porechop-runner.py", line 9, in <module>
+     main()
+    File "/scratch/software/Porechop-0.2.3/porechop/porechop.py", line 35, in main
+     args.check_reads)
+    File "/scratch/software/Porechop-0.2.3/porechop/porechop.py", line 255, in load_reads
+     file_reads, _ = load_fasta_or_fastq(fastq_file)
+    File "/scratch/software/Porechop-0.2.3/porechop/misc.py", line 114, in load_fasta_or_fastq
+     file_type = get_sequence_file_type(filename)
+    File "/scratch/software/Porechop-0.2.3/porechop/misc.py", line 106, in get_sequence_file_type
+     raise ValueError('File is neither FASTA or FASTQ')
+    ValueError: File is neither FASTA or FASTQ    
 
 
 ## Step 3
