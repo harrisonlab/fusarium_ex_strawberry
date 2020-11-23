@@ -117,8 +117,14 @@ Can run like this instead: miniasm -f trimmed_renamed.fasta FolR1_fastq_allfiles
 
 
 ## Quast QC assembly check
-#Run in conda env with python 2.7 (betaenv)
-#Run on each assembly
+Run in conda env with python 2.7 (betaenv)
+
+    conda create -n betaenv python=2.7
+    # conda create -n betaenv python=2.7 quast=0.1.0 - to install specific version of quast
+    conda install -c bioconda quast
+
+
+Run on each assembly
 
     ProgDir=/home/akinya/git_repos/tools/seq_tools/assemblers/assembly_qc/quast
       for Assembly in $(ls assembly/flye/F.oxysporum_fsp_fragariae/DSA14_003/assembly.fasta); do
@@ -129,8 +135,12 @@ Can run like this instead: miniasm -f trimmed_renamed.fasta FolR1_fastq_allfiles
       done
 #Updated entire script using https://github.com/harrisonlab/bioinformatics_tools/blob/master/Gene_prediction/README.md
 #Look into BuscoDB direc - directory exists
-#Run in conda env - BUSCOenv
-#Ran on genome(softmasked) and gene models (final_genes_appended_renamed.gene.fasta)
+Run in conda env - BUSCOenv
+
+    conda create -n BUSCOenv
+    conda install -c bioconda busco
+
+Ran on genome(softmasked) and gene models (final_genes_appended_renamed.gene.fasta)
 
     for Assembly in $(ls assembly/SMARTdenovo/F.oxysporum_fsp_fragariae/DSA14_003/DSA14_003_smartdenovo.dmo.lay.utg); do
       Strain=$(echo $Assembly| rev | cut -d '/' -f2 | rev)
@@ -246,7 +256,7 @@ Run BUSCO and quast on medaka and pick best 1 out of 3 for pilon polishing
 
 Aligning illumina reads against pilon data to polish.
 Alternate prog directory /home/gomeza/git_repos/scripts/bioinformatics_tools/Genome_assemblers/pilon
-Run in conda env.
+Run in conda env (olc_assemblers).
 
 INSTALL BOWTIE2 -
 
@@ -311,16 +321,49 @@ Repeat identification and masking is conducted before gene prediction and annota
 The term 'masking' means transforming every nucleotide identified as a repeat to an 'N', 'X' or to a lower case a, t, g or c.
 
 ## Repeat mask
-Run in conda env (Repenv or seq_tools)
+Ensure packages are installed in envs
 
-    for Assembly in $(ls assembly/spades/*/*/ncbi_edits/contigs_min_500bp_renamed.fasta | grep -v '_2' | grep -v '11055'); do
+    conda create -n Repenv
+
+    conda install -c bioconda repeatmodeler
+    conda install -c bioconda repeatmasker
+
+### Rename before you run rep mask
+
+ProgDir=/home/gomeza/git_repos/scripts/bioinformatics_tools/Assembly_qc
+    touch tmp.txt
+    for Assembly in $(ls assembly/miniasm/F.oxysporum_fsp_fragariae/DSA14_003/pilon/pilon_10.fasta); do
+        OutDir=$(dirname $Assembly)
+        $ProgDir/remove_contaminants.py --inp $Assembly --out $OutDir/pilon_10_renamed.fasta --coord_file tmp.txt > $OutDir/log.txt
+    done
+    rm tmp.txt
+
+
+Run in conda env (Repenv) - input for |illumina assembly/spades/*/*/ncbi_edits/contigs_min_500bp_renamed.fasta | grep -v '_2' | grep -v '11055'|
+
+    for Assembly in $(ls assembly/miniasm/F.oxysporum_fsp_fragariae/DSA14_003/pilon/pilon_10_renamed.fasta); do
     Strain=$(echo $Assembly | rev | cut -f3 -d '/' | rev)
     Organism=$(echo $Assembly | rev | cut -f4 -d '/' | rev)
     echo "$Organism"
     echo "$Strain"
     OutDir=repeat_masked/$Organism/$Strain/ncbi_edits_repmask
     ProgDir=/home/akinya/git_repos/tools/seq_tools/repeat_masking
-    sbatch $ProgDir/rep_modeling.sh $Assembly $OutDir
+    sbatch $ProgDir/rep_modelingBeta.sh $Assembly $OutDir
+    done
+
+## TransposonPSI
+
+Run in (betaenv)  - only compatible with python v 2.7 NOT 3.8 run in betaenv
+
+    conda install -c bioconda transposonpsi
+
+    for Assembly in $(ls assembly/miniasm/F.oxysporum_fsp_fragariae/DSA14_003/pilon/pilon_10_renamed.fasta); do
+    Strain=$(echo $Assembly | rev | cut -f3 -d '/' | rev)
+    Organism=$(echo $Assembly | rev | cut -f4 -d '/' | rev)
+    echo "$Organism"
+    echo "$Strain"
+    OutDir=repeat_masked/$Organism/$Strain/ncbi_edits_repmask
+    ProgDir=/home/akinya/git_repos/tools/seq_tools/repeat_masking
     sbatch $ProgDir/transposonPSI.sh $Assembly $OutDir
     done
 
