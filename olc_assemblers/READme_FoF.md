@@ -327,6 +327,19 @@ Ensure packages are installed in envs
 
     conda install -c bioconda repeatmodeler
     conda install -c bioconda repeatmasker
+    conda install repeatmasker
+    conda install rmblast
+
+Need to manually configure Repeatmasker
+
+    cd /home/USER_ID/miniconda3/envs/general_tools/share/RepeatMasker/ # USER_ID is your user name i.e. akinya
+
+    ./confiure # runs the configuration step
+
+    # Set execution path of tfr, e.g. /home/USER_ID/miniconda3/envs/USER_ENV/bin/trf
+    # Add search engine. Option 2 - RMBlast will be used
+    # Set path where rmblastn and makeblastdb are found, e.g. /home/USER_ID/miniconda3/envs/USER_ENV/bin
+    # 5. Done to exit
 
 ### Rename before you run rep mask
 
@@ -372,7 +385,7 @@ Soft masking means transforming every nucleotide identified as a repeat to a low
 
 Gives number of masked N's in sequence  - Take physical and digital note of the results.
 
-    for File in $(ls repeat_masked/*/*/*/*_contigs_softmasked.fa); do
+    for File in $(ls repeat_masked/F.oxysporum_fsp_fragariae/DSA14_003/ncbi_edits_repmask/_contigs_softmasked.fa); do
       OutDir=$(dirname $File)
       TPSI=$(ls $OutDir/*_contigs_unmasked.fa.TPSI.allHits.chains.gff3)
       OutFile=$(echo $File | sed 's/_contigs_softmasked.fa/_contigs_softmasked_repeatmasker_TPSI_appended.fa/g')
