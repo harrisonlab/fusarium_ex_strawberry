@@ -375,8 +375,7 @@ Run in conda env (Repenv) - input for |illumina assembly/spades/*/*/ncbi_edits/c
     done
 
 ### TransposonPSI (path 2)
-
-Run in (betaenv)  - only compatible with python v 2.7 NOT 3.8 run in betaenv (Might just be error in Repenv config)
+Run in RMask env
 
     conda install -c bioconda transposonpsi
 
@@ -395,9 +394,9 @@ Soft masking means transforming every nucleotide identified as a repeat to a low
 
 Gives number of masked N's in sequence  - Take physical and digital note of the results.
 
-    for File in $(ls repeat_masked/F.oxysporum_fsp_fragariae/DSA14_003/ncbi_edits_repmask/_contigs_softmasked.fa); do
+    for File in $(ls repeat_masked/F.oxysporum_fsp_fragariae/DSA14_003/ncbi_edits_repmask/DSA14_003_contigs_softmasked.fa); do
       OutDir=$(dirname $File)
-      TPSI=$(ls $OutDir/*_contigs_unmasked.fa.TPSI.allHits.chains.gff3)
+      TPSI=$(ls $OutDir/DSA14_003_contigs_unmasked.fa.TPSI.allHits.chains.gff3)
       OutFile=$(echo $File | sed 's/_contigs_softmasked.fa/_contigs_softmasked_repeatmasker_TPSI_appended.fa/g')
       echo "$OutFile"
       bedtools maskfasta -soft -fi $File -bed $TPSI -fo $OutFile
@@ -405,12 +404,15 @@ Gives number of masked N's in sequence  - Take physical and digital note of the 
       cat $OutFile | grep -v '>' | tr -d '\n' | awk '{print $0, gsub("[a-z]", ".")}' | cut -f2 -d ' '
     done
 
+    # Number of masked bases:
+    # 6854263
+
 ## Hard Mask
 Hard masking  means transforming every nucleotide identified as a repeat to an 'N' or 'X'.
 
-    for File in $(ls repeat_masked/*/*/*/*_contigs_hardmasked.fa); do
+    for File in $(ls repeat_masked/F.oxysporum_fsp_fragariae/DSA14_003/ncbi_edits_repmask/DSA14_003_contigs_hardmasked.fa); do
       OutDir=$(dirname $File)
-      TPSI=$(ls $OutDir/*_contigs_unmasked.fa.TPSI.allHits.chains.gff3)
+      TPSI=$(ls $OutDir/DSA14_003_contigs_unmasked.fa.TPSI.allHits.chains.gff3)
       OutFile=$(echo $File | sed 's/_contigs_hardmasked.fa/_contigs_hardmasked_repeatmasker_TPSI_appended.fa/g')
       echo "$OutFile"
       bedtools maskfasta -fi $File -bed $TPSI -fo $OutFile
