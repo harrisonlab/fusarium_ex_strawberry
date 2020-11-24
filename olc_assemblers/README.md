@@ -8,7 +8,7 @@
 ####################
 
 ## Step 1
-#Login to node srun --partition himem --time 0-06:00:00 --mem 40G --cpus-per-task 24 --pty bash
+#Login to node srun --partition himem --time 0-06:00:00 --mem-per-cpu 40G --cpus-per-task 24 --pty bash
 Concatenate sequence reads first (there is old seq data that was basecalled again include it)
 #Use command below if you are working in the same directory as the raw sequence reads
 
@@ -69,16 +69,21 @@ error below
 
 ## Step 3
 #Need to rename all reads
+Run in conda env that has minimap2 and bbmap (olc_assemblers)
 
     rename.sh qin=33 in=FAL_trim.fastq.gz out=trimmed_renamed.fasta prefix=FolR1
 
+For all concatenated reads run:
+
+    rename.sh qin=33 in=FoL_CONC_trim.fastq.gz out=FoL_conc_renamed.fasta prefix=FolR1
+
 #If script doesn't work, see below
 
-        for TrimReads in $(ls FAL_trim.fastq.gz); do
+        for TrimReads in $(ls FAL_trim.fastq.gz); do #sub in FoL_CONC_trim.fastq.gz
             Organism=F.oxysporum_fsp_lactucae
             Strain=race_1
             Prefix="$Strain"_miniasm
-            OutDir=assembly/miniasm/$Organism/$Strain
+            OutDir=assembly/miniasm/$Organism/$Strain #Assembly2
             mkdir -p $OutDir
             ProgDir=/home/gomeza/git_repos/scripts/bioinformatics_tools/Genome_assemblers
             sbatch $ProgDir/miniasm.sh $TrimReads $Prefix $OutDir
@@ -90,6 +95,8 @@ Need to run read against itself. IT IS NEEDED. it is going to do self mapping
 #Fast all-against-all overlap of raw reads
 
     minimap2 -x ava-ont -t8 trimmed_renamed.fasta trimmed_renamed.fasta | gzip -1 > FolR1_fastq_allfiles.paf.gz
+    or
+    minimap2 -x ava-ont -t8 FoL_conc_renamed.fasta FoL_conc_renamed.fasta | gzip -1 > FolR1C_fastq_all.paf.gz
 
 #For ONT long read sequences use miniasm to assemble genome
 Run in a screen and a node in a conda env with miniasm installed
@@ -100,6 +107,8 @@ Run in a screen and a node in a conda env with miniasm installed
 Can run like this instead: miniasm -f trimmed_renamed.fasta FolR1_fastq_allfiles.paf.gz > reads.gfa
 
     miniasm -f "$Prefix"_rename.fasta $Prefix.paf.gz > reads.gfa
+    #or
+    miniasm -f FoL_conc_renamed.fasta FolR1C_fastq_all.paf.gz > Assembly2/miniasm/F.oxysporum_fsp_lactucae/race_1/reads.gfa
 
 ## Step 6
 #Convert gfa file to fasta file

@@ -323,12 +323,11 @@ The term 'masking' means transforming every nucleotide identified as a repeat to
 ## Repeat mask
 Ensure packages are installed in envs
 
-    conda create -n Repenv
+    conda create -n RMask
 
-    conda install -c bioconda repeatmodeler
-    conda install -c bioconda repeatmasker
-    conda install repeatmasker
-    conda install rmblast
+    conda install -c bioconda repeatmodeler # repeatmodeler also installs packages below
+    #conda install -c bioconda repeatmasker
+    #conda install rmblast
 
 Need to manually configure Repeatmasker
 
@@ -351,6 +350,17 @@ ProgDir=/home/gomeza/git_repos/scripts/bioinformatics_tools/Assembly_qc
     done
     rm tmp.txt
 
+Have 2 paths to choose from to run scripts
+
+### RepeatMask & TPSI path 1
+
+    ProgDir=/home/gomeza/git_repos/scripts/bioinformatics_tools/Repeat_masking
+    BestAssembly=path/to/assembly/*renamed.fasta
+    OutDir=repeat_masked/$Organism/$Strain/pilon
+    sbatch $ProgDir/rep_modeling.sh $BestAssembly $OutDir
+    sbatch $ProgDir/transposonPSI.sh $BestAssembly $OutDir
+
+### Rep mask (path 2)
 
 Run in conda env (Repenv) - input for |illumina assembly/spades/*/*/ncbi_edits/contigs_min_500bp_renamed.fasta | grep -v '_2' | grep -v '11055'|
 
@@ -360,13 +370,13 @@ Run in conda env (Repenv) - input for |illumina assembly/spades/*/*/ncbi_edits/c
     echo "$Organism"
     echo "$Strain"
     OutDir=repeat_masked/$Organism/$Strain/ncbi_edits_repmask
-    ProgDir=/home/akinya/git_repos/tools/seq_tools/repeat_masking
+    ProgDir=/home/gomeza/git_repos/scripts/bioinformatics_tools/Repeat_masking #/home/akinya/git_repos/tools/seq_tools/repeat_masking
     sbatch $ProgDir/rep_modelingBeta.sh $Assembly $OutDir
     done
 
-## TransposonPSI
+### TransposonPSI (path 2)
 
-Run in (betaenv)  - only compatible with python v 2.7 NOT 3.8 run in betaenv
+Run in (betaenv)  - only compatible with python v 2.7 NOT 3.8 run in betaenv (Might just be error in Repenv config)
 
     conda install -c bioconda transposonpsi
 
@@ -376,7 +386,7 @@ Run in (betaenv)  - only compatible with python v 2.7 NOT 3.8 run in betaenv
     echo "$Organism"
     echo "$Strain"
     OutDir=repeat_masked/$Organism/$Strain/ncbi_edits_repmask
-    ProgDir=/home/akinya/git_repos/tools/seq_tools/repeat_masking
+    ProgDir=/home/gomeza/git_repos/scripts/bioinformatics_tools/Repeat_masking #/home/akinya/git_repos/tools/seq_tools/repeat_masking
     sbatch $ProgDir/transposonPSI.sh $Assembly $OutDir
     done
 
