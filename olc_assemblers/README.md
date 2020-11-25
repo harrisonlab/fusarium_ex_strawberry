@@ -125,7 +125,7 @@ Log into the long node
 #flye assembly method
 size= Expected genome size
 
-    for TrimReads in $(ls assembly/flye/F.oxysporum_fsp_lactucae/race_1/FAL_trim.fastq.gz); do
+    for TrimReads in $(ls assembly/flye/F.oxysporum_fsp_lactucae/race_1/FAL_trim.fastq.gz); do # for concatenated runs raw_dna/FoL_CONC_trim.fastq.gz
            Organism=$(echo $TrimReads | rev | cut -f3 -d '/' | rev) ;
            Strain=$(echo $TrimReads | rev | cut -f2 -d '/' | rev) ;
            Prefix="$Strain"_flye;     
@@ -136,6 +136,20 @@ size= Expected genome size
            ProgDir=/home/gomeza/git_repos/scripts/bioinformatics_tools/Genome_assemblers/;
            sbatch $ProgDir/flye.sh $TrimReads $Prefix $OutDir $Size $TypeSeq;
          done
+
+         or
+
+         for TrimReads in $(ls raw_dna/FoL_CONC_trim.fastq.gz); do # for concatenated runs
+                Organism=F.oxysporum_fsp_lactucae;
+                Strain=race_1;
+                Prefix="$Strain"_flye;     
+                TypeSeq=nanoraw;
+                OutDir=Assembly2/flye/$Organism/$Strain;
+                mkdir -p $OutDir;
+                Size=60m;
+                ProgDir=/home/gomeza/git_repos/scripts/bioinformatics_tools/Genome_assemblers;
+                sbatch $ProgDir/flye.sh $TrimReads $Prefix $OutDir $Size $TypeSeq;
+              done
 
 ########################
 # SMARTDenovo assembly
@@ -158,6 +172,16 @@ Could run like this:
       ProgDir=/home/gomeza/git_repos/scripts/bioinformatics_tools/Genome_assemblers
       sbatch $ProgDir/SMARTdenovo.sh $TrimReads $Prefix $OutDir
     done
+     or
+     for TrimReads in $(ls raw_dna/FoL_CONC_trim.fastq.gz); do
+       Organism=F.oxysporum_fsp_lactucae
+       Strain=race_1
+       Prefix="$Strain"_smartdenovo
+       OutDir=Assembly2/SMARTdenovo/$Organism/$Strain
+       mkdir -p $OutDir
+       ProgDir=/home/gomeza/git_repos/scripts/bioinformatics_tools/Genome_assemblers
+       sbatch $ProgDir/SMARTdenovo.sh $TrimReads $Prefix $OutDir
+     done
 
 #output = race_1_smartdenovo.dmo.lay.utg
 
@@ -177,12 +201,20 @@ Run on each assembly
         OutDir=assembly/flye/$Organism/$Strain/ncbi_edits
         sbatch $ProgDir/sub_quast.sh $Assembly $OutDir
       done
+      or
+      ProgDir=/home/akinya/git_repos/tools/seq_tools/assemblers/assembly_qc/quast
+      for Assembly in $(ls Assembly2/SMARTdenovo/F.oxysporum_fsp_lactucae/race_1/race_1_smartdenovo.dmo.lay.utg); do
+        Strain=$(echo $Assembly | rev | cut -f2 -d '/' | rev)
+        Organism=$(echo $Assembly | rev | cut -f3 -d '/' | rev)  
+        OutDir=Assembly2/miniasm/$Organism/$Strain/ncbi_edits
+        sbatch $ProgDir/sub_quast.sh $Assembly $OutDir
+      done
 
 #Updated entire script using https://github.com/harrisonlab/bioinformatics_tools/blob/master/Gene_prediction/README.md
 #Look into BuscoDB direc - directory exists
 #Run in conda env - BUSCOenv
 
-    for Assembly in $(ls assembly/flye/F.oxysporum_fsp_lactucae/race_1/assembly.fasta); do
+    for Assembly in $(ls assembly/flye/F.oxysporum_fsp_lactucae/race_1/assembly.fasta); do # Assembly2/miniasm/F.oxysporum_fsp_lactucae/race_1/FoLR1_conc.fa
       Strain=$(echo $Assembly| rev | cut -d '/' -f2 | rev)
       Organism=$(echo $Assembly | rev | cut -d '/' -f3 | rev)
       echo "$Organism - $Strain"
@@ -202,12 +234,22 @@ Need to do for Miniasm*, Flye* and SMARTdenovo* output files
 #Run in condaenv with racon installed (olc_assemblers) - *=complete
 
     for Assembly in $(ls assembly/SMARTdenovo/F.oxysporum_fsp_lactucae/race_1/race_1_smartdenovo.dmo.lay.utg); do
-        ReadsFq=$(ls assembly/flye/F.oxysporum_fsp_lactucae/race_1/FAL_trim.fastq.gz)
+        ReadsFq=$(ls raw_dna/FoL_CONC_trim.fastq.gz)
         Iterations=10
         OutDir=$(dirname $Assembly)"/racon_$Iterations"
         ProgDir=~/git_repos/assembly_fusarium_ex/ProgScripts
         sbatch $ProgDir/racon.sh $Assembly $ReadsFq $Iterations $OutDir
       done
+
+      or
+
+      for Assembly in $(ls Assembly2/SMARTdenovo/F.oxysporum_fsp_lactucae/race_1/race_1_smartdenovo.dmo.lay.utg); do
+          ReadsFq=$(ls raw_dna/FoL_CONC_trim.fastq.gz)
+          Iterations=10
+          OutDir=$(dirname $Assembly)"/racon_$Iterations"
+          ProgDir=~/git_repos/assembly_fusarium_ex/ProgScripts
+          sbatch $ProgDir/racon.sh $Assembly $ReadsFq $Iterations $OutDir
+        done
 
 #Quality check each iteration with Quast and BUSCO
 DO for each iteration

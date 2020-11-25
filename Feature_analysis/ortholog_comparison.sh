@@ -31,3 +31,13 @@ done
 
 # second query../F.oxysporum_fsp_cepae/Fus2_canu_new/final/Eff_mimp_genes.fasta
 # Use cut -f1 or * DSA14_003_eff_ortho_genes.fasta_homologs.csv to excise and view column data
+# Compare against Andy's known SIX genes
+for Assembly in $(ls assembly/miniasm/F.oxysporum_fsp_fragariae/DSA14_003/pilon/pilon_10_renamed.fasta); do
+  Strain=$(echo $Assembly| rev | cut -d '/' -f3 | rev)
+  Organism=$(echo $Assembly | rev | cut -d '/' -f4 | rev)
+  echo "$Organism - $Strain"
+  Query=../../oldhome/groups/harrisonlab/project_files/fusarium/analysis/blast_homology/six_genes/six-appended_parsed.fa
+  OutDir=assembly/miniasm/$Organism/$Strain/Orthology
+  ProgDir=/home/gomeza/git_repos/scripts/bioinformatics_tools/Feature_analysis
+  sbatch $ProgDir/blast_pipe.sh $Query dna $Assembly $OutDir
+done
