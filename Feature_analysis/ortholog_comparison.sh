@@ -15,6 +15,8 @@ faidx -d '|' final_genes_combined.cdna.fasta $(tr '\n' ' ' < FocFus2_genes.txt )
 
 # faidx -d '|' final_genes_combined.cdna.fasta $(tr '\n' ' ' < FoC_cand_mimps.txt ) > Eff_mimp_genes.fasta
 
+# faidx -d '|' final_genes_combined.cdna.fasta $(tr '\n' ' ' < FoC_Six.txt ) > six_ortho_genes.fasta
+
 # Now that you have the cand effector genes, contrast against Fo_fragariae_14_003 long read seq genome
 # Run in conda env with perly (Repenv)
 # for $Assembly Use files with nucleotides
@@ -23,7 +25,7 @@ for Assembly in $(ls assembly/miniasm/F.oxysporum_fsp_fragariae/DSA14_003/pilon/
   Strain=$(echo $Assembly| rev | cut -d '/' -f3 | rev)
   Organism=$(echo $Assembly | rev | cut -d '/' -f4 | rev)
   echo "$Organism - $Strain"
-  Query=../F.oxysporum_fsp_cepae/Fus2_canu_new/final/eff_ortho_genes.fasta
+  Query=../F.oxysporum_fsp_cepae/Fus2_canu_new/final/eff_ortho_genes.fasta # six_ortho_genes.fasta
   OutDir=assembly/miniasm/$Organism/$Strain/Orthology
   ProgDir=/home/gomeza/git_repos/scripts/bioinformatics_tools/Feature_analysis
   sbatch $ProgDir/blast_pipe.sh $Query dna $Assembly $OutDir
