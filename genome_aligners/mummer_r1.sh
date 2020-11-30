@@ -1,6 +1,6 @@
 # System for rapidly aligning entire genomes
 # run in conda env (mummer)
-# for help go to http://mummer.sourceforge.net/manual/
+# for help go to https://mummer4.github.io/manual/manual.html
 # compare Fofr14 against cepae genome and lycopersici genomes (reference genomes)
 #SubjectGenome=reference genome
 #QueryGenome= my genome i.e FoFr_14
@@ -22,6 +22,16 @@ done
 
 # to view particular hits on contig, do
 # less FoFr_14_coords.tsv | grep 'contig_11'
+# do for unmasked cepae genome
+
+for SubjectGenome in $(ls ../../oldhome/groups/harrisonlab/project_files/fusarium/repeat_masked/F.oxysporum_fsp_cepae/Fus2_canu_new/edited_contigs_repmask/Fus2_canu_contigs_unmasked.fa); do
+  QueryGenome=assembly/miniasm/F.oxysporum_fsp_fragariae/DSA14_003/pilon/pilon_10_renamed.fasta
+  Prefix=FoFr_14
+  OutDir=alignment/mummer/miniasm/FoFrvsFoCep
+  mkdir -p $OutDir
+  ProgDir=/home/gomeza/git_repos/scripts/bioinformatics_tools/Genome_aligners
+  sbatch $ProgDir/mummer.sh $SubjectGenome $QueryGenome $Prefix $OutDir
+done
 
  # may produce errors in slurm out file therefore run this after
 # -c	Include percent coverage columns in the output
