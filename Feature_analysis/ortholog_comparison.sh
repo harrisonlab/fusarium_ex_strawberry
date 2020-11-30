@@ -43,3 +43,60 @@ for Assembly in $(ls assembly/miniasm/F.oxysporum_fsp_fragariae/DSA14_003/pilon/
   ProgDir=/home/gomeza/git_repos/scripts/bioinformatics_tools/Feature_analysis
   sbatch $ProgDir/blast_pipe.sh $Query dna $Assembly $OutDir
 done
+
+#############
+
+# To see if miniasm assembly is chimeric, contrast other assemblies
+# They haven't been pilon polished - currently cleaned with medaka
+# Use pilon to polish these assemblies
+# Use the diff queries ../F.oxysporum_fsp_cepae/Fus2_canu_new/final/Eff_mimp_genes.fasta # six_ortho_genes.fasta
+# ../../oldhome/groups/harrisonlab/project_files/fusarium/analysis/blast_homology/six_genes/six-appended_parsed.fa
+
+for Assembly in $(ls assembly/SMARTdenovo/F.oxysporum_fsp_fragariae/DSA14_003/medaka/DSA14_003_smartdenovo_racon_round_4_renamed.fasta); do
+  Strain=$(echo $Assembly| rev | cut -d '/' -f3 | rev)
+  Organism=$(echo $Assembly | rev | cut -d '/' -f4 | rev)
+  echo "$Organism - $Strain"
+  Query=../F.oxysporum_fsp_cepae/Fus2_canu_new/final/six_ortho_genes.fasta
+  OutDir=assembly/SMARTdenovo/$Organism/$Strain/Orthology
+  ProgDir=/home/gomeza/git_repos/scripts/bioinformatics_tools/Feature_analysis
+  sbatch $ProgDir/blast_pipe.sh $Query dna $Assembly $OutDir
+done
+
+# Then do for flye
+
+for Assembly in $(ls assembly/flye/F.oxysporum_fsp_fragariae/DSA14_003/medaka/assembly_racon_round_3_renamed.fasta); do
+  Strain=$(echo $Assembly| rev | cut -d '/' -f3 | rev)
+  Organism=$(echo $Assembly | rev | cut -d '/' -f4 | rev)
+  echo "$Organism - $Strain"
+  Query=../../oldhome/groups/harrisonlab/project_files/fusarium/analysis/blast_homology/six_genes/six-appended_parsed.fa
+  OutDir=assembly/flye/$Organism/$Strain/Orthology
+  ProgDir=/home/gomeza/git_repos/scripts/bioinformatics_tools/Feature_analysis
+  sbatch $ProgDir/blast_pipe.sh $Query dna $Assembly $OutDir
+done
+
+##########
+
+# DO a mimp analysis and store data on a spreadsheet
+
+for Assembly in $(ls repeat_masked/F.oxysporum_fsp_cepae/Fus2_canu_new/edited_contigs_repmask/Fus2_canu_contigs_unmasked.fa); do
+    Organism=$(echo "$Assembly" | rev | cut -d '/' -f4 | rev)
+    Strain=$(echo "$Assembly" | rev | cut -d '/' -f3 | rev)
+    GeneGff=$(ls gene_pred/final_genes/F.oxysporum_fsp_cepae/Fus2_canu_new/final/final_genes_appended_renamed.gff3)
+    OutDir=../../../../../fusarium_ex_strawberry/F.oxysporum_fsp_cepae/Fus2_canu_new/mimps/V3
+    mkdir -p "$OutDir"
+    echo "$Organism - $Strain"
+    ProgDir=/home/gomeza/git_repos/scripts/bioinformatics_tools/Feature_annotation
+    $ProgDir/mimp_finder.pl $Assembly $OutDir/"$Strain"_mimps.fa $OutDir/"$Strain"_mimps.gff > $OutDir/"$Strain"_mimps.log
+    $ProgDir/gffexpander.pl +- 2000 $OutDir/"$Strain"_mimps.gff > $OutDir/"$Strain"_mimps_exp.gff
+    echo "The number of mimps identified:"
+    cat $OutDir/"$Strain"_mimps.fa | grep '>' | wc -l
+    bedtools intersect -u -a $GeneGff -b $OutDir/"$Strain"_mimps_exp.gff > $OutDir/"$Strain"_genes_in_2kb_mimp.gff
+    echo "The following transcripts intersect mimps:"
+    MimpProtsTxt=$OutDir/"$Strain"_prots_in_2kb_mimp.txt
+    MimpGenesTxt=$OutDir/"$Strain"_genes_in_2kb_mimp.txt
+    cat $OutDir/"$Strain"_genes_in_2kb_mimp.gff | grep -w 'mRNA' | cut -f9 | cut -f1 -d';' | cut -f2 -d'=' | sort | uniq > $MimpProtsTxt
+    cat $OutDir/"$Strain"_genes_in_2kb_mimp.gff | grep -w 'mRNA' | cut -f9 | cut -f1 -d';' | cut -f2 -d'=' | cut -f1 -d '.'| sort | uniq > $MimpGenesTxt
+    cat $MimpProtsTxt | wc -l
+    cat $MimpGenesTxt | wc -l
+    echo ""
+  done

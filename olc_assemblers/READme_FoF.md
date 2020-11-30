@@ -267,6 +267,8 @@ Make sure script is executable
    chmod u+x ./sub_pilon.sh
 
 The best medaka product was from the miniasm assembly - Fof14_miniasm_racon_round_7_renamed.fasta
+DUE to possible chimeric miniasm assembly, ran pilon on SDEN and flye assemblies
+
 
     for Assembly in $(ls assembly/miniasm/F.oxysporum_fsp_fragariae/DSA14_003/medaka/Fof14_miniasm_racon_round_7_renamed.fasta); do
       Organism=$(echo $Assembly | rev | cut -d '/' -f4 | rev)
@@ -293,22 +295,22 @@ Run quast and BUSCO analysis on each iteration
 QUAST
 
     ProgDir=/home/akinya/git_repos/tools/seq_tools/assemblers/assembly_qc/quast
-      for Assembly in $(ls assembly/miniasm/F.oxysporum_fsp_fragariae/DSA14_003/pilon/pilon_*.fasta); do
+      for Assembly in $(ls assembly/flye/F.oxysporum_fsp_fragariae/DSA14_003/pilon/pilon_*.fasta); do
         Strain=$(echo $Assembly | rev | cut -f3 -d '/' | rev)
         Organism=$(echo $Assembly | rev | cut -f4 -d '/' | rev)  
-        OutDir=assembly/miniasm/$Organism/$Strain/pilon/ncbi_edits/round_*
+        OutDir=assembly/flye/$Organism/$Strain/pilon/ncbi_edits/round_*
         sbatch $ProgDir/sub_quast.sh $Assembly $OutDir
       done
 
 BUSCO
 
-    for Assembly in $(ls assembly/miniasm/F.oxysporum_fsp_fragariae/DSA14_003/pilon/pilon_*.fasta); do
+    for Assembly in $(ls assembly/SMARTdenovo/F.oxysporum_fsp_fragariae/DSA14_003/pilon/pilon_*.fasta); do
       Strain=$(echo $Assembly| rev | cut -d '/' -f3 | rev)
       Organism=$(echo $Assembly | rev | cut -d '/' -f4 | rev)
       echo "$Organism - $Strain"
-      ProgDir=/home/akinya/git_repos/fusarium_ex_strawberry/ProgScripts
+      ProgDir=/home/akinya/git_repos/fusarium_ex_strawberry/ProgScripts/quality_check/
       BuscoDB=$(ls -d /projects/dbBusco/sordariomycetes_odb10)
-      OutDir=assembly/miniasm/F.oxysporum_fsp_fragariae/DSA14_003/pilon/busco_sordariomycetes_obd10/round_*
+      OutDir=assembly/SMARTdenovo/F.oxysporum_fsp_fragariae/DSA14_003/pilon/busco_sordariomycetes_obd10/round_*
       sbatch $ProgDir/busco.sh $Assembly $BuscoDB $OutDir
     done
 

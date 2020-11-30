@@ -7,7 +7,7 @@
 # assembly/flye/F.oxysporum_fsp_fragariae/DSA14_003/medaka/assembly_racon_round_3_renamed.fasta
 
 ```bash
-for Assembly in $(ls assembly/flye/F.oxysporum_fsp_fragariae/DSA14_003/medaka/assembly_racon_round_3_renamed.fasta); do
+for Assembly in $(ls assembly/SMARTdenovo/F.oxysporum_fsp_fragariae/DSA14_003/medaka/DSA14_003_smartdenovo_racon_round_4_renamed.fasta); do
   Organism=F.oxysporum_fsp_fragariae
   Strain=DSA14_003
   IlluminaDir=$(ls -d ../raw_dna/paired/F.oxysporum_fsp_fragariae/DSA14_003)
