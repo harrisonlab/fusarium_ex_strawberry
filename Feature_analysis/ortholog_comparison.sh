@@ -11,7 +11,7 @@
 # Why are you doing this?
 # To compare candidate effectors in Fo cepae (which has RNA seq data) against the predicted genes in Fof using cepae RNA seq data
 
-faidx -d '|' final_genes_combined.cdna.fasta $(tr '\n' ' ' < FocFus2_genes.txt ) > eff_ortho_genes.fasta
+faidx -d '|' final_genes_combined.cdna.fasta $(tr '\n' ' ' < FocFus2_genes.txt ) > eff_ortho_genes.fasta # beta test - don't use
 
 # faidx -d '|' final_genes_combined.cdna.fasta $(tr '\n' ' ' < FoC_cand_mimps.txt ) > Eff_mimp_genes.fasta
 
@@ -21,12 +21,12 @@ faidx -d '|' final_genes_combined.cdna.fasta $(tr '\n' ' ' < FocFus2_genes.txt )
 # Run in conda env with perly (Repenv)
 # for $Assembly Use files with nucleotides
 
-for Assembly in $(ls assembly/miniasm/F.oxysporum_fsp_fragariae/DSA14_003/pilon/pilon_10_renamed.fasta); do
+for Assembly in $(ls assembly/flye/F.oxysporum_fsp_fragariae/DSA14_003/pilon/pilon_10_renamed.fasta); do
   Strain=$(echo $Assembly| rev | cut -d '/' -f3 | rev)
   Organism=$(echo $Assembly | rev | cut -d '/' -f4 | rev)
   echo "$Organism - $Strain"
-  Query=../F.oxysporum_fsp_cepae/Fus2_canu_new/final/eff_ortho_genes.fasta # six_ortho_genes.fasta
-  OutDir=assembly/miniasm/$Organism/$Strain/Orthology
+  Query=../F.oxysporum_fsp_cepae/Fus2_canu_new/final/Eff_mimp_genes.fasta # six_ortho_genes.fasta
+  OutDir=assembly/flye/$Organism/$Strain/Orthology/FoFrvsFoCep_mimps
   ProgDir=/home/gomeza/git_repos/scripts/bioinformatics_tools/Feature_analysis
   sbatch $ProgDir/blast_pipe.sh $Query dna $Assembly $OutDir
 done
@@ -52,12 +52,12 @@ done
 # Use the diff queries ../F.oxysporum_fsp_cepae/Fus2_canu_new/final/Eff_mimp_genes.fasta # six_ortho_genes.fasta
 # ../../oldhome/groups/harrisonlab/project_files/fusarium/analysis/blast_homology/six_genes/six-appended_parsed.fa
 
-for Assembly in $(ls assembly/SMARTdenovo/F.oxysporum_fsp_fragariae/DSA14_003/medaka/DSA14_003_smartdenovo_racon_round_4_renamed.fasta); do
+for Assembly in $(ls assembly/flye/F.oxysporum_fsp_fragariae/DSA14_003/pilon/pilon_10_renamed.fasta); do
   Strain=$(echo $Assembly| rev | cut -d '/' -f3 | rev)
   Organism=$(echo $Assembly | rev | cut -d '/' -f4 | rev)
   echo "$Organism - $Strain"
-  Query=../F.oxysporum_fsp_cepae/Fus2_canu_new/final/six_ortho_genes.fasta
-  OutDir=assembly/SMARTdenovo/$Organism/$Strain/Orthology
+  Query=../../oldhome/groups/harrisonlab/project_files/fusarium/analysis/blast_homology/six_genes/six-appended_parsed.fa
+  OutDir=assembly/flye/$Organism/$Strain/Orthology/FoFrvsFoCep
   ProgDir=/home/gomeza/git_repos/scripts/bioinformatics_tools/Feature_analysis
   sbatch $ProgDir/blast_pipe.sh $Query dna $Assembly $OutDir
 done
@@ -70,6 +70,33 @@ for Assembly in $(ls assembly/flye/F.oxysporum_fsp_fragariae/DSA14_003/medaka/as
   echo "$Organism - $Strain"
   Query=../../oldhome/groups/harrisonlab/project_files/fusarium/analysis/blast_homology/six_genes/six-appended_parsed.fa
   OutDir=assembly/flye/$Organism/$Strain/Orthology
+  ProgDir=/home/gomeza/git_repos/scripts/bioinformatics_tools/Feature_analysis
+  sbatch $ProgDir/blast_pipe.sh $Query dna $Assembly $OutDir
+done
+
+############
+
+# Do whole genome blast for each assembly against lycopersici genome
+# query = assembly that needs checking
+
+for Assembly in $(ls ../../oldhome/groups/harrisonlab/project_files/fusarium/repeat_masked/F.oxysporum_fsp_lycopersici/4287_v2/fungidb_repmask/4287_v2_contigs_unmasked.fa); do
+  Strain=$(echo $Query| rev | cut -d '/' -f3 | rev)
+  Organism=$(echo $Query | rev | cut -d '/' -f4 | rev)
+  echo "$Organism - $Strain"
+  Query=assembly/SMARTdenovo/F.oxysporum_fsp_fragariae/DSA14_003/pilon/pilon_10_renamed.fasta
+  OutDir=assembly/SMARTdenovo/$Organism/$Strain/Orthology/FoFrVSFoLy_genome
+  ProgDir=/home/gomeza/git_repos/scripts/bioinformatics_tools/Feature_analysis
+  sbatch $ProgDir/blast_pipe.sh $Query dna $Assembly $OutDir
+done
+
+# Do the same against the cepae genome
+
+for Assembly in $(ls ../../oldhome/groups/harrisonlab/project_files/fusarium/repeat_masked/F.oxysporum_fsp_cepae/Fus2_canu_new/edited_contigs_repmask/Fus2_canu_contigs_unmasked.fa); do
+  Strain=$(echo $Query| rev | cut -d '/' -f3 | rev)
+  Organism=$(echo $Query | rev | cut -d '/' -f4 | rev)
+  echo "$Organism - $Strain"
+  Query=assembly/SMARTdenovo/F.oxysporum_fsp_fragariae/DSA14_003/pilon/pilon_10_renamed.fasta
+  OutDir=assembly/SMARTdenovo/$Organism/$Strain/Orthology/FoFrVSFoCep_genome
   ProgDir=/home/gomeza/git_repos/scripts/bioinformatics_tools/Feature_analysis
   sbatch $ProgDir/blast_pipe.sh $Query dna $Assembly $OutDir
 done

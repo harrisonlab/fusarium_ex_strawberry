@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 #SBATCH -J blast_pipe
 #SBATCH --partition=himem
-#SBATCH --mem-per-cpu=1G
-#SBATCH --cpus-per-task=4
+#SBATCH --mem-per-cpu=20G
+#SBATCH --cpus-per-task=12
 
 # script to run blast homology pipe
 USAGE="blast_pipe.sh <query.fa> <dna, protein (query_format)> <genome_sequence.fa> <output_directory>"
