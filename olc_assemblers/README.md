@@ -243,7 +243,7 @@ Need to do for Miniasm*, Flye* and SMARTdenovo* output files
 
       or
 
-      for Assembly in $(ls Assembly2/SMARTdenovo/F.oxysporum_fsp_lactucae/race_1/race_1_smartdenovo.dmo.lay.utg); do
+      for Assembly in $(ls Assembly2/flye/F.oxysporum_fsp_lactucae/race_1/assembly.fasta); do
           ReadsFq=$(ls raw_dna/FoL_CONC_trim.fastq.gz)
           Iterations=10
           OutDir=$(dirname $Assembly)"/racon_$Iterations"
@@ -264,11 +264,11 @@ DO for each iteration
 
 #Ended up here for some reason assembly/flye/F.oxysporum_fsp_lactucae/race_1/ncbi_edits/round_*
 
-    for Assembly in $(ls assembly/flye/F.oxysporum_fsp_lactucae/race_1/flye_raw/racon_10/assembly_racon_round_1.fasta); do
-      Strain=$(echo $Assembly| rev | cut -d '/' -f4 | rev)
-      Organism=$(echo $Assembly | rev | cut -d '/' -f5 | rev)
+    for Assembly in $(ls Assembly2/SMARTdenovo/F.oxysporum_fsp_lactucae/race_1/racon_10/race_1_smartdenovo_racon_round_1.fasta); do
+      Strain=$(echo $Assembly| rev | cut -d '/' -f3 | rev)
+      Organism=$(echo $Assembly | rev | cut -d '/' -f4 | rev)
       echo "$Organism - $Strain"
-      ProgDir=/home/akinya/git_repos/fusarium_ex_strawberry/ProgScripts
+      ProgDir=/home/akinya/git_repos/fusarium_ex_strawberry/ProgScripts/quality_check
       BuscoDB=$(ls -d /projects/dbBusco/sordariomycetes_odb10)
       OutDir=$(dirname $Assembly)/busco_sordariomycetes_obd10/round_1
       sbatch $ProgDir/busco.sh $Assembly $BuscoDB $OutDir

@@ -28,9 +28,9 @@ done
 # do for unmasked cepae genome
 
 for SubjectGenome in $(ls ../../oldhome/groups/harrisonlab/project_files/fusarium/repeat_masked/F.oxysporum_fsp_cepae/Fus2_canu_new/edited_contigs_repmask/Fus2_canu_contigs_unmasked.fa); do
-  QueryGenome=assembly/SMARTdenovo/F.oxysporum_fsp_fragariae/DSA14_003/pilon/pilon_10_renamed.fasta
+  QueryGenome=assembly/flye/F.oxysporum_fsp_fragariae/DSA14_003/pilon/pilon_10_renamed.fasta
   Prefix=FoFr_14
-  OutDir=alignment/mummer/SMARTdenovo/FoFrvsFoCep
+  OutDir=alignment/mummer/flye/FoFrvsFoCep
   mkdir -p $OutDir
   ProgDir=/home/gomeza/git_repos/scripts/bioinformatics_tools/Genome_aligners
   sbatch $ProgDir/mummer.sh $SubjectGenome $QueryGenome $Prefix $OutDir
