@@ -7,14 +7,17 @@
 #Prefix=$3
 #OutDir=$4
 
+# Do for flye assembly/flye/F.oxysporum_fsp_fragariae/DSA14_003/pilon/pilon_10_renamed.fasta
+# assembly/SMARTdenovo/F.oxysporum_fsp_fragariae/DSA14_003/pilon/pilon_10_renamed.fasta
+# assembly/miniasm/F.oxysporum_fsp_fragariae/DSA14_003/pilon/pilon_10_renamed.fasta
 
 for SubjectGenome in $(ls ../../oldhome/groups/harrisonlab/project_files/fusarium/repeat_masked/F.oxysporum_fsp_lycopersici/4287_v2/fungidb_repmask/4287_v2_contigs_unmasked.fa); do
-  QueryGenome=assembly/miniasm/F.oxysporum_fsp_fragariae/DSA14_003/pilon/pilon_10_renamed.fasta
+  QueryGenome=assembly/SMARTdenovo/F.oxysporum_fsp_fragariae/DSA14_003/pilon/pilon_10_renamed.fasta
   Organism=$(echo "$QueryGenome" | rev | cut -d '/' -f4 | rev)
   Strain=$(echo "$QueryGenome" | rev | cut -d '/' -f3 | rev)
   echo "$Organism - $Strain"
   Prefix=FoFr_14
-  OutDir=alignment/mummer/miniasm/FoFrvsFoLy
+  OutDir=alignment/mummer/SMARTdenovo/FoFrvsFoLy
   mkdir -p $OutDir
   ProgDir=/home/gomeza/git_repos/scripts/bioinformatics_tools/Genome_aligners
   sbatch $ProgDir/mummer.sh $SubjectGenome $QueryGenome $Prefix $OutDir
@@ -25,9 +28,9 @@ done
 # do for unmasked cepae genome
 
 for SubjectGenome in $(ls ../../oldhome/groups/harrisonlab/project_files/fusarium/repeat_masked/F.oxysporum_fsp_cepae/Fus2_canu_new/edited_contigs_repmask/Fus2_canu_contigs_unmasked.fa); do
-  QueryGenome=assembly/miniasm/F.oxysporum_fsp_fragariae/DSA14_003/pilon/pilon_10_renamed.fasta
+  QueryGenome=assembly/SMARTdenovo/F.oxysporum_fsp_fragariae/DSA14_003/pilon/pilon_10_renamed.fasta
   Prefix=FoFr_14
-  OutDir=alignment/mummer/miniasm/FoFrvsFoCep
+  OutDir=alignment/mummer/SMARTdenovo/FoFrvsFoCep
   mkdir -p $OutDir
   ProgDir=/home/gomeza/git_repos/scripts/bioinformatics_tools/Genome_aligners
   sbatch $ProgDir/mummer.sh $SubjectGenome $QueryGenome $Prefix $OutDir

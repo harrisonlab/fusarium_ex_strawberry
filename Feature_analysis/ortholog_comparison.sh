@@ -76,30 +76,9 @@ done
 
 ############
 
-# Do whole genome blast for each assembly against lycopersici genome
+# BLAST DOES NOT DO WHOLE GENOME ANALYSIS
 # query = assembly that needs checking
 
-for Assembly in $(ls ../../oldhome/groups/harrisonlab/project_files/fusarium/repeat_masked/F.oxysporum_fsp_lycopersici/4287_v2/fungidb_repmask/4287_v2_contigs_unmasked.fa); do
-  Strain=$(echo $Query| rev | cut -d '/' -f3 | rev)
-  Organism=$(echo $Query | rev | cut -d '/' -f4 | rev)
-  echo "$Organism - $Strain"
-  Query=assembly/SMARTdenovo/F.oxysporum_fsp_fragariae/DSA14_003/pilon/pilon_10_renamed.fasta
-  OutDir=assembly/SMARTdenovo/$Organism/$Strain/Orthology/FoFrVSFoLy_genome
-  ProgDir=/home/gomeza/git_repos/scripts/bioinformatics_tools/Feature_analysis
-  sbatch $ProgDir/blast_pipe.sh $Query dna $Assembly $OutDir
-done
-
-# Do the same against the cepae genome
-
-for Assembly in $(ls ../../oldhome/groups/harrisonlab/project_files/fusarium/repeat_masked/F.oxysporum_fsp_cepae/Fus2_canu_new/edited_contigs_repmask/Fus2_canu_contigs_unmasked.fa); do
-  Strain=$(echo $Query| rev | cut -d '/' -f3 | rev)
-  Organism=$(echo $Query | rev | cut -d '/' -f4 | rev)
-  echo "$Organism - $Strain"
-  Query=assembly/SMARTdenovo/F.oxysporum_fsp_fragariae/DSA14_003/pilon/pilon_10_renamed.fasta
-  OutDir=assembly/SMARTdenovo/$Organism/$Strain/Orthology/FoFrVSFoCep_genome
-  ProgDir=/home/gomeza/git_repos/scripts/bioinformatics_tools/Feature_analysis
-  sbatch $ProgDir/blast_pipe.sh $Query dna $Assembly $OutDir
-done
 
 ##########
 
