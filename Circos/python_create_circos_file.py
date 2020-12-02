@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python
 
 
 #Convert fasta files into format for circos plots
@@ -10,11 +10,13 @@
 # Import variables & load input files
 #-----------------------------------------------------
 
+#import sets
+import Bio
 import sys
 import argparse
 import re
 import numpy
-from sets import Set
+#from sets import set
 from Bio import SeqIO
 from collections import defaultdict
 from operator import itemgetter
