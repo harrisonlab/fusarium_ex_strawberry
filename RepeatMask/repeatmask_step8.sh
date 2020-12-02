@@ -1,7 +1,12 @@
 #!/bin/bash
 
-#executed through Antonios directory in the 1st run 
+#executed through Antonios directory in the 1st run
 #copied the scripts to my directory after they were fixed
+
+# run in conda shell before script
+
+#/home/akinya/miniconda3/envs/RMask/bin/ cpan Text:Soundex - key for function
+
 
 for Assembly in $(ls assembly/spades/*/*/ncbi_edits/contigs_min_500bp_renamed.fasta | grep -v '_2' | grep -v '11055'); do
 Strain=$(echo $Assembly | rev | cut -f3 -d '/' | rev)

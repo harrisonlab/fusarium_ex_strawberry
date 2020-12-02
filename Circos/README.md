@@ -1,18 +1,30 @@
 README
-#Script to create circos plots.
-#1.) First create txt files for genomes and concatenate
-#2.) Create synteny links between genomes using satsuma synteny
-#3.) Create circos config file used for building ideogram.
+# Script to create circos plots.
+1.) First create txt files for genomes and concatenate
+Text file 1 is first genome.Text file 2 is second genome. Text files have contig name followed by the size
+2.) Create synteny links between genomes using satsuma synteny
+3.) Create circos config file used for building ideogram.
 
 
-#1.) Create a .txt file with contig lengths of the genomes to be aligned.
-#.txt file for genome 1
+# 1.) Create a .txt file with contig lengths of the genomes to be aligned.
+txt file for genome 1
+Run in a conda env. Run line by line
+  conda create -n Circos python
+  conda install -c conda-forge biopython
+  python
+  >>> import Bio
+  >>> press "ctrl + D" to exit python
 
-Genome1=$(ls ../../projects/fusarium_venenatum_miseq/genomes/WT/WT_contigs_unmasked.fa)
-OutDir=/home/connellj/Circos
-mkdir -p $OutDir
-ProgDir=/home/connellj/git_repos/emr_repos/Fv_C-variants/Circos
-$ProgDir/python_create_circos_file.py --genome $Genome1 --contig_prefix "A3_5_" > $OutDir/Fv_Illumina_genome.txt
+Make file executable before running
+add "import Bio" line to top of python_create_circos_file.py program just under the title if it is not there already
+
+  chmod u+x ./python_create_circos_file.py
+
+    Genome1=$(ls repeat_masked/F.oxysporum_fsp_fragariae/DSA14_003/miniasm/ncbi_edits_repmask/DSA14_003_contigs_unmasked.fa)
+      OutDir=synteny_analysis/circos/miniasm
+      mkdir -p $OutDir
+      ProgDir=/home/akinya/git_repos/fusarium_ex_strawberry/Circos
+      $ProgDir/python_create_circos_file.py --genome $Genome1 --contig_prefix "FoFr_14_" > $OutDir/FoFr_14_ONT_genome.txt
 
 #.txt file for genome 2
 
