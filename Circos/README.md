@@ -11,7 +11,7 @@ txt file for genome 1
 Run in a conda env. Run line by line
   conda create -n Circos python
   conda install -c conda-forge biopython
-  pip3 install sets
+  conda install -c bioconda perl-bioperl
 
   python
   >>> import Bio
