@@ -26,10 +26,13 @@ add "import Bio" line to top of python_create_circos_file.py program just under 
 Or just run in alphaenv
 
     Genome1=repeat_masked/F.oxysporum_fsp_fragariae/DSA14_003/miniasm/ncbi_edits_repmask/DSA14_003_contigs_unmasked.fa
-    OutDir=synteny_analysis/circos/miniasm
+    #Genome3=repeat_masked/F.oxysporum_fsp_fragariae/DSA14_003/flye/ncbi_edits_repmask/DSA14_003_contigs_unmasked.fa
+    #Genome4=repeat_masked/F.oxysporum_fsp_fragariae/DSA14_003/SMARTdenovo/ncbi_edits_repmask/DSA14_003_contigs_unmasked.fa
+    OutDir=synteny_analysis/circos/flye
     mkdir -p $OutDir
     ProgDir=/home/akinya/git_repos/fusarium_ex_strawberry/Circos
-    $ProgDir/python_create_circos_file.py --genome $Genome1 --contig_prefix "FoFr_14_" > $OutDir/FoFr_14_ONT_genome.txt
+    $ProgDir/python_create_circos_file.py --genome $Genome4 --contig_prefix "FoFr_14_S_" > $OutDir/FoFr_14_Sden_genome.txt
+    #FoFr_14_F=flye FoFr_14_S= Sden
 
 ### .txt file for genome 2
 
@@ -40,9 +43,11 @@ Or just run in alphaenv
 
 ### Concatenate files
 
-File=synteny_analysis/circos/miniasm
-cat $File/FoFr_14_ONT_genome.txt > $File/FoFr_FoLy_genome.txt
-tac $File/FoLy_illumina_genome.txt >> $File/FoFr_FoLy_genome.txt
+Do for all txt files in respective directories: FoFr_14_flye_genome.txt FoFr_14_Sden_genome.txt FoFr_14_ONT_genome.txt
+
+  File=synteny_analysis/circos/SMARTdenovo
+  cat $File/FoFr_14_Sden_genome.txt > $File/FoFr_FoLy_genome.txt
+  tac $File/FoLy_illumina_genome.txt >> $File/FoFr_FoLy_genome.txt
 
  #Contigs smaller than 10Kb can be removed if not required.
  eg...
@@ -95,13 +100,16 @@ USE FULL PATHS AS YOU RUN PROG FROM HOME DIRECTORY!!!!!!!!!!!!!!
   chmod u+x ./B*
   chmod u+x ./c*
   chmod u+x ./T*
-  # copy directory into "satsuma_synteny.sh" place where command is 
+  # copy directory into "satsuma_synteny.sh" place where command is
 
     /home/*/SatsumaSynteny/satsuma-code-0/
 
 
   Genome1=/projects/fusarium_ex_strawberry/NextGenSeq/repeat_masked/F.oxysporum_fsp_fragariae/DSA14_003/miniasm/ncbi_edits_repmask/DSA14_003_contigs_unmasked.fa
+  #Genome3=/projects/fusarium_ex_strawberry/NextGenSeq/repeat_masked/F.oxysporum_fsp_fragariae/DSA14_003/flye/ncbi_edits_repmask/DSA14_003_contigs_unmasked.fa
+  #Genome4=/projects/fusarium_ex_strawberry/NextGenSeq/repeat_masked/F.oxysporum_fsp_fragariae/DSA14_003/SMARTdenovo/ncbi_edits_repmask/DSA14_003_contigs_unmasked.fa
   Genome2=/projects/oldhome/groups/harrisonlab/project_files/fusarium/repeat_masked/F.oxysporum_fsp_lycopersici/4287_v2/fungidb_repmask/4287_v2_contigs_unmasked.fa
+  #Genome5=/projects/oldhome/groups/harrisonlab/project_files/fusarium/repeat_masked/F.oxysporum_fsp_lycopersici/4287_chromosomal/ensembl_repmask/4287_chromosomal_contigs_unmasked.fa
   OutDir=/projects/fusarium_ex_strawberry/NextGenSeq/synteny_analysis/circos/miniasm/satsuma_alignment/FoFr_14VSFoLy
   mkdir -p $OutDir
   ProgDir=/home/akinya/git_repos/fusarium_ex_strawberry/Circos

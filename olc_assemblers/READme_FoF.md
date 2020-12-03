@@ -282,7 +282,7 @@ DUE to possible chimeric miniasm assembly, ran pilon on SDEN and flye assemblies
       echo $TrimR1_Read
       OutDir=assembly/miniasm/F.oxysporum_fsp_fragariae/DSA14_003/pilon
       Iterations=10
-      ProgDir=/home/akinya/git_repos/fusarium_ex_strawberry/ProgScripts
+      ProgDir=/home/akinya/git_repos/fusarium_ex_strawberry/ProgScripts/NGS_assembly
       sbatch $ProgDir/pilon_2_lib.sh $Assembly $TrimF1_Read $TrimR1_Read $OutDir $Iterations
     done
 
