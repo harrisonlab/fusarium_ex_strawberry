@@ -357,8 +357,8 @@ Have 2 paths to choose from to run scripts
 ### RepeatMask & TPSI path 1
 
     ProgDir=/home/gomeza/git_repos/scripts/bioinformatics_tools/Repeat_masking
-    BestAssembly=path/to/assembly/*renamed.fasta
-    OutDir=repeat_masked/$Organism/$Strain/pilon
+    BestAssembly=assembly/SMARTdenovo/F.oxysporum_fsp_fragariae/DSA14_003/pilon/pilon_10_renamed.fasta
+    OutDir=repeat_masked/F.oxysporum_fsp_fragariae/DSA14_003/SMARTdenovo/ncbi_edits_repmask
     sbatch $ProgDir/rep_modeling.sh $BestAssembly $OutDir
     sbatch $ProgDir/transposonPSI.sh $BestAssembly $OutDir
 

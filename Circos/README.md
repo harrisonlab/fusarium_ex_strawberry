@@ -12,6 +12,7 @@ Run in a conda env. Run line by line
   conda create -n Circos python
   conda install -c conda-forge biopython
   conda install -c bioconda perl-bioperl
+  conda install -c nanjiang satsuma
 
   python
   >>> import Bio
@@ -44,7 +45,7 @@ cat $File/FoFr_14_ONT_genome.txt > $File/FoFr_FoLy_genome.txt
 tac $File/FoLy_illumina_genome.txt >> $File/FoFr_FoLy_genome.txt
 
  #Contigs smaller than 10Kb can be removed if not required.
-
+ eg...
   cat $File/Fv_Fv_genome.txt \
   | grep -v -e "A3_5_contig_87" \
   | grep -v -e "A3_5_contig_88" \
@@ -71,10 +72,37 @@ tac $File/FoLy_illumina_genome.txt >> $File/FoFr_FoLy_genome.txt
 
 ## 2.) Create synteny links between genomes.
 
+Type "SatsumaSynteny" to check if it is installed in conda env.
 
-  Genome1=repeat_masked/F.oxysporum_fsp_fragariae/DSA14_003/miniasm/ncbi_edits_repmask/DSA14_003_contigs_unmasked.fa
-  Genome2=../../oldhome/groups/harrisonlab/project_files/fusarium/repeat_masked/F.oxysporum_fsp_lycopersici/4287_v2/fungidb_repmask/4287_v2_contigs_unmasked.fa
-  OutDir=synteny_analysis/circos/miniasm/satsuma_alignment/FoFr_14VSFoLy
+Note that SatsumaSynteny calls other executables (FilterGridSeeds, HomologyByXCorr, HomologyByXCorrSlave, MergeXCorrMatches), and thus has to be invoked by either supplying the full path of the executable, or
+“./SatsumSynteny”
+
+USE FULL PATHS AS YOU RUN PROG FROM HOME DIRECTORY!!!!!!!!!!!!!!
+
+  mkdir SatsumaSynteny
+  cd SatsumaSynteny/
+  wget ftp://ftp.broadinstitute.org/distribution/software/spines/satsuma-3.0.tar.gz
+  gunzip satsuma-3.0.tar.gz
+  tar -xf satsuma-3.0.tar
+  cd satsuma-code-0
+  # make a files executable
+  chmod u+x ./M*
+  chmod u+x ./S*
+  chmod u+x ./t*
+  chmod u+x ./H*
+  chmod u+x ./F*
+  chmod u+x ./C*
+  chmod u+x ./B*
+  chmod u+x ./c*
+  chmod u+x ./T*
+  # copy directory into "satsuma_synteny.sh" place where command is 
+
+    /home/*/SatsumaSynteny/satsuma-code-0/
+
+
+  Genome1=/projects/fusarium_ex_strawberry/NextGenSeq/repeat_masked/F.oxysporum_fsp_fragariae/DSA14_003/miniasm/ncbi_edits_repmask/DSA14_003_contigs_unmasked.fa
+  Genome2=/projects/oldhome/groups/harrisonlab/project_files/fusarium/repeat_masked/F.oxysporum_fsp_lycopersici/4287_v2/fungidb_repmask/4287_v2_contigs_unmasked.fa
+  OutDir=/projects/fusarium_ex_strawberry/NextGenSeq/synteny_analysis/circos/miniasm/satsuma_alignment/FoFr_14VSFoLy
   mkdir -p $OutDir
   ProgDir=/home/akinya/git_repos/fusarium_ex_strawberry/Circos
   sbatch $ProgDir/satsuma_synteny.sh $Genome1 $Genome2 $OutDir
