@@ -18,6 +18,6 @@ for Assembly in $(ls repeat_masked/F.oxysporum_fsp_fragariae/DSA15_041/ncbi_edit
     Sample_Name=$(echo $FileF | rev | cut -d '/' -f1 | rev | sed 's/_1_trim.fq.gz//g')
     OutDir=alignment/star/$Organism/$Strain/$Timepoint/$Sample_Name
     ProgDir=/home/akinya/git_repos/assembly_fusarium_ex/ProgScripts
-    sbatch $ProgDir/star.sh $Assembly $FileF $FileR $OutDir
+    sbatch $ProgDir/star.sh $Assembly $FileF $FileR $OutDir 11
   done
 done

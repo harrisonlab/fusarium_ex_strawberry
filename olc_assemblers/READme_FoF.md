@@ -3,7 +3,7 @@
 ## Method was used for Fusarium oxysporum fsp frgariae
 #### 1 # , then you have a header, ## subheading , ### small heading - use "tab" key to identify script info
 
-####################
+
 # Miniasm assembly
 ####################
 
@@ -79,7 +79,7 @@ Can run like this instead: miniasm -f trimmed_renamed.fasta FolR1_fastq_allfiles
 
     awk '/^S/{print ">"$2"\n"$3}' reads.gfa | fold > Fof14_miniasm.fa
 
-####################
+
 # Flye assembly
 ####################
 
@@ -95,7 +95,7 @@ Can run like this instead: miniasm -f trimmed_renamed.fasta FolR1_fastq_allfiles
        sbatch $ProgDir/flye.sh $TrimReads $Prefix $OutDir $Size $TypeSeq;
      done
 
-######################
+
 # SMARTDenovo assembly
 ######################
 
@@ -111,7 +111,7 @@ Can run like this instead: miniasm -f trimmed_renamed.fasta FolR1_fastq_allfiles
 
 #output = *_smartdenovo.dmo.lay.utg
 
-#####################
+
 # QC steps
 #####################
 
@@ -152,7 +152,7 @@ Ran on genome(softmasked) and gene models (final_genes_appended_renamed.gene.fas
       sbatch $ProgDir/busco.sh $Assembly $BuscoDB $OutDir
     done
 
-#####################
+
 # Racon
 #####################
 
@@ -202,7 +202,6 @@ Run for each round of each assembly:
 Select iteration from each assembly with the best BUSCO scores for the next step
 
 
-#####################
 # Medaka
 #####################
 
@@ -250,7 +249,6 @@ Run BUSCO and quast on medaka and pick best 1 out of 3 for pilon polishing
       sbatch $ProgDir/busco.sh $Assembly $BuscoDB $OutDir
     done
 
-#####################
 # Pilon
 #####################
 
@@ -315,7 +313,6 @@ BUSCO
     done
 
 
-#####################
 # Repeat Masking
 #####################
 
@@ -421,3 +418,54 @@ Hard masking  means transforming every nucleotide identified as a repeat to an '
     done
 
 Run BUSCO and Quast qc checks on the softmasked, unmasked and hardmasked assemblies
+
+
+# Synteny Check
+#####################
+
+# D-genies
+
+Go to http://dgenies.toulouse.inra.fr/ to compare genomes for synteny against FoLy4287 and FoFrvsFoCep.
+Using the plots, see which assembly will be best to use for gene_prediction using Fo_cepae data.
+
+  assembly/flye/F.oxysporum_fsp_fragariae/DSA14_003/pilon/pilon_10_renamed.fasta # best assembly
+
+
+# Gene prediction
+#####################
+
+## STAR
+
+Run in Repenv - condaenv
+Fus2_CzapekDox, Fus2_GlucosePeptone, Fus2_PDA and Fus2_PDB are RNAseq data of infected onions
+Only data samples that will map genes of F.oxy accurately
+Need to concatenate data after STAR analysis
+#--genomeSAindexNbases is unique to each genome and is 11 for FoFR
+
+  for Assembly in $(ls repeat_masked/F.oxysporum_fsp_fragariae/DSA14_003/flye/ncbi_edits_repmask/DSA14_003_contigs_unmasked.fa);  do
+      Strain=$(echo $Assembly | rev | cut -f4 -d '/' | rev)
+      Organism=$(echo $Assembly | rev | cut -f5 -d '/' | rev)
+      echo "$Organism - $Strain"
+      FileF=../../oldhome/groups/harrisonlab/project_files/fusarium/qc_rna/paired/F.oxysporum_fsp_cepae/Fus2_CzapekDox/F/*_trim.fq.gz
+      FileR=../../oldhome/groups/harrisonlab/project_files/fusarium/qc_rna/paired/F.oxysporum_fsp_cepae/Fus2_CzapekDox/R/*_trim.fq.gz
+      echo $FileF
+      echo $FileR
+      Timepoint=$(echo $FileF | rev | cut -d '/' -f3 | rev)
+      echo "$Timepoint"
+      Sample_Name=$(echo $FileF | rev | cut -d '/' -f1 | rev | sed 's/_1_trim.fq.gz//g')
+      OutDir=alignment/star/$Organism/$Strain/$Timepoint/$Sample_Name
+      ProgDir=/home/akinya/git_repos/fusarium_ex_strawberry/ProgScripts/Genome_alignment
+      sbatch $ProgDir/STAR_1.sh $Assembly $FileF $FileR $OutDir 11
+    done
+    done
+
+Need to concatenate in this step to link RNAseq data into one series
+
+  Strain="DSA14_003"
+    Organism="F.oxysporum_fsp_fragariae"
+    mkdir -p alignment/star/$Organism/$Strain/concatenated
+    samtools merge -f alignment/star/$Organism/$Strain/concatenated/concatenated.bam \
+    alignment/star/$Organism/$Strain/Fus2_CzapekDox/6_S2_L001_R1_001_trim.fq.gz/star_aligmentAligned.sorted.out.bam \
+    alignment/star/$Organism/$Strain/Fus2_GlucosePeptone/7_S3_L001_R1_001_trim.fq.gz/star_aligmentAligned.sorted.out.bam \
+    alignment/star/$Organism/$Strain/Fus2_PDA/9_S4_L001_R1_001_trim.fq.gz/star_aligmentAligned.sorted.out.bam \
+    alignment/star/$Organism/$Strain/Fus2_PDB/4_S1_L001_R1_001_trim.fq.gz/star_aligmentAligned.sorted.out.bam
