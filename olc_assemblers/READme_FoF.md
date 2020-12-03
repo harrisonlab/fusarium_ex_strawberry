@@ -437,9 +437,9 @@ Extract genes from reference lycopersici & cepae genomes NOT FRAGARIAE
   #faidx -d '|' final_genes_combined.cdna.fasta $(tr '\n' ' ' < FoC_cand_mimps.txt ) > Eff_mimp_genes.fasta
   #faidx -d '|' final_genes_combined.cdna.fasta $(tr '\n' ' ' < FoC_Six.txt ) > six_ortho_genes.fasta
 
-Now that you have the cand effector genes, contrast against Fo_fragariae_14_003 long read seq genome
-Run in conda env with perly (Repenv)
-For $Assembly Use files with nucleotides
+-Now that you have the cand effector genes, contrast against Fo_fragariae_14_003 long read seq genome
+-Run in conda env with perly (Repenv)
+-For $Assembly Use files with nucleotides
 
   for Assembly in $(ls assembly/flye/F.oxysporum_fsp_fragariae/DSA14_003/pilon/pilon_10_renamed.fasta); do
     Strain=$(echo $Assembly| rev | cut -d '/' -f3 | rev)
@@ -505,15 +505,36 @@ Need to concatenate data after STAR analysis
       ProgDir=/home/akinya/git_repos/fusarium_ex_strawberry/ProgScripts/Genome_alignment
       sbatch $ProgDir/STAR_1.sh $Assembly $FileF $FileR $OutDir 11
     done
-    done
 
 Need to concatenate in this step to link RNAseq data into one series
+View "star_aligmentLog.final.out" to see uniquely mapped reads %
 
-  Strain="DSA14_003"
-    Organism="F.oxysporum_fsp_fragariae"
+  Strain=DSA14_003
+    Organism=F.oxysporum_fsp_fragariae
     mkdir -p alignment/star/$Organism/$Strain/concatenated
     samtools merge -f alignment/star/$Organism/$Strain/concatenated/concatenated.bam \
-    alignment/star/$Organism/$Strain/Fus2_CzapekDox/6_S2_L001_R1_001_trim.fq.gz/star_aligmentAligned.sorted.out.bam \
-    alignment/star/$Organism/$Strain/Fus2_GlucosePeptone/7_S3_L001_R1_001_trim.fq.gz/star_aligmentAligned.sorted.out.bam \
-    alignment/star/$Organism/$Strain/Fus2_PDA/9_S4_L001_R1_001_trim.fq.gz/star_aligmentAligned.sorted.out.bam \
-    alignment/star/$Organism/$Strain/Fus2_PDB/4_S1_L001_R1_001_trim.fq.gz/star_aligmentAligned.sorted.out.bam
+    alignment/star/$Organism/$Strain/Fus2_CzapekDox/6_S2_L001_R1_001_trim.fq.gz/star_aligmentAligned.sortedByCoord.out.bam \
+    alignment/star/$Organism/$Strain/Fus2_GlucosePeptone/7_S3_L001_R1_001_trim.fq.gz/star_aligmentAligned.sortedByCoord.out.bam \
+    alignment/star/$Organism/$Strain/Fus2_PDA/9_S4_L001_R1_001_trim.fq.gz/star_aligmentAligned.sortedByCoord.out.bam \
+    alignment/star/$Organism/$Strain/Fus2_PDB/4_S1_L001_R1_001_trim.fq.gz/star_aligmentAligned.sortedByCoord.out.bam
+
+
+## Braker
+
+Run in conda env (Repenv)
+AcceptedHits=alignment/concatenated.bam
+Alternate strain for softmasked
+Intial run required installation of Hash::Merge and Logger::Simple using cpan
+
+    #Original prog  dir /home/gomeza/git_repos/scripts/bioinformatics_tools/Gene_prediction
+
+    for Assembly in $(ls repeat_masked/*/DSA14_003/ncbi_edits_repmask/*_contigs_softmasked_repeatmasker_TPSI_appended.fa); do
+        Strain=$(echo $Assembly| rev | cut -d '/' -f3 | rev)
+        Organism=$(echo $Assembly | rev | cut -d '/' -f4 | rev)
+        echo "$Organism - $Strain"
+        OutDir=gene_pred/braker/$Organism/$Strain/
+        AcceptedHits=alignment/star/F.oxysporum_fsp_fragariae/DSA14_003/concatenated/concatenated.bam
+        GeneModelName="$Organism"_"$Strain"_braker
+        ProgDir=/home/akinya/git_repos/assembly_fusarium_ex/scripts
+        sbatch $ProgDir/braker_fungi.sh $Assembly $OutDir $AcceptedHits $GeneModelName
+      done

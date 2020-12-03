@@ -10,3 +10,5 @@ Strain="DSA14_003"
   alignment/star/$Organism/$Strain/Fus2_GlucosePeptone/7_S3_L001_R1_001_trim.fq.gz/star_aligmentAligned.sorted.out.bam \
   alignment/star/$Organism/$Strain/Fus2_PDA/9_S4_L001_R1_001_trim.fq.gz/star_aligmentAligned.sorted.out.bam \
   alignment/star/$Organism/$Strain/Fus2_PDB/4_S1_L001_R1_001_trim.fq.gz/star_aligmentAligned.sorted.out.bam
+
+#new star otput - star_aligmentAligned.sortedByCoord.out.bam
