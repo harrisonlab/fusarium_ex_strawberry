@@ -352,5 +352,5 @@ Assembly - Assembly2/miniasm/F.oxysporum_fsp_lactucae/race_1/medaka/FoLR1_conc_r
       OutDir=Assembly2/miniasm/F.oxysporum_fsp_lactucae/race_1/pilon
       Iterations=10
       ProgDir=/home/akinya/git_repos/fusarium_ex_strawberry/ProgScripts/NGS_assembly
-      sbatch $ProgDir/pilon_lac_min_lib.sh $Assembly $TrimF1_Read $TrimR1_Read $OutDir $Iterations
+      sbatch $ProgDir/pilon_lac_mini_lib.sh $Assembly $TrimF1_Read $TrimR1_Read $OutDir $Iterations
     done
