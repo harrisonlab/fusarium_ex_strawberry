@@ -419,6 +419,54 @@ Hard masking  means transforming every nucleotide identified as a repeat to an '
 
 Run BUSCO and Quast qc checks on the softmasked, unmasked and hardmasked assemblies
 
+# Orthology hunt
+#####################
+
+Use extracted effectors from a gene.fasta file using names in txt file
+Create text file with known gene names of effectors/mimps you want to remove
+i.e  input gene names in Fof14_genes.txt
+Command uses gene name to copy across fasta seq to Fof genes
+
+Why are you doing this?
+To compare candidate effectors in Fo cepae (which has RNA seq data) against the predicted genes in Fof using cepae RNA seq data
+
+Extract genes from reference lycopersici & cepae genomes NOT FRAGARIAE
+
+  faidx -d '|' final_genes_appended_renamed.cdna.fasta $(tr '\n' ' ' < Fof14_genes.txt ) > Fof14_genes.fasta - example command to test
+
+  #faidx -d '|' final_genes_combined.cdna.fasta $(tr '\n' ' ' < FoC_cand_mimps.txt ) > Eff_mimp_genes.fasta
+  #faidx -d '|' final_genes_combined.cdna.fasta $(tr '\n' ' ' < FoC_Six.txt ) > six_ortho_genes.fasta
+
+Now that you have the cand effector genes, contrast against Fo_fragariae_14_003 long read seq genome
+Run in conda env with perly (Repenv)
+For $Assembly Use files with nucleotides
+
+  for Assembly in $(ls assembly/flye/F.oxysporum_fsp_fragariae/DSA14_003/pilon/pilon_10_renamed.fasta); do
+    Strain=$(echo $Assembly| rev | cut -d '/' -f3 | rev)
+    Organism=$(echo $Assembly | rev | cut -d '/' -f4 | rev)
+    echo "$Organism - $Strain"
+    Query=../F.oxysporum_fsp_cepae/Fus2_canu_new/final/Eff_mimp_genes.fasta # six_ortho_genes.fasta
+    OutDir=assembly/flye/$Organism/$Strain/Orthology/FoFrvsFoCep_mimps
+    ProgDir=/home/gomeza/git_repos/scripts/bioinformatics_tools/Feature_analysis
+    sbatch $ProgDir/blast_pipe.sh $Query dna $Assembly $OutDir
+  done
+
+Second query../F.oxysporum_fsp_cepae/Fus2_canu_new/final/Eff_mimp_genes.fasta
+Use cut -f1 or * DSA14_003_eff_ortho_genes.fasta_homologs.csv to excise and view column data
+Compare against Andy's known SIX genes
+
+  for Assembly in $(ls assembly/miniasm/F.oxysporum_fsp_fragariae/DSA14_003/pilon/pilon_10_renamed.fasta); do
+    Strain=$(echo $Assembly| rev | cut -d '/' -f3 | rev)
+    Organism=$(echo $Assembly | rev | cut -d '/' -f4 | rev)
+    echo "$Organism - $Strain"
+    Query=../../oldhome/groups/harrisonlab/project_files/fusarium/analysis/blast_homology/six_genes/six-appended_parsed.fa
+    OutDir=assembly/miniasm/$Organism/$Strain/Orthology
+    ProgDir=/home/gomeza/git_repos/scripts/bioinformatics_tools/Feature_analysis
+    sbatch $ProgDir/blast_pipe.sh $Query dna $Assembly $OutDir
+  done
+
+- miniasm assembly was potentially chimeric, therefore did the same for flye and Sden assemblies
+
 
 # Synteny Check
 #####################
@@ -446,8 +494,8 @@ Need to concatenate data after STAR analysis
       Strain=$(echo $Assembly | rev | cut -f4 -d '/' | rev)
       Organism=$(echo $Assembly | rev | cut -f5 -d '/' | rev)
       echo "$Organism - $Strain"
-      FileF=../../oldhome/groups/harrisonlab/project_files/fusarium/qc_rna/paired/F.oxysporum_fsp_cepae/Fus2_CzapekDox/F/*_trim.fq.gz
-      FileR=../../oldhome/groups/harrisonlab/project_files/fusarium/qc_rna/paired/F.oxysporum_fsp_cepae/Fus2_CzapekDox/R/*_trim.fq.gz
+      FileF=../../oldhome/groups/harrisonlab/project_files/fusarium/qc_rna/paired/F.oxysporum_fsp_cepae/Fus2_PDA/F/*_trim.fq.gz
+      FileR=../../oldhome/groups/harrisonlab/project_files/fusarium/qc_rna/paired/F.oxysporum_fsp_cepae/Fus2_PDA/R/*_trim.fq.gz
       echo $FileF
       echo $FileR
       Timepoint=$(echo $FileF | rev | cut -d '/' -f3 | rev)
