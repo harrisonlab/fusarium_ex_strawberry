@@ -1,5 +1,6 @@
 #CIRCOS CONFIGURATION
 #non optional requirements
+# NEEDS EDITING FOR FRAGARIAE
 #1.) Required are Karyotype
 #2.) 2D plot which details the synteny between bases
 
