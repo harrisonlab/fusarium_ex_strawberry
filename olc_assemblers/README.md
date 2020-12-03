@@ -339,7 +339,7 @@ Raw DNA direc - /projects/oldhome/groups/harrisonlab/project_files/fusarium/raw_
 Assembly - Assembly2/SMARTdenovo/F.oxysporum_fsp_lactucae/race_1/medaka/race_1_smartdenovo_racon_round_2_renamed.fasta
 Assembly - Assembly2/miniasm/F.oxysporum_fsp_lactucae/race_1/medaka/FoLR1_conc_racon_round_6_renamed.fasta
 
-    for Assembly in $(ls  Assembly2/SMARTdenovo/F.oxysporum_fsp_lactucae/race_1/medaka/race_1_smartdenovo_racon_round_2_renamed.fasta); do
+    for Assembly in $(ls Assembly2/miniasm/F.oxysporum_fsp_lactucae/race_1/medaka/FoLR1_conc_racon_round_6_renamed.fasta); do
       Organism=F.oxysporum_fsp_lactucae
       Strain=race_1
       IlluminaDir=$(ls -d ../oldhome/groups/harrisonlab/project_files/fusarium/raw_dna/paired/F.oxysporum_fsp_lactucae/AJ520)
@@ -349,8 +349,8 @@ Assembly - Assembly2/miniasm/F.oxysporum_fsp_lactucae/race_1/medaka/FoLR1_conc_r
       TrimR1_Read=$(ls $IlluminaDir/R/AJ520_S2_L001_R2_001.fastq.gz | head -n2 | tail -n1);
       echo $TrimF1_Read
       echo $TrimR1_Read
-      OutDir=Assembly2/SMARTdenovo/F.oxysporum_fsp_lactucae/race_1/pilon
+      OutDir=Assembly2/miniasm/F.oxysporum_fsp_lactucae/race_1/pilon
       Iterations=10
       ProgDir=/home/akinya/git_repos/fusarium_ex_strawberry/ProgScripts/NGS_assembly
-      sbatch $ProgDir/pilon_lac_lib.sh $Assembly $TrimF1_Read $TrimR1_Read $OutDir $Iterations
+      sbatch $ProgDir/pilon_lac_min_lib.sh $Assembly $TrimF1_Read $TrimR1_Read $OutDir $Iterations
     done
