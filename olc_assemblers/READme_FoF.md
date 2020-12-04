@@ -527,6 +527,22 @@ AcceptedHits=alignment/concatenated.bam
 Alternate strain for softmasked
 Intial run required installation of Hash::Merge and Logger::Simple using cpan
 
+  conda install -c thiesgehrmann genemark_es
+  find miniconda3/envs/Repenv/ -name genemark_es # find location of program in installed env
+
+Installation instructions for GeneMark* software
+
+a. Copy the content of distribution to desired location.
+b. Install the key: copy key "gm_key" into users home directory as:
+
+  cp gm_key ~/.gm_key
+
+Program is ready for execution.
+
+add these paths to your "braker_fungi.sh" program script:
+  --GENEMARK_PATH=/home/akinya/miniconda3/envs/Repenv/opt/genemark_es/gmes_petap \
+  --BAMTOOLS_PATH=/home/akinya/miniconda3/envs/Repenv/bin \
+
     #Original prog  dir /home/gomeza/git_repos/scripts/bioinformatics_tools/Gene_prediction
 
     for Assembly in $(ls repeat_masked/F.oxysporum_fsp_fragariae/DSA14_003/flye/ncbi_edits_repmask/DSA14_003_contigs_softmasked_repeatmasker_TPSI_appended.fa); do
@@ -542,6 +558,10 @@ Intial run required installation of Hash::Merge and Logger::Simple using cpan
 
 Got this error:
     failed to execute: perl /home/gomeza/prog/genemark/gmes_linux_64/gmes_petap.pl --sequence=/tmp/akinya_614617/braker/F.oxysporum_fsp_fragariae_DSA14_003_braker_flye/genome.fa --ET=/tmp/akinya_614617/braker/F.oxysporum_fsp_fragariae_DSA14_003_braker_flye/hintsfile.gff --cores=1 --fungus --soft 1000 1>/tmp/akinya_614617/braker/F.oxysporum_fsp_fragariae_DSA14_003_braker_flye/GeneMark-ET.stdout 2>/tmp/akinya_614617/braker/F.oxysporum_fsp_fragariae_DSA14_003_braker_flye/errors/GeneMark-ET.stderr
+
+    --GENEMARK_PATH=/home/gomeza/prog/genemark/gmes_linux_64 \
+--BAMTOOLS_PATH=/home/gomeza/miniconda3/envs/gene_pred/bin \
+
 
 ## StringTie
 
