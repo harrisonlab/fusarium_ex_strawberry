@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #SBATCH -J satsumasynteny
-#SBATCH --partition=himem
+#SBATCH --partition=long
 #SBATCH --mem-per-cpu=12G
 #SBATCH --cpus-per-task=30
 
@@ -26,11 +26,7 @@ cp $Genome2 $WorkDir
 cd $WorkDir
 
 
-SatsumaSynteny=/home/connellj/satsuma-code/SatsumaSynteny
-$SatsumaSynteny \
- 	-t $Genome1 \
- 	-q $Genome2 \
- 	-o $WorkDir
+/home/akinya/SatsumaSynteny/satsuma-code-0/SatsumaSynteny -t $Genome1 -q $Genome2 -o $WorkDir
 
 
 cp $WorkDir/satsuma_summary.chained.out $outdir

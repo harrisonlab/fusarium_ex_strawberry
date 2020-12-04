@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python
 
 import argparse
 
@@ -31,7 +31,7 @@ for element in line:
     pass
   data = [element [0], element [1], element [2], element [3], element [4], element [5]]
   out_line = "\t".join (data)
-  print out_line
+  print (out_line)
   file_out.write (out_line)
   file_out.write ("\n")
 
