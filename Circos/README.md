@@ -122,12 +122,15 @@ This script assumes your contigs are called "contig_". Change pre1 and pre2 to n
 Changes output of satsuma contig names - major key as it distinguishes information
 
 
-#Synteny_file=/home/connellj/Circos/satsuma_alignment/test_copy/satsuma_summary.chained.out            #Synteny file location and file name here
-#OutDir=/home/connellj/Circos/satsuma_alignment/test_copy/satsuma_summary_editedforcircos.chained.out  #Outfile location and file name here
-pre1=FoFr_14_  #change to your contig prefix
-pre2=Fol_4287_v2_ #change to your contig prefix
-#ProgDir=/home/connellj/git_repos/emr_repos/Fv_C-variants/Circos
-$ProgDir/Python_edit_contig_names.py --synteny $Synteny_file --contig_prefix_1 $pre1 --contig_prefix_2 $pre2 --outfile $OutDir
+    Synteny_file=synteny_analysis/circos/flye/satsuma_alignment/FoFr_14VSFoLy/satsuma_summary.chained.out           #Synteny file location and file name here
+    OutDir=synteny_analysis/circos/flye/satsuma_alignment/FoFr_14VSFoLy/satsuma_summary_editedforcircos.chained.out  #Outfile location and file name here
+    pre1=FoFr_14_  #change to your contig prefix
+    pre2=Fol_4287_v2_ #change to your contig prefix
+    #ProgDir=/home/akinya/git_repos/fusarium_ex_strawberry/Circos/Python_edit_contig_names.py
+    sbatch $ProgDir/Python_edit_contig_names.py --synteny $Synteny_file --contig_prefix_1 $pre1 --contig_prefix_2 $pre2 --outfile $OutDir
+
+Had to edit line 34 in the "Python_edit_contig_names.py" script
+  # From "print out_line" to "print (out_line)"
 
 
 #3.) Run circos
