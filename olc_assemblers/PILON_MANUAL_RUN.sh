@@ -1,5 +1,9 @@
 # Pilon is a software tool which can be used to:
 # Automatically improve draft assemblies and find variation among strains, including large event detection
+
+# View  https://timkahlke.github.io/LongRead_tutorials/ECR_P.html for help
+# https://timkahlke.github.io/LongRead_tutorials/
+
 # RUN IN A SCREEN - step 1 can be longer than 3 hours so run in medium, long or himem partition
 # srun --partition himem --time 1-12:00:00 --mem-per-cpu 20G --cpus-per-task 24 --pty bash (long was full)
 srun --partition short --time 0-03:00:00 --mem-per-cpu 20G --cpus-per-task 24 --pty bash

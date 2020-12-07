@@ -540,8 +540,14 @@ b. Install the key: copy key "gm_key" into users home directory as:
 Program is ready for execution.
 
 add these paths to your "braker_fungi.sh" program script:
+  --GENEMARK_PATH=/home/gomeza/prog/genemark/gmes_linux_64 \
+  --BAMTOOLS_PATH=/home/gomeza/miniconda3/envs/gene_pred/bin \
+or
   --GENEMARK_PATH=/home/akinya/miniconda3/envs/Repenv/opt/genemark_es/gmes_petap \
   --BAMTOOLS_PATH=/home/akinya/miniconda3/envs/Repenv/bin \
+  
+Then copy the .gm_key file like so:
+  cp /home/gomeza/.gm_key ~/
 
     #Original prog  dir /home/gomeza/git_repos/scripts/bioinformatics_tools/Gene_prediction
 
@@ -551,7 +557,7 @@ add these paths to your "braker_fungi.sh" program script:
         echo "$Organism - $Strain"
         OutDir=gene_pred/braker/$Organism/$Strain/flye
         AcceptedHits=alignment/star/F.oxysporum_fsp_fragariae/DSA14_003/concatenated/concatenated.bam
-        GeneModelName="$Organism"_"$Strain"_braker_flye
+        GeneModelName="$Organism"_"$Strain"_braker_flye_V2
         ProgDir=/home/akinya/git_repos/assembly_fusarium_ex/ProgScripts
         sbatch $ProgDir/braker_fungi.sh $Assembly $OutDir $AcceptedHits $GeneModelName
       done
@@ -561,7 +567,7 @@ Got this error:
 
     --GENEMARK_PATH=/home/gomeza/prog/genemark/gmes_linux_64 \
 --BAMTOOLS_PATH=/home/gomeza/miniconda3/envs/gene_pred/bin \
-
+BRAKER CRASHED afte 5 mins of editing paths
 
 ## StringTie
 
@@ -603,7 +609,7 @@ Antonio /home/gomeza/git_repos/scripts/bioinformatics_tools/Gene_prediction
       sbatch $ProgDir/codingquarry2.sh $Assembly $GTF $OutDir
     done
 
-## Add transcripts together
+## Add gene prediction transcripts together
 
 Additional transcripts - to be edited
 Run in perly env (Repenv)

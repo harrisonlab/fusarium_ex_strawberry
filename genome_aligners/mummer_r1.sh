@@ -11,13 +11,14 @@
 # assembly/SMARTdenovo/F.oxysporum_fsp_fragariae/DSA14_003/pilon/pilon_10_renamed.fasta
 # assembly/miniasm/F.oxysporum_fsp_fragariae/DSA14_003/pilon/pilon_10_renamed.fasta
 
-for SubjectGenome in $(ls ../../oldhome/groups/harrisonlab/project_files/fusarium/repeat_masked/F.oxysporum_fsp_lycopersici/4287_v2/fungidb_repmask/4287_v2_contigs_unmasked.fa); do
-  QueryGenome=assembly/SMARTdenovo/F.oxysporum_fsp_fragariae/DSA14_003/pilon/pilon_10_renamed.fasta
+# do for 4287_chromosomal also -../../oldhome/groups/harrisonlab/project_files/fusarium/repeat_masked/F.oxysporum_fsp_lycopersici/4287_chromosomal/ensembl_repmask/4287_chromosomal_contigs_unmasked.fa
+for SubjectGenome in $(ls ../../oldhome/groups/harrisonlab/project_files/fusarium/repeat_masked/F.oxysporum_fsp_lycopersici/4287_chromosomal/ensembl_repmask/4287_chromosomal_contigs_unmasked.fa); do
+  QueryGenome=assembly/flye/F.oxysporum_fsp_fragariae/DSA14_003/pilon/pilon_10_renamed.fasta
   Organism=$(echo "$QueryGenome" | rev | cut -d '/' -f4 | rev)
   Strain=$(echo "$QueryGenome" | rev | cut -d '/' -f3 | rev)
   echo "$Organism - $Strain"
   Prefix=FoFr_14
-  OutDir=alignment/mummer/SMARTdenovo/FoFrvsFoLy
+  OutDir=alignment/flye/miniasm/FoFrvsFoLy2
   mkdir -p $OutDir
   ProgDir=/home/gomeza/git_repos/scripts/bioinformatics_tools/Genome_aligners
   sbatch $ProgDir/mummer.sh $SubjectGenome $QueryGenome $Prefix $OutDir

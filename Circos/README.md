@@ -36,10 +36,10 @@ Or just run in alphaenv
 
 ### .txt file for genome 2
 
-    Genome2=../../oldhome/groups/harrisonlab/project_files/fusarium/repeat_masked/F.oxysporum_fsp_lycopersici/4287_v2/fungidb_repmask/4287_v2_contigs_unmasked.fa
-    OutDir=synteny_analysis/circos/miniasm
+    Genome2=../../oldhome/groups/harrisonlab/project_files/fusarium/repeat_masked/F.oxysporum_fsp_lycopersici/4287_chromosomal/ensembl_repmask/4287_chromosomal_contigs_unmasked.fa
+    OutDir=synteny_analysis/circos/flye
     ProgDir=/home/akinya/git_repos/fusarium_ex_strawberry/Circos
-    $ProgDir/python_create_circos_file.py --genome $Genome2 --contig_prefix "Fol_4287_v2_" > $OutDir/FoLy_illumina_genome.txt
+    $ProgDir/python_create_circos_file.py --genome $Genome2 --contig_prefix "Fol_4287_Chr_" > $OutDir/FoLy_illumina_genome.txt
 
 ### Concatenate files
 
@@ -124,9 +124,9 @@ Changes output of satsuma contig names - major key as it distinguishes informati
 
     Synteny_file=synteny_analysis/circos/flye/satsuma_alignment/FoFr_14VSFoLy/satsuma_summary.chained.out           #Synteny file location and file name here
     OutDir=synteny_analysis/circos/flye/satsuma_alignment/FoFr_14VSFoLy/satsuma_summary_editedforcircos.chained.out  #Outfile location and file name here
-    pre1=FoFr_14_  #change to your contig prefix
-    pre2=Fol_4287_v2_ #change to your contig prefix
-    #ProgDir=/home/akinya/git_repos/fusarium_ex_strawberry/Circos/Python_edit_contig_names.py
+    pre1=FoFr_14_contig_  #change to your contig prefix
+    pre2=Fol_4287_Chr_ #change to your contig prefix
+    #ProgDir=/home/akinya/git_repos/fusarium_ex_strawberry/Circos/
     sbatch $ProgDir/Python_edit_contig_names.py --synteny $Synteny_file --contig_prefix_1 $pre1 --contig_prefix_2 $pre2 --outfile $OutDir
 
 Had to edit line 34 in the "Python_edit_contig_names.py" script

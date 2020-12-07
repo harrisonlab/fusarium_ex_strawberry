@@ -16,22 +16,22 @@ karyotype =synteny_analysis/circos/miniasm/FoFr_FoLy_genome.txt
     # spacing between ideograms is 0.5% of the image
     #default = 0.005r
     default = 0.001r
-    <pairwise A3_5_contig_22 A3_5_contig_55>
+    <pairwise FoFr_14_contig_1 FoLy_Chr_1>
       # spacing between contig1 and FoL_chromosome_1 is 4x of 0.5% (2%) of image
       # The angle of the ideogram is also edited in <image> below.
       spacing = 10r
     </pairwise>
-    <pairwise A3_5_MINcontig_2 A3_5_MINcontig_1>
+    <pairwise FoFr_14_contig_2 3>
       spacing = 10r
     </pairwise>
-    <pairwise A3_5_MINcontig_3 A3_5_MINcontig_2>
+    <pairwise FoFr_14_contig_2 4>
       #spacing = 0.005r
       spacing = 10r
     </pairwise>
-    <pairwise A3_5_MINcontig_3 A3_5_MINcontig_4>
+    <pairwise FoFr_14_contig_3 2>
       spacing = 10r
     </pairwise>
-    <pairwise A3_5_contig_18 A3_5_MINcontig_1>
+    <pairwise FoFr_14_contig_4 5>
       spacing = 10r
     </pairwise>
     <pairwise A3_5_contig_32 A3_5_contig_24>
