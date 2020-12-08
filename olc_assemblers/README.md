@@ -290,9 +290,9 @@ If split or remove contigs is needed, provide FCSreport file by NCBI.
 
     ProgDir=/home/gomeza/git_repos/scripts/bioinformatics_tools/Assembly_qc
         touch tmp.txt
-        for Assembly in $(ls Assembly2/SMARTdenovo/F.oxysporum_fsp_lactucae/race_1/racon_10/race_1_smartdenovo_racon_round_2.fasta); do
+        for Assembly in $(ls Assembly2/flye/F.oxysporum_fsp_lactucae/race_1/racon_10/assembly_racon_round_4.fasta); do
             OutDir=$(dirname $Assembly)
-            $ProgDir/remove_contaminants.py --inp $Assembly --out $OutDir/race_1_smartdenovo_racon_round_2_renamed.fasta --coord_file tmp.txt > $OutDir/log.txt
+            $ProgDir/remove_contaminants.py --inp $Assembly --out $OutDir/assembly_racon_round_4.fasta_renamed.fasta --coord_file tmp.txt > $OutDir/log.txt
         done
         rm tmp.txt
 
@@ -311,9 +311,9 @@ If split or remove contigs is needed, provide FCSreport file by NCBI.
       sbatch $ProgDir/medaka.sh $Assembly $ReadsFq $OutDir
     done
     or
-    for Assembly in $(ls Assembly2/miniasm/F.oxysporum_fsp_lactucae/race_1/racon_10/FoLR1_conc_racon_round_6_renamed.fasta); do
+    for Assembly in $(ls Assembly2/flye/F.oxysporum_fsp_lactucae/race_1/racon_10/assembly_racon_round_4_renamed.fasta); do
       ReadsFq=raw_dna/FoL_CONC_trim.fastq.gz
-      OutDir=Assembly2/miniasm/F.oxysporum_fsp_lactucae/race_1/medaka
+      OutDir=Assembly2/flye/F.oxysporum_fsp_lactucae/race_1/medaka
       ProgDir=/home/gomeza/git_repos/scripts/bioinformatics_tools/Genome_assemblers
       sbatch $ProgDir/medaka.sh $Assembly $ReadsFq $OutDir
     done
@@ -338,8 +338,9 @@ Make sure script is executable
 Raw DNA direc - /projects/oldhome/groups/harrisonlab/project_files/fusarium/raw_dna/paired/F.oxysporum_fsp_lactucae/AJ520/F/AJ520_S2_L001_R1_001.fastq.gz0
 Assembly - Assembly2/SMARTdenovo/F.oxysporum_fsp_lactucae/race_1/medaka/race_1_smartdenovo_racon_round_2_renamed.fasta
 Assembly - Assembly2/miniasm/F.oxysporum_fsp_lactucae/race_1/medaka/FoLR1_conc_racon_round_6_renamed.fasta
+Assembly - Assembly2/flye/F.oxysporum_fsp_lactucae/race_1/medaka/assembly_racon_round_4.fasta_renamed.fasta
 
-    for Assembly in $(ls Assembly2/miniasm/F.oxysporum_fsp_lactucae/race_1/medaka/FoLR1_conc_racon_round_6_renamed.fasta); do
+    for Assembly in $(ls Assembly2/flye/F.oxysporum_fsp_lactucae/race_1/medaka/assembly_racon_round_4.fasta_renamed.fasta); do
       Organism=F.oxysporum_fsp_lactucae
       Strain=race_1
       IlluminaDir=$(ls -d ../oldhome/groups/harrisonlab/project_files/fusarium/raw_dna/paired/F.oxysporum_fsp_lactucae/AJ520)
@@ -349,7 +350,7 @@ Assembly - Assembly2/miniasm/F.oxysporum_fsp_lactucae/race_1/medaka/FoLR1_conc_r
       TrimR1_Read=$(ls $IlluminaDir/R/AJ520_S2_L001_R2_001.fastq.gz | head -n2 | tail -n1);
       echo $TrimF1_Read
       echo $TrimR1_Read
-      OutDir=Assembly2/miniasm/F.oxysporum_fsp_lactucae/race_1/pilon
+      OutDir=Assembly2/flye/F.oxysporum_fsp_lactucae/race_1/pilon
       Iterations=10
       ProgDir=/home/akinya/git_repos/fusarium_ex_strawberry/ProgScripts/NGS_assembly
       sbatch $ProgDir/pilon_lac_mini_lib.sh $Assembly $TrimF1_Read $TrimR1_Read $OutDir $Iterations
@@ -436,9 +437,9 @@ Soft masking means transforming every nucleotide identified as a repeat to a low
 
 Gives number of masked N's in sequence  - Take physical and digital note of the results.
 
-    for File in $(ls repeat_masked/F.oxysporum_fsp_fragariae/DSA14_003/flye/ncbi_edits_repmask/DSA14_003_contigs_softmasked.fa); do
+    for File in $(ls repeat_masked/F.oxysporum_fsp_lactucae/race_1/SMARTdenovo/ncbi_edits_repmask/race_1_contigs_softmasked.fa); do
       OutDir=$(dirname $File)
-      TPSI=$(ls $OutDir/DSA14_003_contigs_unmasked.fa.TPSI.allHits.chains.gff3)
+      TPSI=$(ls $OutDir/race_1_contigs_unmasked.fa.TPSI.allHits.chains.gff3)
       OutFile=$(echo $File | sed 's/_contigs_softmasked.fa/_contigs_softmasked_repeatmasker_TPSI_appended.fa/g')
       echo "$OutFile"
       bedtools maskfasta -soft -fi $File -bed $TPSI -fo $OutFile
@@ -447,15 +448,15 @@ Gives number of masked N's in sequence  - Take physical and digital note of the 
     done
 
     # Number of masked bases:
-    # miniasm - 6854263     SDEN- 6908635
-    # flye - 7069053
+    # miniasm - 11417581     SDEN- 1358959
+    # flye -
 
 ## Hard Mask
 Hard masking  means transforming every nucleotide identified as a repeat to an 'N' or 'X'.
 
-    for File in $(ls repeat_masked/F.oxysporum_fsp_fragariae/DSA14_003/ncbi_edits_repmask/DSA14_003_contigs_hardmasked.fa); do
+    for File in $(ls repeat_masked/F.oxysporum_fsp_lactucae/race_1/SMARTdenovo/ncbi_edits_repmask/race_1_contigs_hardmasked.fa); do
       OutDir=$(dirname $File)
-      TPSI=$(ls $OutDir/DSA14_003_contigs_unmasked.fa.TPSI.allHits.chains.gff3)
+      TPSI=$(ls $OutDir/race_1_contigs_unmasked.fa.TPSI.allHits.chains.gff3)
       OutFile=$(echo $File | sed 's/_contigs_hardmasked.fa/_contigs_hardmasked_repeatmasker_TPSI_appended.fa/g')
       echo "$OutFile"
       bedtools maskfasta -fi $File -bed $TPSI -fo $OutFile
@@ -526,12 +527,12 @@ Only data samples that will map genes of F.oxy accurately
 Need to concatenate data after STAR analysis
 #--genomeSAindexNbases is unique to each genome and is 11 for FoFR
 
-  for Assembly in $(ls repeat_masked/F.oxysporum_fsp_fragariae/DSA14_003/flye/ncbi_edits_repmask/DSA14_003_contigs_unmasked.fa);  do
+  for Assembly in $(ls repeat_masked/F.oxysporum_fsp_lactucae/race_1/SMARTdenovo/ncbi_edits_repmask/race_1_contigs_unmasked.fa);  do
       Strain=$(echo $Assembly | rev | cut -f4 -d '/' | rev)
       Organism=$(echo $Assembly | rev | cut -f5 -d '/' | rev)
       echo "$Organism - $Strain"
-      FileF=../../oldhome/groups/harrisonlab/project_files/fusarium/qc_rna/paired/F.oxysporum_fsp_cepae/Fus2_PDA/F/*_trim.fq.gz
-      FileR=../../oldhome/groups/harrisonlab/project_files/fusarium/qc_rna/paired/F.oxysporum_fsp_cepae/Fus2_PDA/R/*_trim.fq.gz
+      FileF=../oldhome/groups/harrisonlab/project_files/fusarium/qc_rna/paired/F.oxysporum_fsp_cepae/Fus2_PDA/F/*_trim.fq.gz
+      FileR=../oldhome/groups/harrisonlab/project_files/fusarium/qc_rna/paired/F.oxysporum_fsp_cepae/Fus2_PDA/R/*_trim.fq.gz
       echo $FileF
       echo $FileR
       Timepoint=$(echo $FileF | rev | cut -d '/' -f3 | rev)
