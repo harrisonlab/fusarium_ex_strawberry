@@ -274,7 +274,7 @@ DO for each iteration
 
 #Ended up here for some reason assembly/flye/F.oxysporum_fsp_lactucae/race_1/ncbi_edits/round_*
 
-    for Assembly in $(ls Assembly2/SMARTdenovo/F.oxysporum_fsp_lactucae/race_1/racon_10/race_1_smartdenovo_racon_round_1.fasta); do
+    for Assembly in $(ls Assembly2/flye/F.oxysporum_fsp_lactucae/race_1/racon_10/assembly_racon_round_1.fasta); do
       Strain=$(echo $Assembly| rev | cut -d '/' -f3 | rev)
       Organism=$(echo $Assembly | rev | cut -d '/' -f4 | rev)
       echo "$Organism - $Strain"
@@ -354,3 +354,153 @@ Assembly - Assembly2/miniasm/F.oxysporum_fsp_lactucae/race_1/medaka/FoLR1_conc_r
       ProgDir=/home/akinya/git_repos/fusarium_ex_strawberry/ProgScripts/NGS_assembly
       sbatch $ProgDir/pilon_lac_mini_lib.sh $Assembly $TrimF1_Read $TrimR1_Read $OutDir $Iterations
     done
+
+
+# Repeat Masking
+#####################
+
+Repeat identification and masking is conducted before gene prediction and annotation steps.
+The term 'masking' means transforming every nucleotide identified as a repeat to an 'N', 'X' or to a lower case a, t, g or c.
+
+## Repeat mask
+Ensure packages are installed in envs
+
+    conda create -n RMask
+
+    conda install -c bioconda repeatmodeler # repeatmodeler also installs packages below
+    #conda install -c bioconda repeatmasker
+    #conda install rmblast
+
+Need to manually configure Repeatmasker
+
+    cd /home/USER_ID/miniconda3/envs/general_tools/share/RepeatMasker/ # USER_ID is your user name i.e. akinya
+
+    ./confiure # runs the configuration step
+
+    # Set execution path of tfr, e.g. /home/USER_ID/miniconda3/envs/USER_ENV/bin/trf
+    # Add search engine. Option 2 - RMBlast will be used
+    # Set path where rmblastn and makeblastdb are found, e.g. /home/USER_ID/miniconda3/envs/USER_ENV/bin
+    # 5. Done to exit
+
+### Rename before you run rep mask
+
+ProgDir=/home/gomeza/git_repos/scripts/bioinformatics_tools/Assembly_qc
+    touch tmp.txt
+    for Assembly in $(ls Assembly2/miniasm/F.oxysporum_fsp_lactucae/race_1/pilon/pilon_10.fasta); do
+        OutDir=$(dirname $Assembly)
+        $ProgDir/remove_contaminants.py --inp $Assembly --out $OutDir/pilon_10_renamed.fasta --coord_file tmp.txt > $OutDir/log.txt
+    done
+    rm tmp.txt
+
+Have 2 paths to choose from to run scripts
+
+### RepeatMask & TPSI path 1
+
+    ProgDir=/home/gomeza/git_repos/scripts/bioinformatics_tools/Repeat_masking
+    BestAssembly=Assembly2/miniasm/F.oxysporum_fsp_lactucae/race_1/pilon/pilon_10_renamed.fasta
+    OutDir=repeat_masked/F.oxysporum_fsp_lactucae/race_1/miniasm/ncbi_edits_repmask
+    sbatch $ProgDir/rep_modeling.sh $BestAssembly $OutDir
+    sbatch $ProgDir/transposonPSI.sh $BestAssembly $OutDir
+
+### Rep mask (path 2)
+
+Run in conda env (Repenv) - input for |illumina assembly/spades/*/*/ncbi_edits/contigs_min_500bp_renamed.fasta | grep -v '_2' | grep -v '11055'|
+
+    for Assembly in $(ls assembly/miniasm/F.oxysporum_fsp_fragariae/DSA14_003/pilon/pilon_10_renamed.fasta); do
+    Strain=$(echo $Assembly | rev | cut -f3 -d '/' | rev)
+    Organism=$(echo $Assembly | rev | cut -f4 -d '/' | rev)
+    echo "$Organism"
+    echo "$Strain"
+    OutDir=repeat_masked/$Organism/$Strain/ncbi_edits_repmask
+    ProgDir=/home/gomeza/git_repos/scripts/bioinformatics_tools/Repeat_masking #/home/akinya/git_repos/tools/seq_tools/repeat_masking
+    sbatch $ProgDir/rep_modelingBeta.sh $Assembly $OutDir
+    done
+
+### TransposonPSI (path 2)
+Run in RMask env
+
+    conda install -c bioconda transposonpsi
+
+    for Assembly in $(ls assembly/miniasm/F.oxysporum_fsp_fragariae/DSA14_003/pilon/pilon_10_renamed.fasta); do
+    Strain=$(echo $Assembly | rev | cut -f3 -d '/' | rev)
+    Organism=$(echo $Assembly | rev | cut -f4 -d '/' | rev)
+    echo "$Organism"
+    echo "$Strain"
+    OutDir=repeat_masked/$Organism/$Strain/ncbi_edits_repmask
+    ProgDir=/home/gomeza/git_repos/scripts/bioinformatics_tools/Repeat_masking #/home/akinya/git_repos/tools/seq_tools/repeat_masking
+    sbatch $ProgDir/transposonPSI.sh $Assembly $OutDir
+    done
+
+## Soft mask
+Soft masking means transforming every nucleotide identified as a repeat to a lower case a, t, g or c to be included in later gene prediction stages.
+
+Gives number of masked N's in sequence  - Take physical and digital note of the results.
+
+    for File in $(ls repeat_masked/F.oxysporum_fsp_fragariae/DSA14_003/flye/ncbi_edits_repmask/DSA14_003_contigs_softmasked.fa); do
+      OutDir=$(dirname $File)
+      TPSI=$(ls $OutDir/DSA14_003_contigs_unmasked.fa.TPSI.allHits.chains.gff3)
+      OutFile=$(echo $File | sed 's/_contigs_softmasked.fa/_contigs_softmasked_repeatmasker_TPSI_appended.fa/g')
+      echo "$OutFile"
+      bedtools maskfasta -soft -fi $File -bed $TPSI -fo $OutFile
+      echo "Number of masked bases:"
+      cat $OutFile | grep -v '>' | tr -d '\n' | awk '{print $0, gsub("[a-z]", ".")}' | cut -f2 -d ' '
+    done
+
+    # Number of masked bases:
+    # miniasm - 6854263     SDEN- 6908635
+    # flye - 7069053
+
+## Hard Mask
+Hard masking  means transforming every nucleotide identified as a repeat to an 'N' or 'X'.
+
+    for File in $(ls repeat_masked/F.oxysporum_fsp_fragariae/DSA14_003/ncbi_edits_repmask/DSA14_003_contigs_hardmasked.fa); do
+      OutDir=$(dirname $File)
+      TPSI=$(ls $OutDir/DSA14_003_contigs_unmasked.fa.TPSI.allHits.chains.gff3)
+      OutFile=$(echo $File | sed 's/_contigs_hardmasked.fa/_contigs_hardmasked_repeatmasker_TPSI_appended.fa/g')
+      echo "$OutFile"
+      bedtools maskfasta -fi $File -bed $TPSI -fo $OutFile
+    done
+
+Run BUSCO and Quast qc checks on the softmasked, unmasked and hardmasked assemblies
+
+# Orthology hunt
+#####################
+
+Use extracted effectors from a gene.fasta file using names in txt file
+Create text file with known gene names of effectors/mimps you want to remove
+
+Why are you doing this?
+To compare candidate effectors in Fo cepae (which has RNA seq data) against the predicted genes in Fof using cepae RNA seq data
+
+Extract genes from reference lycopersici & cepae genomes
+Command uses gene name to copy across fasta seq to Fo genes
+  #faidx -d '|' final_genes_combined.cdna.fasta $(tr '\n' ' ' < FoC_cand_mimps.txt ) > Eff_mimp_genes.fasta
+  #faidx -d '|' final_genes_combined.cdna.fasta $(tr '\n' ' ' < FoC_Six.txt ) > six_ortho_genes.fasta
+
+-Now that you have the cand effector genes, contrast against long read seq genome
+-Run in conda env with perly (Repenv)
+-For $Assembly Use files with nucleotides
+
+  for Assembly in $(ls Assembly2/miniasm/F.oxysporum_fsp_lactucae/race_1/pilon/pilon_10_renamed.fasta); do
+    Strain=$(echo $Assembly| rev | cut -d '/' -f3 | rev)
+    Organism=$(echo $Assembly | rev | cut -d '/' -f4 | rev)
+    echo "$Organism - $Strain"
+    Query=../fusarium_ex_strawberry/F.oxysporum_fsp_cepae/Fus2_canu_new/final/Eff_mimp_genes.fasta # six_ortho_genes.fasta
+    OutDir=Orthology/miniasm/blastn/$Organism/$Strain/FoFrvsFoCep_mimps
+    ProgDir=/home/gomeza/git_repos/scripts/bioinformatics_tools/Feature_analysis
+    sbatch $ProgDir/blast_pipe.sh $Query dna $Assembly $OutDir
+  done
+
+Second query../F.oxysporum_fsp_cepae/Fus2_canu_new/final/Eff_mimp_genes.fasta
+Use cut -f1 or * DSA14_003_eff_ortho_genes.fasta_homologs.csv to excise and view column data
+Compare against Andy's known SIX genes
+
+  for Assembly in $(ls Assembly2/SMARTdenovo/F.oxysporum_fsp_lactucae/race_1/pilon/pilon_10_renamed.fasta); do
+    Strain=$(echo $Assembly| rev | cut -d '/' -f3 | rev)
+    Organism=$(echo $Assembly | rev | cut -d '/' -f4 | rev)
+    echo "$Organism - $Strain"
+    Query=../oldhome/groups/harrisonlab/project_files/fusarium/analysis/blast_homology/six_genes/six-appended_parsed.fa
+    OutDir=Orthology/SMARTdenovo/blastn/$Organism/$Strain/FoFrvsFoLy
+    ProgDir=/home/gomeza/git_repos/scripts/bioinformatics_tools/Feature_analysis
+    sbatch $ProgDir/blast_pipe.sh $Query dna $Assembly $OutDir
+  done
