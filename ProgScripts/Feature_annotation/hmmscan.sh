@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 #SBATCH -J tmhmm
 #SBATCH --partition=long
-#SBATCH --mem-per-cpu=4G
+#SBATCH --mem-per-cpu=10G
 #SBATCH --cpus-per-task=8
 
 # hmmscan.sh <HmmFile> <ProtFile> <OutputPrefix> <OutputDirecotry>

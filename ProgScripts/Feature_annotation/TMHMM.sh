@@ -9,8 +9,8 @@ INFILE=$1
 
 echo $USAGE
 
-ORGANISM=$(echo $INFILE | rev | cut -d "/" -f4 | rev)
-STRAIN=$(echo $INFILE | rev | cut -d "/" -f3 | rev)
+ORGANISM=$(echo $INFILE | rev | cut -d "/" -f5 | rev)
+STRAIN=$(echo $INFILE | rev | cut -d "/" -f4 | rev)
 PRED_PROTEINS=$(echo $INFILE | rev | cut -d "/" -f1 | rev)
 CUR_PATH=$PWD
 WORK_DIR=$TMPDIR/${SLURM_JOB_USER}_${SLURM_JOBID}
