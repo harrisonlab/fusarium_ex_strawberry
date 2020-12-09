@@ -545,7 +545,7 @@ add these paths to your "braker_fungi.sh" program script:
 or
   --GENEMARK_PATH=/home/akinya/miniconda3/envs/Repenv/opt/genemark_es/gmes_petap \
   --BAMTOOLS_PATH=/home/akinya/miniconda3/envs/Repenv/bin \
-  
+
 Then copy the .gm_key file like so:
   cp /home/gomeza/.gm_key ~/
 
@@ -617,15 +617,15 @@ Type full paths, do not use asterisks
 RUN LINE BY LINE AS IT WILL NOT WORK
 Do segments one at a time for peace of mind
 
-    BrakerGff=$(ls -d gene_pred/braker/F.oxysporum_fsp_fragariae/DSA15_041/F.oxysporum_fsp_fragariae_DSA15_041_brakerV2/augustus.gff3)
-    	Strain=$(echo $BrakerGff| rev | cut -d '/' -f3 | rev)
-    	Organism=$(echo $BrakerGff | rev | cut -d '/' -f4 | rev)
+    BrakerGff=$(ls -d gene_pred/braker/F.oxysporum_fsp_fragariae/DSA14_003/flye/F.oxysporum_fsp_fragariae_DSA14_003_braker_flye_V2/augustus.gff3)
+    	Strain=$(echo $BrakerGff| rev | cut -d '/' -f4 | rev)
+    	Organism=$(echo $BrakerGff | rev | cut -d '/' -f5 | rev)
     	echo "$Organism - $Strain"
-    	Assembly=$(ls repeat_masked/F.oxysporum_fsp_fragariae/DSA15_041/ncbi_edits_repmask/DSA15_041_contigs_softmasked_repeatmasker_TPSI_appended.fa)
-    	CodingQuarryGff=gene_pred/codingquary/F.oxysporum_fsp_fragariae/DSA15_041/out/PredictedPass.gff3
-    	PGNGff=gene_pred/codingquary/F.oxysporum_fsp_fragariae/DSA15_041/out/PGN_predictedPass.gff3
-    	AddDir=gene_pred/codingquary/$Organism/$Strain/additional
-    	FinalDir=gene_pred/codingquary/$Organism/$Strain/final
+    	Assembly=$(ls repeat_masked/F.oxysporum_fsp_fragariae/DSA14_003/flye/ncbi_edits_repmask/DSA14_003_contigs_softmasked_repeatmasker_TPSI_appended.fa)
+    	CodingQuarryGff=gene_pred/codingquary/F.oxysporum_fsp_fragariae/DSA14_003/flye/out/PredictedPass.gff3
+    	PGNGff=gene_pred/codingquary/F.oxysporum_fsp_fragariae/DSA14_003/flye/out/PGN_predictedPass.gff3
+    	AddDir=gene_pred/codingquary/$Organism/$Strain/flye/additional
+    	FinalDir=gene_pred/codingquary/$Organism/$Strain/flye/final
     	AddGenesList=$AddDir/additional_genes.txt
     	AddGenesGff=$AddDir/additional_genes.gff
     	FinalGff=$AddDir/combined_genes.gff
@@ -647,8 +647,14 @@ Creat Gff file with the additional transcripts
 Create a final Gff file with gene features
     $ProgDir/add_CodingQuary_features.pl $AddGenesGff $Assembly > $FinalDir/final_genes_CodingQuary.gff3
 
+Got this error:
+  Possible precedence issue with control flow operator at /home/gomeza/miniconda3/envs/perly_env/lib/site_perl/5.26.2/Bio/DB/IndexedBase.pm line 805.
+
 Create fasta files from each gene feature in the CodingQuarry gff3
     $ProgDir/gff2fasta.pl $Assembly $FinalDir/final_genes_CodingQuary.gff3 $FinalDir/final_genes_CodingQuary
+
+Got this error again (got it again after creating fasta files in braker gff3):
+      Possible precedence issue with control flow operator at /home/gomeza/miniconda3/envs/perly_env/lib/site_perl/5.26.2/Bio/DB/IndexedBase.pm line 805.  
 
 Create fasta files from each gene feature in the Braker gff3
     cp $BrakerGff $FinalDir/final_genes_Braker.gff3
@@ -675,33 +681,111 @@ Check the final number of genes
       echo "";
   	done
 
+For flye assembly Braker genes: 17980, CQ: 1103 & combined: 19083
+
 ## Gene renaming
 Run line by line
 Run in conda env (Repenv)
 Remove duplicate and rename genes
 
-    GffAppended=$(ls -d gene_pred/final_genes/F.oxysporum_fsp_cepae/Fus2_canu_new/final/final_genes_appended.gff3)
-    Strain=$(echo $GffAppended | rev | cut -d '/' -f3 | rev)
-    Organism=$(echo $GffAppended | rev | cut -d '/' -f4 | rev)
+    GffAppended=$(ls -d gene_pred/codingquary/F.oxysporum_fsp_fragariae/DSA14_003/flye/final/final_genes_appended.gff3)
+    Strain=$(echo $GffAppended | rev | cut -d '/' -f4 | rev)
+    Organism=$(echo $GffAppended | rev | cut -d '/' -f5 | rev)
     echo "$Organism - $Strain"
-    FinalDir=gene_pred/final_genes/F.oxysporum_fsp_cepae/Fus2_canu_new/final
+    FinalDir=gene_pred/codingquary/F.oxysporum_fsp_fragariae/DSA14_003/flye/final
 
-    Remove duplicated genes
+Remove duplicated genes
     GffFiltered=$FinalDir/filtered_duplicates.gff
     ProgDir=/home/gomeza/git_repos/scripts/bioinformatics_tools/Gene_prediction
     $ProgDir/remove_dup_features.py --inp_gff $GffAppended --out_gff $GffFiltered
 
-    Rename genes
+Rename genes
     GffRenamed=$FinalDir/final_genes_appended_renamed.gff3
     LogFile=$FinalDir/final_genes_appended_renamed.log
     $ProgDir/gff_rename_genes.py --inp_gff $GffFiltered --conversion_log $LogFile > $GffRenamed
     rm $GffFiltered
 
-    Create renamed fasta files from each gene feature
-    Assembly=$(ls repeat_masked/F.oxysporum_fsp_cepae/Fus2_canu_new/edited_contigs_repmask/Fus2_canu_contigs_softmasked_repeatmasker_TPSI_appended.fa)
+Create renamed fasta files from each gene feature
+    Assembly=$(ls repeat_masked/F.oxysporum_fsp_fragariae/DSA14_003/flye/ncbi_edits_repmask/DSA14_003_contigs_softmasked_repeatmasker_TPSI_appended.fa)
     $ProgDir/gff2fasta.pl $Assembly $GffRenamed $FinalDir/final_genes_appended_renamed
-    The proteins fasta file contains * instead of Xs for stop codons, these should be changed
+The proteins fasta file contains * instead of Xs for stop codons, these should be changed
     sed -i 's/\*/X/g' $FinalDir/final_genes_appended_renamed.pep.fasta
 
-    view gene names
+View gene names
     cat $FinalDir/final_genes_appended_renamed.cdna.fasta | grep '>'
+
+# Genome annotations
+
+## Interproscan
+
+    ProgDir=/home/gomeza/git_repos/scripts/bioinformatics_tools/Feature_annotation
+      for Genes in $(ls gene_pred/codingquary/F.oxysporum_fsp_fragariae/DSA14_003/flye/final/final_genes_appended_renamed.pep.fasta); do
+        echo $Genes
+        $ProgDir/interproscan.sh $Genes
+      done 2>&1 | tee -a interproscan_submission.log
+
+
+## Signal-P
+Need to install paths into project_files
+  nano .profile # copy paths into profile
+    PATH=${PATH}:/home/gomeza/prog/signalp-5.0b
+    PATH=${PATH}:/data/scratch/gomeza/prog/signalp/signalp-5.0b/bin
+    PATH=/data/scratch/gomeza/prog/java/jdk-11.0.4/bin:${PATH}
+    PATH=${PATH}:/data/scratch/gomeza/prog/signalp/signalp-4.1
+update your profile
+  . ~/.profile
+
+Signal P script for fungi
+Add your strains name to first line
+Added codingquary to Proteome direc
+
+    for Strain in DSA14_003; do
+      ProgDir=/home/gomeza/git_repos/scripts/bioinformatics_tools/Feature_annotation
+      CurPath=$PWD
+      for Proteome in $(ls gene_pred/codingquary/*/$Strain/final/final_genes_combined.pep.fasta); do
+      Strain=$(echo $Proteome | rev | cut -f3 -d '/' | rev)
+      Organism=$(echo $Proteome | rev | cut -f4 -d '/' | rev)
+      SplitDir=gene_pred/final_genes_split/$Organism/$Strain
+      mkdir -p $SplitDir
+      BaseName="$Organism""_$Strain"_final_preds
+      $ProgDir/splitfile_500.py --inp_fasta $Proteome --out_dir $SplitDir --out_base $BaseName # Split your input fasta in 500 genes files
+        for File in $(ls $SplitDir/*_final_preds_*); do
+        #sbatch $ProgDir/pred_signalP.sh $File signalp
+        #sbatch $ProgDir/pred_signalP.sh $File signalp-3.0 # Recommended for oomycetes
+        sbatch $ProgDir/pred_signalP.sh $File signalp-4.1 # Recommended for fungi
+        #sbatch $ProgDir/pred_signalP.sh $File signalp-5.0
+        done
+      done
+    done
+
+## EffectorP - Effector identification
+
+Add path to .profile PATH=${PATH}:/scratch/software/EffectorP-2.0/Scripts
+Use full paths to scripts - EffectorP is extremely picky with inputs
+  # Make directory first
+  mkdir -p analysis/effectorP/$Organism/$Strain/flye
+Note down your paths
+  Basename="$Organism"_"$Strain"_EffectorP
+  Proteome=$(ls -d gene_pred/codingquary/F.oxysporum_fsp_fragariae/DSA14_003/flye/final/final_genes_appended_renamed.pep.fasta)
+  OutDir=analysis/effectorP/F.oxysporum_fsp_fragariae/DSA14_003/flye
+  EffectorP.py -o analysis/effectorP/F.oxysporum_fsp_fragariae/DSA14_003/flye/F.oxysporum_fsp_fragariae_DSA14_003_EffectorP.txt -E analysis/effectorP/F.oxysporum_fsp_fragariae/DSA14_003/flye/F.oxysporum_fsp_fragariae_DSA14_003_EffectorP.fa -i gene_pred/codingquary/F.oxysporum_fsp_fragariae/DSA14_003/flye/final/final_genes_appended_renamed.pep.fasta
+
+## EffectorP - phase 2
+  for File in $(ls analysis/effectorP/F.oxysporum_fsp_fragariae/DSA15_041/F.oxysporum_fsp_fragariae_DSA15_041_EffectorP.txt); do
+    Strain=$(echo $File | rev | cut -f2 -d '/' | rev)
+    Organism=$(echo $File | rev | cut -f3 -d '/' | rev)
+    echo "$Organism - $Strain"
+    Headers=$(echo "$File" | sed 's/_EffectorP.txt/_EffectorP_headers.txt/g')
+    cat $File | grep 'Effector' | cut -f1 > $Headers
+    Secretome=$(ls gene_pred/final_genes_signalp-4.1/F.oxysporum_fsp_fragariae/DSA15_041/DSA15_041_final_sp_no_trans_mem.aa)
+    OutFile=$(echo "$File" | sed 's/_EffectorP.txt/_EffectorP_secreted.aa/g')
+    ProgDir=/home/gomeza/git_repos/scripts/bioinformatics_tools/Feature_annotation
+    $ProgDir/extract_from_fasta.py --fasta $Secretome --headers $Headers > $OutFile
+    OutFileHeaders=$(echo "$File" | sed 's/_EffectorP.txt/_EffectorP_secreted_headers.txt/g')
+    cat $OutFile | grep '>' | tr -d '>' > $OutFileHeaders
+    cat $OutFileHeaders | wc -l
+    Gff=$(ls gene_pred/codingquary/F.oxysporum_fsp_fragariae/DSA15_041/final/final_genes_appended_renamed.gff3)
+    EffectorP_Gff=$(echo "$File" | sed 's/_EffectorP.txt/_EffectorP_secreted.gff/g')
+    $ProgDir/extract_gff_for_sigP_hits.pl $OutFileHeaders $Gff effectorP ID > $EffectorP_Gff
+    cat $EffectorP_Gff | grep -w 'gene' | wc -l
+  done > tmp.txt
