@@ -724,6 +724,25 @@ View gene names
         $ProgDir/interproscan.sh $Genes
       done 2>&1 | tee -a interproscan_submission.log
 
+Interproscan: all jobs failed - couldn't run all jobs simultaneously
+ERROR: uk.ac.ebi.interpro.scan.management.model.implementations.RunBinaryStep - Command line failed with exit code: 1
+Need to run in batches
+
+DNA was successfully split but interpro script didn't run for 33/35 of the split DNA
+Had to run split DNA in sets of 9
+Putting data in queue in short partition forced an error
+Everthing in queue would run for 2 seconds and crash
+Split gene.pep.fasta like so:
+  InFile=gene_pred/codingquary/F.oxysporum_fsp_fragariae/DSA14_003/flye/final/final_genes_appended_renamed.pep.fasta
+  SplitDir=gene_pred/interproscan/$Organism/$Strain/flye
+  InterproDir=/home/gomeza/git_repos/scripts/bioinformatics_tools/Feature_annotation
+  InName=$(basename $InFile)
+  mkdir -p $SplitDir
+  $InterproDir/splitfile_500.py --inp_fasta $InFile --out_dir $SplitDir --out_base "$InName"_split
+
+  for file in $(ls gene_pred/interproscan/F.oxysporum_fsp_fragariae/DSA14_003/flye/*_split_2*); do
+    sbatch /home/gomeza/git_repos/scripts/bioinformatics_tools/Feature_annotation/run_interproscan.sh $file
+    done
 
 ## Signal-P
 Need to install paths into project_files

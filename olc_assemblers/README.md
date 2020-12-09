@@ -340,7 +340,7 @@ Assembly - Assembly2/SMARTdenovo/F.oxysporum_fsp_lactucae/race_1/medaka/race_1_s
 Assembly - Assembly2/miniasm/F.oxysporum_fsp_lactucae/race_1/medaka/FoLR1_conc_racon_round_6_renamed.fasta
 Assembly - Assembly2/flye/F.oxysporum_fsp_lactucae/race_1/medaka/assembly_racon_round_4.fasta_renamed.fasta
 
-    for Assembly in $(ls Assembly2/flye/F.oxysporum_fsp_lactucae/race_1/medaka/assembly_racon_round_4.fasta_renamed.fasta); do
+    for Assembly in $(ls Assembly2/flye/F.oxysporum_fsp_lactucae/race_1/medaka/assembly_racon_round_4_renamed.fasta); do
       Organism=F.oxysporum_fsp_lactucae
       Strain=race_1
       IlluminaDir=$(ls -d ../oldhome/groups/harrisonlab/project_files/fusarium/raw_dna/paired/F.oxysporum_fsp_lactucae/AJ520)
@@ -356,6 +356,16 @@ Assembly - Assembly2/flye/F.oxysporum_fsp_lactucae/race_1/medaka/assembly_racon_
       sbatch $ProgDir/pilon_lac_mini_lib.sh $Assembly $TrimF1_Read $TrimR1_Read $OutDir $Iterations
     done
 
+Run BUSCO & QUAST
+    for Assembly in $(ls Assembly2/SMARTdenovo/F.oxysporum_fsp_lactucae/race_1/pilon/pilon_*.fasta); do
+      Strain=$(echo $Assembly| rev | cut -d '/' -f3 | rev)
+      Organism=$(echo $Assembly | rev | cut -d '/' -f4 | rev)
+      echo "$Organism - $Strain"
+      ProgDir=/home/akinya/git_repos/fusarium_ex_strawberry/ProgScripts/quality_check
+      BuscoDB=$(ls -d /projects/dbBusco/sordariomycetes_odb10)
+      OutDir=$(dirname $Assembly)/busco_sordariomycetes_obd10/round_*
+      sbatch $ProgDir/busco.sh $Assembly $BuscoDB $OutDir
+    done
 
 # Repeat Masking
 #####################
