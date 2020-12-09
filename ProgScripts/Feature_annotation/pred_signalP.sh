@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 #SBATCH -J signalP
-#SBATCH --partition=medium
-#SBATCH --mem-per-cpu=1G
+#SBATCH --partition=short
+#SBATCH --mem-per-cpu=3G
 #SBATCH --cpus-per-task=4
 
 # set -u
