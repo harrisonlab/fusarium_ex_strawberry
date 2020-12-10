@@ -1000,7 +1000,7 @@ Run line by line
       printf "Number of predicted genes in secondary metabolite clusters:\t"
       cat "$Prefix"_secmet_genes.gff | grep -w 'gene' | wc -l
     done
-    
+
 Results
   Number of secondary metabolite detected:        57
   Number of predicted proteins in secondary metabolite clusters:  1412
@@ -1008,5 +1008,5 @@ Results
 
 Antismash output correction. Some gene names contain ;. Remove manually with the following command.
 First sed command removes ;. Second and Third remove the cluster kind information (optional)
-  cat analysis/secondary_metabolites/antismash/F.oxysporum/DSA14_003/Strain_antismash_results_secmet_genes.tsv | sed 's/;//p' | sed 's/;.*//p' | sed 's/Kin.*//p' > analysis/secondary_metabolites/antismash/F.oxysporum/DSA14_003/"Strain"_antismash_results_secmet_genes_corrected.tsv
+  cat analysis/secondary_metabolites/antismash/F.oxysporum_fsp_fragariae/DSA14_003/DSA14_003_antismash_results_secmet_genes.tsv | sed 's/;//p' | sed 's/;.*//p' | sed 's/Kin.*//p' > analysis/secondary_metabolites/antismash/F.oxysporum_fsp_fragariae/DSA14_003/DSA14_003_antismash_results_secmet_genes_corrected.tsv
 Edit output file names from this script after completion

@@ -455,7 +455,7 @@ Soft masking means transforming every nucleotide identified as a repeat to a low
 
 Gives number of masked N's in sequence  - Take physical and digital note of the results.
 
-    for File in $(ls repeat_masked/F.oxysporum_fsp_lactucae/race_1/SMARTdenovo/ncbi_edits_repmask/race_1_contigs_softmasked.fa); do
+    for File in $(ls repeat_masked/F.oxysporum_fsp_lactucae/race_1/flye/ncbi_edits_repmask/race_1_contigs_softmasked.fa); do
       OutDir=$(dirname $File)
       TPSI=$(ls $OutDir/race_1_contigs_unmasked.fa.TPSI.allHits.chains.gff3)
       OutFile=$(echo $File | sed 's/_contigs_softmasked.fa/_contigs_softmasked_repeatmasker_TPSI_appended.fa/g')
@@ -467,12 +467,12 @@ Gives number of masked N's in sequence  - Take physical and digital note of the 
 
     # Number of masked bases:
     # miniasm - 11417581     SDEN- 1358959
-    # flye -
+    # flye - 9530627
 
 ## Hard Mask
 Hard masking  means transforming every nucleotide identified as a repeat to an 'N' or 'X'.
 
-    for File in $(ls repeat_masked/F.oxysporum_fsp_lactucae/race_1/SMARTdenovo/ncbi_edits_repmask/race_1_contigs_hardmasked.fa); do
+    for File in $(ls repeat_masked/F.oxysporum_fsp_lactucae/race_1/flye/ncbi_edits_repmask/race_1_contigs_hardmasked.fa); do
       OutDir=$(dirname $File)
       TPSI=$(ls $OutDir/race_1_contigs_unmasked.fa.TPSI.allHits.chains.gff3)
       OutFile=$(echo $File | sed 's/_contigs_hardmasked.fa/_contigs_hardmasked_repeatmasker_TPSI_appended.fa/g')
@@ -505,25 +505,24 @@ Command uses gene name to copy across fasta seq to Fo genes
     Organism=$(echo $Assembly | rev | cut -d '/' -f4 | rev)
     echo "$Organism - $Strain"
     Query=../fusarium_ex_strawberry/F.oxysporum_fsp_cepae/Fus2_canu_new/final/Eff_mimp_genes.fasta # six_ortho_genes.fasta
-    OutDir=Orthology/miniasm/blastn/$Organism/$Strain/FoFrvsFoCep_mimps
+    OutDir=Orthology/flye/blastn/$Organism/$Strain/FolR1vsFoCep_mimps
     ProgDir=/home/gomeza/git_repos/scripts/bioinformatics_tools/Feature_analysis
     sbatch $ProgDir/blast_pipe.sh $Query dna $Assembly $OutDir
   done
 
 Second query../F.oxysporum_fsp_cepae/Fus2_canu_new/final/Eff_mimp_genes.fasta
-Use cut -f1 or * DSA14_003_eff_ortho_genes.fasta_homologs.csv to excise and view column data
+Use cut -f1 or * resulys_file.fasta_homologs.csv to excise and view column data
 Compare against Andy's known SIX genes
 
-  for Assembly in $(ls Assembly2/SMARTdenovo/F.oxysporum_fsp_lactucae/race_1/pilon/pilon_10_renamed.fasta); do
+  for Assembly in $(ls Assembly2/flye/F.oxysporum_fsp_lactucae/race_1/pilon/pilon_10_renamed.fasta); do
     Strain=$(echo $Assembly| rev | cut -d '/' -f3 | rev)
     Organism=$(echo $Assembly | rev | cut -d '/' -f4 | rev)
     echo "$Organism - $Strain"
     Query=../oldhome/groups/harrisonlab/project_files/fusarium/analysis/blast_homology/six_genes/six-appended_parsed.fa
-    OutDir=Orthology/SMARTdenovo/blastn/$Organism/$Strain/FoFrvsFoLy
+    OutDir=Orthology/flye/blastn/$Organism/$Strain/FolR!vsFoLy
     ProgDir=/home/gomeza/git_repos/scripts/bioinformatics_tools/Feature_analysis
     sbatch $ProgDir/blast_pipe.sh $Query dna $Assembly $OutDir
   done
-
 
 # Synteny Check
 #####################
@@ -654,13 +653,13 @@ Then copy the .gm_key file like so:
 
     #Original prog  dir /home/gomeza/git_repos/scripts/bioinformatics_tools/Gene_prediction
 
-    for Assembly in $(ls repeat_masked/F.oxysporum_fsp_fragariae/DSA14_003/flye/ncbi_edits_repmask/DSA14_003_contigs_softmasked_repeatmasker_TPSI_appended.fa); do
+    for Assembly in $(ls repeat_masked/F.oxysporum_fsp_lactucae/race_1/flye/ncbi_edits_repmask/race_1_contigs_softmasked_repeatmasker_TPSI_appended.fa); do
         Strain=$(echo $Assembly| rev | cut -d '/' -f4 | rev)
         Organism=$(echo $Assembly | rev | cut -d '/' -f5 | rev)
         echo "$Organism - $Strain"
         OutDir=gene_pred/braker/$Organism/$Strain/flye
-        AcceptedHits=alignment/star/F.oxysporum_fsp_fragariae/DSA14_003/concatenated/concatenated.bam
-        GeneModelName="$Organism"_"$Strain"_braker_flye_V2
+        AcceptedHits=alignment/star/F.oxysporum_fsp_lactucae/race_1/concatenated/concatenated.bam
+        GeneModelName="$Organism"_"$Strain"_braker_flye
         ProgDir=/home/akinya/git_repos/assembly_fusarium_ex/ProgScripts
         sbatch $ProgDir/braker_fungi.sh $Assembly $OutDir $AcceptedHits $GeneModelName
       done
@@ -681,13 +680,13 @@ Merge with Braker to give final gene model set
 /home/akinya/git_repos/assembly_fusarium_ex/scripts
 /home/gomeza/git_repos/scripts/bioinformatics_tools/Gene_prediction
 
-    for Assembly in $(ls repeat_masked/F.oxysporum_fsp_fragariae/DSA14_003/flye/ncbi_edits_repmask/DSA14_003_contigs_unmasked.fa); do
+    for Assembly in $(ls repeat_masked/F.oxysporum_fsp_lactucae/race_1/flye/ncbi_edits_repmask/race_1_contigs_unmasked.fa); do
         Strain=$(echo $Assembly| rev | cut -d '/' -f4 | rev)
         Organism=$(echo $Assembly| rev | cut -d '/' -f5 | rev)
         echo "$Organism - $Strain"
         OutDir=gene_pred/stringtie/$Organism/$Strain/flye/concatenated_prelim
         mkdir -p $OutDir
-        AcceptedHits=alignment/star/F.oxysporum_fsp_fragariae/DSA14_003/concatenated/concatenated.bam
+        AcceptedHits=alignment/star/F.oxysporum_fsp_lactucae/race_1/concatenated/concatenated.bam
         ProgDir=/home/akinya/git_repos/assembly_fusarium_ex/ProgScripts
         sbatch $ProgDir/stringtie.sh $AcceptedHits $OutDir
        done
@@ -701,13 +700,13 @@ GFT file from stringtie/cufflinks output
 my repo /home/akinya/git_repos/assembly_fusarium_ex/scripts
 Antonio /home/gomeza/git_repos/scripts/bioinformatics_tools/Gene_prediction
 
-  for Assembly in $(ls repeat_masked/F.oxysporum_fsp_fragariae/DSA14_003/flye/ncbi_edits_repmask/DSA14_003_contigs_unmasked.fa); do
+  for Assembly in $(ls repeat_masked/F.oxysporum_fsp_lactucae/race_1/flye/ncbi_edits_repmask/race_1_contigs_softmasked.fa); do
       Strain=$(echo $Assembly| rev | cut -d '/' -f4 | rev)
       Organism=$(echo $Assembly| rev | cut -d '/' -f5 | rev)
       echo "$Organism - $Strain"
       OutDir=gene_pred/codingquary/$Organism/$Strain/flye
       mkdir -p $OutDir
-      GTF=gene_pred/stringtie/F.oxysporum_fsp_fragariae/DSA14_003/flye/concatenated_prelim/out.gtf
+      GTF=gene_pred/stringtie/F.oxysporum_fsp_lactucae/race_1/flye/concatenated_prelim/out.gtf
       ProgDir=/home/akinya/git_repos/assembly_fusarium_ex/ProgScripts
       sbatch $ProgDir/codingquarry2.sh $Assembly $GTF $OutDir
     done
