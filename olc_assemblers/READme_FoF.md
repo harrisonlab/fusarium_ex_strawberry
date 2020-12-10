@@ -903,6 +903,12 @@ Run in conda env (Repenv)
       echo ""
     done
 
+The number of mimps identified:
+74
+The following transcripts intersect mimps:
+53
+53
+
 ## 6) Cazy
 
 CAZY analysis - program for searching and analyzing carbohydrate-active enzymes in a newly sequenced organism using CAZy database
@@ -933,19 +939,16 @@ Creates a file with CAZy module and gene
       Organism=$(echo $File | rev | cut -f3 -d '/' | rev)
       OutDir=$(dirname $File)
       echo "$Organism - $Strain"
-      ProgDir=/projects/dbCAN
+      ProgDir=../../dbCAN
       $ProgDir/hmmscan-parser.sh $OutDir/"$Strain"_CAZY.out.dm > $OutDir/"$Strain"_CAZY.out.dm.ps
-
       CazyHeaders=$(echo $File | sed 's/.out.dm/_headers.txt/g')
       cat $OutDir/"$Strain"_CAZY.out.dm.ps | cut -f3 | sort | uniq > $CazyHeaders # Extract gene names
       echo "Number of CAZY genes identified:"
       cat $CazyHeaders | wc -l
-
-      Gff=$(ls gene_pred/codingquary/F.oxysporum_fsp_fragariae/DSA14_003/final/final_genes_appended_renamed.gff3)
+      Gff=$(ls gene_pred/codingquary/F.oxysporum_fsp_fragariae/DSA14_003/flye/final/final_genes_appended_renamed.gff3)
       CazyGff=$OutDir/"$Strain"_CAZY.gff
       ProgDir=/home/gomeza/git_repos/scripts/bioinformatics_tools/Feature_annotation
       $ProgDir/extract_gff_for_sigP_hits.pl $CazyHeaders $Gff CAZyme ID > $CazyGff # Creates a gff for all CAZymes
-
       SecretedProts=$(ls gene_pred/final_genes_signalp-4.1/F.oxysporum_fsp_fragariae/DSA14_003/DSA14_003_final_sp_no_trans_mem.aa)
       SecretedHeaders=$(echo $SecretedProts | sed 's/.aa/_headers.txt/g')
       cat $SecretedProts | grep '>' | tr -d '>' > $SecretedHeaders
@@ -955,9 +958,23 @@ Creates a file with CAZy module and gene
       cat $CazyGffSecreted | grep -w 'gene' | cut -f9 | tr -d 'ID=' | wc -l
       done
 
+Number of CAZY genes identified:
+936
+Number of Secreted CAZY genes identified:
+397
+
 ## Antismash
 
 Antismash was run to identify clusters of secondary metabolite genes within the genome. Antismash was run using the webserver at: http://antismash.secondarymetabolites.org.
+Use you polished unmasked contig genome as the genome input and the complementary "final_genes_appended_renamed.gff3" for the gene input.
+Download antiSMASH results
+
+    mkdir -p gene_pred/antiSMASH/F.oxysporum/DSA14_003/
+    cd # to new directory
+    wget download.link.com/results.zip # not actual result file
+    #Then unzip file
+    unzip results.zip
+
 Results of web-annotation of gene clusters within the assembly were downloaded to the following directories
 Run line by line
 

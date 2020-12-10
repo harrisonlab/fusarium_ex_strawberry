@@ -367,6 +367,14 @@ Run BUSCO & QUAST
       sbatch $ProgDir/busco.sh $Assembly $BuscoDB $OutDir
     done
 
+    ProgDir=/home/akinya/git_repos/tools/seq_tools/assemblers/assembly_qc/quast
+      for Assembly in $(ls Assembly2/flye/F.oxysporum_fsp_lactucae/race_1/pilon/pilon_1.fasta); do
+        Strain=$(echo $Assembly | rev | cut -f3 -d '/' | rev)
+        Organism=$(echo $Assembly | rev | cut -f4 -d '/' | rev)  
+        OutDir=$(dirname $Assembly)/ncbi_edits/round_1
+        sbatch $ProgDir/sub_quast.sh $Assembly $OutDir
+      done
+
 # Repeat Masking
 #####################
 
@@ -397,19 +405,19 @@ Need to manually configure Repeatmasker
 
 ProgDir=/home/gomeza/git_repos/scripts/bioinformatics_tools/Assembly_qc
     touch tmp.txt
-    for Assembly in $(ls Assembly2/miniasm/F.oxysporum_fsp_lactucae/race_1/pilon/pilon_10.fasta); do
+    for Assembly in $(ls Assembly2/flye/F.oxysporum_fsp_lactucae/race_1/pilon/pilon_10.fasta); do
         OutDir=$(dirname $Assembly)
         $ProgDir/remove_contaminants.py --inp $Assembly --out $OutDir/pilon_10_renamed.fasta --coord_file tmp.txt > $OutDir/log.txt
     done
     rm tmp.txt
 
-Have 2 paths to choose from to run scripts
+Have 2 paths to choose from to run scripts if either doesn't work
 
 ### RepeatMask & TPSI path 1
 
     ProgDir=/home/gomeza/git_repos/scripts/bioinformatics_tools/Repeat_masking
-    BestAssembly=Assembly2/miniasm/F.oxysporum_fsp_lactucae/race_1/pilon/pilon_10_renamed.fasta
-    OutDir=repeat_masked/F.oxysporum_fsp_lactucae/race_1/miniasm/ncbi_edits_repmask
+    BestAssembly=Assembly2/flye/F.oxysporum_fsp_lactucae/race_1/pilon/pilon_10_renamed.fasta
+    OutDir=repeat_masked/F.oxysporum_fsp_lactucae/race_1/flye/ncbi_edits_repmask
     sbatch $ProgDir/rep_modeling.sh $BestAssembly $OutDir
     sbatch $ProgDir/transposonPSI.sh $BestAssembly $OutDir
 
@@ -520,10 +528,59 @@ Compare against Andy's known SIX genes
 # Synteny Check
 #####################
 
-# D-genies
+## D-genies
 
 Go to http://dgenies.toulouse.inra.fr/ to compare genomes for synteny against FoLy4287 and FoFrvsFoCep.
 Using the plots, see which assembly will be best to use for gene_prediction using Fo_cepae data.
+
+## Mummer
+
+System for rapidly aligning entire genomes
+run in conda env (mummer)
+For help go to https://mummer4.github.io/manual/manual.html
+Compare Folac against cepae genome and lycopersici genomes (reference genomes)
+  SubjectGenome=reference genome
+  QueryGenome= my genome i.e FolR1
+  Prefix=$3
+  OutDir=$4
+
+Do for flye assembly/flye/*/*/pilon/pilon_10_renamed.fasta
+assembly/SMARTdenovo/*/*/pilon/pilon_10_renamed.fasta
+assembly/miniasm/*/*/pilon/pilon_10_renamed.fasta
+
+Do for 4287_chromosomal also -../../oldhome/groups/harrisonlab/project_files/fusarium/repeat_masked/F.oxysporum_fsp_lycopersici/4287_chromosomal/ensembl_repmask/4287_chromosomal_contigs_unmasked.fa
+  for SubjectGenome in $(ls ../oldhome/groups/harrisonlab/project_files/fusarium/repeat_masked/F.oxysporum_fsp_lycopersici/4287_chromosomal/ensembl_repmask/4287_chromosomal_contigs_unmasked.fa); do
+    QueryGenome=Assembly2/SMARTdenovo/F.oxysporum_fsp_lactucae/race_1/pilon/pilon_10_renamed.fasta
+    Organism=$(echo "$QueryGenome" | rev | cut -d '/' -f4 | rev)
+    Strain=$(echo "$QueryGenome" | rev | cut -d '/' -f3 | rev)
+    echo "$Organism - $Strain"
+    Prefix=Fol_R1
+    OutDir=alignment/mummer/SMARTdenovo/FoFrvsFoLyChr
+    mkdir -p $OutDir
+    ProgDir=/home/gomeza/git_repos/scripts/bioinformatics_tools/Genome_aligners
+    sbatch $ProgDir/mummer.sh $SubjectGenome $QueryGenome $Prefix $OutDir
+  done
+
+To view particular hits on contig, do:
+  less FoFr_14_coords.tsv | grep 'contig_11'
+
+do for unmasked cepae genome
+
+for SubjectGenome in $(ls ../oldhome/groups/harrisonlab/project_files/fusarium/repeat_masked/F.oxysporum_fsp_cepae/Fus2_canu_new/edited_contigs_repmask/Fus2_canu_contigs_unmasked.fa); do
+  QueryGenome=Assembly2/miniasm/F.oxysporum_fsp_lactucae/race_1/pilon/pilon_10_renamed.fasta
+  Prefix=Fol_R1
+  OutDir=alignment/mummer/miniasm/FoFrvsFoCep
+  mkdir -p $OutDir
+  ProgDir=/home/gomeza/git_repos/scripts/bioinformatics_tools/Genome_aligners
+  sbatch $ProgDir/mummer.sh $SubjectGenome $QueryGenome $Prefix $OutDir
+done
+
+May produce errors in slurm out file therefore run this after
+  #-c	Include percent coverage columns in the output
+  #-l	Include sequence length columns in the output
+  # -b	Brief output that only displays the non-redundant locations of aligning regions
+  # -T	Switch output to tab-delimited format
+  /scratch/software/mummer/mummer-4.0.0rc1/show-coords -c -l -b -T yourfiltereddeltafile.delta > coords.tsv
 
 
 # Gene prediction
@@ -537,12 +594,12 @@ Only data samples that will map genes of F.oxy accurately
 Need to concatenate data after STAR analysis
 #--genomeSAindexNbases is unique to each genome and is 11 for FoFR
 
-  for Assembly in $(ls repeat_masked/F.oxysporum_fsp_lactucae/race_1/SMARTdenovo/ncbi_edits_repmask/race_1_contigs_unmasked.fa);  do
+  for Assembly in $(ls repeat_masked/F.oxysporum_fsp_lactucae/race_1/flye/ncbi_edits_repmask/race_1_contigs_unmasked.fa);  do
       Strain=$(echo $Assembly | rev | cut -f4 -d '/' | rev)
       Organism=$(echo $Assembly | rev | cut -f5 -d '/' | rev)
       echo "$Organism - $Strain"
-      FileF=../oldhome/groups/harrisonlab/project_files/fusarium/qc_rna/paired/F.oxysporum_fsp_cepae/Fus2_PDA/F/*_trim.fq.gz
-      FileR=../oldhome/groups/harrisonlab/project_files/fusarium/qc_rna/paired/F.oxysporum_fsp_cepae/Fus2_PDA/R/*_trim.fq.gz
+      FileF=../oldhome/groups/harrisonlab/project_files/fusarium/qc_rna/paired/F.oxysporum_fsp_cepae/Fus2_CzapekDox/F/*_trim.fq.gz
+      FileR=../oldhome/groups/harrisonlab/project_files/fusarium/qc_rna/paired/F.oxysporum_fsp_cepae/Fus2_CzapekDox/R/*_trim.fq.gz
       echo $FileF
       echo $FileR
       Timepoint=$(echo $FileF | rev | cut -d '/' -f3 | rev)
@@ -556,8 +613,8 @@ Need to concatenate data after STAR analysis
 Need to concatenate in this step to link RNAseq data into one series
 View "star_aligmentLog.final.out" to see uniquely mapped reads %
 
-  Strain=DSA14_003
-    Organism=F.oxysporum_fsp_fragariae
+  Strain=race_1
+    Organism=F.oxysporum_fsp_lactucae
     mkdir -p alignment/star/$Organism/$Strain/concatenated
     samtools merge -f alignment/star/$Organism/$Strain/concatenated/concatenated.bam \
     alignment/star/$Organism/$Strain/Fus2_CzapekDox/6_S2_L001_R1_001_trim.fq.gz/star_aligmentAligned.sortedByCoord.out.bam \
