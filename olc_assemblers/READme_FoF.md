@@ -726,12 +726,7 @@ View gene names
 
 Interproscan: all jobs failed - couldn't run all jobs simultaneously
 ERROR: uk.ac.ebi.interpro.scan.management.model.implementations.RunBinaryStep - Command line failed with exit code: 1
-Need to run in batches
-
-DNA was successfully split but interpro script didn't run for 33/35 of the split DNA
-Had to run split DNA in sets of 10
-Putting data in queue in short partition forced an error
-Everthing in queue would run for 2 seconds and crash
+Need to run in batches - Had to run split DNA in sets of 10.
 Split gene.pep.fasta like so:
   InFile=gene_pred/codingquary/F.oxysporum_fsp_fragariae/DSA14_003/flye/final/final_genes_appended_renamed.pep.fasta
   SplitDir=gene_pred/interproscan/$Organism/$Strain/flye
@@ -743,6 +738,19 @@ Split gene.pep.fasta like so:
   for file in $(ls gene_pred/interproscan/F.oxysporum_fsp_fragariae/DSA14_003/flye/*_split_9*); do
     sbatch /home/gomeza/git_repos/scripts/bioinformatics_tools/Feature_annotation/run_interproscan.sh $file
     done
+
+Need to merge interproscan output as follows
+
+    ProgDir=/home/akinya/git_repos/fusarium_ex_strawberry/ProgScripts/Feature_annotation
+     for Proteins in $(ls gene_pred/codingquary/F.oxysporum_fsp_fragariae/DSA14_003/flye/final/final_genes_appended_renamed.pep.fasta); do
+       Strain=$(echo $Proteins | rev | cut -d '/' -f4 | rev)
+       Organism=$(echo $Proteins | rev | cut -d '/' -f5 | rev)
+       echo "$Organism - $Strain"
+       echo $Strain
+       InterProRaw=gene_pred/interproscan/F.oxysporum_fsp_fragariae/DSA14_003/flye/raw
+       $ProgDir/append_interpro.sh $Proteins $InterProRaw
+     done
+
 
 ## 2) Signal-P
 Need to install paths into project_files
