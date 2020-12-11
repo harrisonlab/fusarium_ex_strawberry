@@ -776,7 +776,7 @@ Now run swissprot
   SwissDbDir=../../dbUniprot/swissprot_2020_June
   SwissDbName=uniprot_sprot
   ProgDir=/home/akinya/git_repos/fusarium_ex_strawberry/ProgScripts/Feature_annotation
-  sbatch $ProgDir/sub_swissprot.sh $Proteome $OutDir $SwissDbDir $SwissDbName
+  sbatch $ProgDir/sub_swissprot_akin.sh $Proteome $OutDir $SwissDbDir $SwissDbName
   done
 
 ## 3) Signal-P
