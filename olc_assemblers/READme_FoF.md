@@ -751,8 +751,24 @@ Need to merge interproscan output as follows
        $ProgDir/append_interpro.sh $Proteins $InterProRaw
      done
 
+Use this command to view particular features in interproscan data:
+  less path/to/interproscan.tsv | grep 'gene feature' # e.g. transposon
 
-## 2) Signal-P
+## 2) SwissProt
+
+SWISS-PROT is a curated protein sequence database which strives to provide a high level of annotation, a minimal level of redundancy and a high level of integration with other databases.
+
+  for Proteome in $(ls gene_pred/codingquary/F.oxysporum_fsp_fragariae/DSA14_003/flye/final/final_genes_appended_renamed.pep.fasta); do
+  Strain=$(echo $Proteome | rev | cut -f4 -d '/' | rev)
+  Organism=$(echo $Proteome | rev | cut -f5 -d '/' | rev)
+  OutDir=gene_pred/swissprot/$Organism/$Strain
+  SwissDbDir=../../dbUniprot/swissprot_2020_June
+  SwissDbName=uniprot_sprot
+  ProgDir=/home/akinya/git_repos/fusarium_ex_strawberry/ProgScripts/Feature_annotation
+  sbatch $ProgDir/sub_swissprot.sh $Proteome $OutDir $SwissDbDir $SwissDbName
+  done
+
+## 3) Signal-P
 Need to install paths into project_files
   nano .profile # copy paths into profile
     PATH=${PATH}:/home/gomeza/prog/signalp-5.0b
@@ -815,7 +831,7 @@ Need to combine the output of the first signal-P run
 Having flye in directory path caused small issues therefore I stopped including it from here
 Things may be in the wrong directory - use "mv" command to change directory names
 
-## 3) TMHMM step
+## 4) TMHMM step
 Identifies transmembrane proteins
 Added strain name
 Add paths to .profile
@@ -849,7 +865,7 @@ Proteins with transmembrane domains were removed from lists of Signal peptide co
 
 1525 proteins had transmembrane domains
 
-## 4) EffectorP - Effector identification
+## 5) EffectorP - Effector identification
 
 Add path to .profile PATH=${PATH}:/scratch/software/EffectorP-2.0/Scripts
 Use full paths to scripts - EffectorP is extremely picky with inputs
@@ -884,7 +900,7 @@ Note down your paths
   nano tmp.txt - should state Org, Strain and Numbers
 
 
-## 5) Mimp analysis
+## 6) Mimp analysis
 Miniature IMPala elements are short autonomous class II  transposable elements and can be used to identify candidate effectors
 Run in conda env (Repenv)
 
@@ -917,7 +933,7 @@ The following transcripts intersect mimps:
 53
 53
 
-## 6) Cazy
+## 7) Cazy
 
 CAZY analysis - program for searching and analyzing carbohydrate-active enzymes in a newly sequenced organism using CAZy database
 "sub_hmmscan.sh" was edited and updated to "hmmscan.sh"
@@ -971,7 +987,7 @@ Number of CAZY genes identified:
 Number of Secreted CAZY genes identified:
 397
 
-## Antismash
+## 8) Antismash
 
 Antismash was run to identify clusters of secondary metabolite genes within the genome. Antismash was run using the webserver at: http://antismash.secondarymetabolites.org.
 Use you polished unmasked contig genome as the genome input and the complementary "final_genes_appended_renamed.gff3" for the gene input.
