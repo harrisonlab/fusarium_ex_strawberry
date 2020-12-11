@@ -760,12 +760,14 @@ SWISS-PROT is a curated protein sequence database which strives to provide a hig
 No requirements to run Swissprot
 Uniprot databases are downloaded to /projects/dbUniprot
 
-Intructions to create a database if needed.
+Intructions to create a database- do this first will save you a headache
     dbFasta=$(ls /projects/dbUniprot/swissprot_2020_June/uniprot_sprot.fasta)
     dbType="prot"
     Prefix="uniprot_sprot"
     makeblastdb -in $dbFasta -input_type fasta -dbtype $dbType -title $Prefix.db -parse_seqids -out $OutDir/$Prefix.db
     #makeblastdb -in $dbFasta -input_type fasta -dbtype $dbType -title $Prefix.db -parse_seqids -out gene_pred/swissprot/F.oxysporum_fsp_fragariae/DSA14_003/$Prefix.db
+
+Now run swissprot
 
   for Proteome in $(ls gene_pred/codingquary/F.oxysporum_fsp_fragariae/DSA14_003/flye/final/final_genes_appended_renamed.pep.fasta); do
   Strain=$(echo $Proteome | rev | cut -f4 -d '/' | rev)
