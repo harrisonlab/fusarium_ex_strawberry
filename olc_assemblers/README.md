@@ -700,7 +700,7 @@ GFT file from stringtie/cufflinks output
 my repo /home/akinya/git_repos/assembly_fusarium_ex/scripts
 Antonio /home/gomeza/git_repos/scripts/bioinformatics_tools/Gene_prediction
 
-  for Assembly in $(ls repeat_masked/F.oxysporum_fsp_lactucae/race_1/flye/ncbi_edits_repmask/race_1_contigs_softmasked.fa); do
+  for Assembly in $(ls repeat_masked/F.oxysporum_fsp_lactucae/race_1/flye/ncbi_edits_repmask/race_1_contigs_unmasked.fa); do
       Strain=$(echo $Assembly| rev | cut -d '/' -f4 | rev)
       Organism=$(echo $Assembly| rev | cut -d '/' -f5 | rev)
       echo "$Organism - $Strain"
@@ -807,3 +807,336 @@ Remove duplicate and rename genes
 
     view gene names
     cat $FinalDir/final_genes_appended_renamed.cdna.fasta | grep '>'
+
+
+# Genome annotations
+
+## 1) Interproscan
+
+    ProgDir=/home/gomeza/git_repos/scripts/bioinformatics_tools/Feature_annotation
+      for Genes in $(ls gene_pred/codingquary/F.oxysporum_fsp_fragariae/DSA14_003/flye/final/final_genes_appended_renamed.pep.fasta); do
+        echo $Genes
+        $ProgDir/interproscan.sh $Genes
+      done 2>&1 | tee -a interproscan_submission.log
+
+Interproscan: all jobs failed - couldn't run all jobs simultaneously
+ERROR: uk.ac.ebi.interpro.scan.management.model.implementations.RunBinaryStep - Command line failed with exit code: 1
+Need to run in batches - Had to run split DNA in sets of 10.
+Split gene.pep.fasta like so:
+  InFile=gene_pred/codingquary/F.oxysporum_fsp_fragariae/DSA14_003/flye/final/final_genes_appended_renamed.pep.fasta
+  SplitDir=gene_pred/interproscan/$Organism/$Strain/flye
+  InterproDir=/home/gomeza/git_repos/scripts/bioinformatics_tools/Feature_annotation
+  InName=$(basename $InFile)
+  mkdir -p $SplitDir
+  $InterproDir/splitfile_500.py --inp_fasta $InFile --out_dir $SplitDir --out_base "$InName"_split
+
+  for file in $(ls gene_pred/interproscan/F.oxysporum_fsp_fragariae/DSA14_003/flye/*_split_9*); do
+    sbatch /home/gomeza/git_repos/scripts/bioinformatics_tools/Feature_annotation/run_interproscan.sh $file
+    done
+
+Need to merge interproscan output as follows
+
+    ProgDir=/home/akinya/git_repos/fusarium_ex_strawberry/ProgScripts/Feature_annotation
+     for Proteins in $(ls gene_pred/codingquary/F.oxysporum_fsp_fragariae/DSA14_003/flye/final/final_genes_appended_renamed.pep.fasta); do
+       Strain=$(echo $Proteins | rev | cut -d '/' -f4 | rev)
+       Organism=$(echo $Proteins | rev | cut -d '/' -f5 | rev)
+       echo "$Organism - $Strain"
+       echo $Strain
+       InterProRaw=gene_pred/interproscan/F.oxysporum_fsp_fragariae/DSA14_003/flye/raw
+       $ProgDir/append_interpro.sh $Proteins $InterProRaw
+     done
+
+Use this command to view particular features in interproscan data:
+  less path/to/interproscan.tsv | grep 'gene feature' # e.g. transposon
+
+## 2) SwissProt
+
+SWISS-PROT is a curated protein sequence database which strives to provide a high level of annotation, a minimal level of redundancy and a high level of integration with other databases.
+No requirements to run Swissprot
+Uniprot databases are downloaded to /projects/dbUniprot
+
+Intructions to create a database- do this first will save you a headache
+    dbFasta=$(ls /projects/dbUniprot/swissprot_2020_June/uniprot_sprot.fasta)
+    dbType="prot"
+    Prefix="uniprot_sprot"
+    makeblastdb -in $dbFasta -input_type fasta -dbtype $dbType -title $Prefix.db -parse_seqids -out $OutDir/$Prefix.db
+    #makeblastdb -in $dbFasta -input_type fasta -dbtype $dbType -title $Prefix.db -parse_seqids -out gene_pred/swissprot/F.oxysporum_fsp_fragariae/DSA14_003/$Prefix.db
+
+Now run swissprot
+
+  for Proteome in $(ls gene_pred/codingquary/F.oxysporum_fsp_fragariae/DSA14_003/flye/final/final_genes_appended_renamed.pep.fasta); do
+  Strain=$(echo $Proteome | rev | cut -f4 -d '/' | rev)
+  Organism=$(echo $Proteome | rev | cut -f5 -d '/' | rev)
+  OutDir=gene_pred/swissprot/$Organism/$Strain
+  SwissDbDir=../../dbUniprot/swissprot_2020_June
+  SwissDbName=uniprot_sprot
+  ProgDir=/home/akinya/git_repos/fusarium_ex_strawberry/ProgScripts/Feature_annotation
+  sbatch $ProgDir/sub_swissprot_akin.sh $Proteome $OutDir $SwissDbDir $SwissDbName
+  done
+
+## 3) Signal-P
+Need to install paths into project_files
+  nano .profile # copy paths into profile
+    PATH=${PATH}:/home/gomeza/prog/signalp-5.0b
+    PATH=${PATH}:/data/scratch/gomeza/prog/signalp/signalp-5.0b/bin
+    PATH=/data/scratch/gomeza/prog/java/jdk-11.0.4/bin:${PATH}
+    PATH=${PATH}:/data/scratch/gomeza/prog/signalp/signalp-4.1
+update your profile
+  . ~/.profile
+
+Signal P script for fungi
+Add your strains name to first line
+Added codingquary to Proteome direc
+
+    for Strain in DSA14_003; do
+      ProgDir=/home/akinya/git_repos/fusarium_ex_strawberry/ProgScripts/Feature_annotation
+      CurPath=$PWD
+      for Proteome in $(ls gene_pred/codingquary/F.oxysporum_fsp_fragariae/DSA14_003/flye/final/final_genes_combined.pep.fasta); do
+      Strain=$(echo $Proteome | rev | cut -f4 -d '/' | rev)
+      Organism=$(echo $Proteome | rev | cut -f5 -d '/' | rev)
+      SplitDir=gene_pred/final_genes_split/$Organism/$Strain/flye
+      mkdir -p $SplitDir
+      BaseName="$Organism""_$Strain"_final_preds
+      $ProgDir/splitfile_500.py --inp_fasta $Proteome --out_dir $SplitDir --out_base $BaseName # Split your input fasta in 500 genes files
+        for File in $(ls $SplitDir/*_final_preds_*); do
+        #sbatch $ProgDir/pred_signalP.sh $File signalp
+        #sbatch $ProgDir/pred_signalP.sh $File signalp-3.0 # Recommended for oomycetes
+        sbatch $ProgDir/pred_signalP.sh $File signalp-4.1 # Recommended for fungi
+        #sbatch $ProgDir/pred_signalP.sh $File signalp-5.0
+        done
+      done
+    done
+
+Change output directory name to "final_genes_signalp-4.1"
+  mv gene_pred/F.oxysporum_fsp_fragariae_signalp-4.1 gene_pred/final_genes_signalp-4.1
+
+Need to combine the output of the first signal-P run
+
+  for Strain in DSA14_003; do
+   for SplitDir in $(ls -d gene_pred/final_genes_split/F.oxysporum_fsp_fragariae/$Strain/flye); do
+    Strain=$(echo $SplitDir | rev |cut -d '/' -f2 | rev)
+    Organism=$(echo $SplitDir | rev |cut -d '/' -f3 | rev)
+    InStringAA=''
+    InStringNeg=''
+    InStringTab=''
+    InStringTxt=''
+    SigpDir=final_genes_signalp-4.1
+    for GRP in $(ls -l $SplitDir/*_final_preds_*.fa | rev | cut -d '_' -f1 | rev | sort -n); do
+      InStringAA="$InStringAA gene_pred/$SigpDir/$Organism/$Strain/"$Organism"_"$Strain"_final_preds_$GRP""_sp.aa";
+      InStringNeg="$InStringNeg gene_pred/$SigpDir/$Organism/$Strain/"$Organism"_"$Strain"_final_preds_$GRP""_sp_neg.aa";
+      InStringTab="$InStringTab gene_pred/$SigpDir/$Organism/$Strain/"$Organism"_"$Strain"_final_preds_$GRP""_sp.tab";
+      InStringTxt="$InStringTxt gene_pred/$SigpDir/$Organism/$Strain/"$Organism"_"$Strain"_final_preds_$GRP""_sp.txt";
+    done
+    cat $InStringAA > gene_pred/$SigpDir/$Organism/$Strain/"$Strain"_final_sp.aa
+    cat $InStringNeg > gene_pred/$SigpDir/$Organism/$Strain/"$Strain"_final_neg_sp.aa
+    tail -n +2 -q $InStringTab > gene_pred/$SigpDir/$Organism/$Strain/"$Strain"_final_sp.tab
+    cat $InStringTxt > gene_pred/$SigpDir/$Organism/$Strain/"$Strain"_final_sp.txt
+   done
+  done
+
+Having flye in directory path caused small issues therefore I stopped including it from here
+Things may be in the wrong directory - use "mv" command to change directory names
+
+## 4) TMHMM step
+Identifies transmembrane proteins
+Added strain name
+Add paths to .profile
+  PATH=${PATH}:/data/scratch/gomeza/prog/tmhmm-2.0c/bin
+
+  . ~/.profile # Refresh your profile
+
+for Strain in DSA14_003; do
+	for Proteome in $(ls gene_pred/codingquary/F.oxysporum_fsp_fragariae/DSA14_003/flye/final/final_genes_combined.pep.fasta); do
+		Strain=$(echo $Proteome | rev | cut -f4 -d '/' | rev)
+		Organism=$(echo $Proteome | rev | cut -f5 -d '/' | rev)
+		ProgDir=/home/akinya/git_repos/fusarium_ex_strawberry/ProgScripts/Feature_annotation
+		sbatch $ProgDir/TMHMM.sh $Proteome
+	done
+done
+
+Proteins with transmembrane domains were removed from lists of Signal peptide containing proteins
+
+    for File in $(ls gene_pred/trans_mem/F.oxysporum_fsp_fragariae/DSA14_003/*_TM_genes_neg.txt); do
+    Strain=$(echo $File | rev | cut -f2 -d '/' | rev)
+    Organism=$(echo $File | rev | cut -f3 -d '/' | rev)
+    echo "$Organism - $Strain"
+    TmHeaders=$(echo "$File" | sed 's/neg.txt/neg_headers.txt/g')
+    cat $File | cut -f1 > $TmHeaders
+    SigP=$(ls gene_pred/final_genes_signalp-4.1/$Organism/$Strain/*_final_sp.aa)
+    OutDir=$(dirname $SigP)
+    ProgDir=/home/gomeza/git_repos/scripts/bioinformatics_tools/Feature_annotation
+    $ProgDir/extract_from_fasta.py --fasta $SigP --headers $TmHeaders > $OutDir/"$Strain"_final_sp_no_trans_mem.aa
+    cat $OutDir/"$Strain"_final_sp_no_trans_mem.aa | grep '>' | wc -l
+    done
+
+1525 proteins had transmembrane domains
+
+## 5) EffectorP - Effector identification
+
+Add path to .profile PATH=${PATH}:/scratch/software/EffectorP-2.0/Scripts
+Use full paths to scripts - EffectorP is extremely picky with inputs
+  # Make directory first
+  mkdir -p analysis/effectorP/$Organism/$Strain/flye
+Note down your paths
+  Basename="$Organism"_"$Strain"_EffectorP
+  Proteome=$(ls -d gene_pred/codingquary/F.oxysporum_fsp_fragariae/DSA14_003/flye/final/final_genes_appended_renamed.pep.fasta)
+  OutDir=analysis/effectorP/F.oxysporum_fsp_fragariae/DSA14_003/flye
+  EffectorP.py -o analysis/effectorP/F.oxysporum_fsp_fragariae/DSA14_003/flye/F.oxysporum_fsp_fragariae_DSA14_003_EffectorP.txt -E analysis/effectorP/F.oxysporum_fsp_fragariae/DSA14_003/flye/F.oxysporum_fsp_fragariae_DSA14_003_EffectorP.fa -i gene_pred/codingquary/F.oxysporum_fsp_fragariae/DSA14_003/flye/final/final_genes_appended_renamed.pep.fasta
+
+### EffectorP - phase 2
+  for File in $(ls analysis/effectorP/F.oxysporum_fsp_fragariae/DSA14_003/flye/F.oxysporum_fsp_fragariae_DSA14_003_EffectorP.txt); do
+    Strain=$(echo $File | rev | cut -f3 -d '/' | rev)
+    Organism=$(echo $File | rev | cut -f4 -d '/' | rev)
+    echo "$Organism - $Strain"
+    Headers=$(echo "$File" | sed 's/_EffectorP.txt/_EffectorP_headers.txt/g')
+    cat $File | grep 'Effector' | cut -f1 > $Headers
+    Secretome=$(ls gene_pred/final_genes_signalp-4.1/F.oxysporum_fsp_fragariae/DSA14_003/DSA14_003_final_sp_no_trans_mem.aa)
+    OutFile=$(echo "$File" | sed 's/_EffectorP.txt/_EffectorP_secreted.aa/g')
+    ProgDir=/home/gomeza/git_repos/scripts/bioinformatics_tools/Feature_annotation
+    $ProgDir/extract_from_fasta.py --fasta $Secretome --headers $Headers > $OutFile
+    OutFileHeaders=$(echo "$File" | sed 's/_EffectorP.txt/_EffectorP_secreted_headers.txt/g')
+    cat $OutFile | grep '>' | tr -d '>' > $OutFileHeaders
+    cat $OutFileHeaders | wc -l
+    Gff=$(ls gene_pred/codingquary/F.oxysporum_fsp_fragariae/DSA14_003/flye/final/final_genes_appended_renamed.gff3)
+    EffectorP_Gff=$(echo "$File" | sed 's/_EffectorP.txt/_EffectorP_secreted.gff/g')
+    $ProgDir/extract_gff_for_sigP_hits.pl $OutFileHeaders $Gff effectorP ID > $EffectorP_Gff
+    cat $EffectorP_Gff | grep -w 'gene' | wc -l
+  done > tmp.txt
+
+  nano tmp.txt - should state Org, Strain and Numbers
+
+
+## 6) Mimp analysis
+Miniature IMPala elements are short autonomous class II  transposable elements and can be used to identify candidate effectors
+Run in conda env (Repenv)
+
+  for Assembly in $(ls repeat_masked/F.oxysporum_fsp_fragariae/DSA14_003/flye/ncbi_edits_repmask/DSA14_003_contigs_unmasked.fa); do
+      Organism=$(echo "$Assembly" | rev | cut -d '/' -f5 | rev)
+      Strain=$(echo "$Assembly" | rev | cut -d '/' -f4 | rev)
+      GeneGff=$(ls gene_pred/codingquary/F.oxysporum_fsp_fragariae/DSA14_003/flye/final/final_genes_appended_renamed.gff3)
+      OutDir=analysis/mimps/$Organism/$Strain
+      mkdir -p "$OutDir"
+      echo "$Organism - $Strain"
+      ProgDir=/home/gomeza/git_repos/scripts/bioinformatics_tools/Feature_annotation
+      $ProgDir/mimp_finder.pl $Assembly $OutDir/"$Strain"_mimps.fa $OutDir/"$Strain"_mimps.gff > $OutDir/"$Strain"_mimps.log
+      $ProgDir/gffexpander.pl +- 2000 $OutDir/"$Strain"_mimps.gff > $OutDir/"$Strain"_mimps_exp.gff
+      echo "The number of mimps identified:"
+      cat $OutDir/"$Strain"_mimps.fa | grep '>' | wc -l
+      bedtools intersect -u -a $GeneGff -b $OutDir/"$Strain"_mimps_exp.gff > $OutDir/"$Strain"_genes_in_2kb_mimp.gff
+      echo "The following transcripts intersect mimps:"
+      MimpProtsTxt=$OutDir/"$Strain"_prots_in_2kb_mimp.txt
+      MimpGenesTxt=$OutDir/"$Strain"_genes_in_2kb_mimp.txt
+      cat $OutDir/"$Strain"_genes_in_2kb_mimp.gff | grep -w 'mRNA' | cut -f9 | cut -f1 -d';' | cut -f2 -d'=' | sort | uniq > $MimpProtsTxt
+      cat $OutDir/"$Strain"_genes_in_2kb_mimp.gff | grep -w 'mRNA' | cut -f9 | cut -f1 -d';' | cut -f2 -d'=' | cut -f1 -d '.'| sort | uniq > $MimpGenesTxt
+      cat $MimpProtsTxt | wc -l
+      cat $MimpGenesTxt | wc -l
+      echo ""
+    done
+
+The number of mimps identified:
+74
+The following transcripts intersect mimps:
+53
+53
+
+## 7) Cazy
+
+CAZY analysis - program for searching and analyzing carbohydrate-active enzymes in a newly sequenced organism using CAZy database
+"sub_hmmscan.sh" was edited and updated to "hmmscan.sh"
+make sure your directories are all correct
+
+    for Strain in DSA14_003; do
+    for Proteome in $(ls gene_pred/codingquary/F.oxysporum_fsp_fragariae/$Strain/flye/final/final_genes_combined.pep.fasta); do
+    Strain=$(echo $Proteome | rev | cut -f4 -d '/' | rev)
+    Organism=$(echo $Proteome | rev | cut -f5 -d '/' | rev)
+    echo "$Organism - $Strain"
+    OutDir=gene_pred/CAZY/$Organism/$Strain
+    mkdir -p $OutDir
+    Prefix="$Strain"_CAZY
+    CazyHmm=../../dbCAN/dbCAN-fam-HMMs.txt
+    ProgDir=/home/akinya/git_repos/fusarium_ex_strawberry/ProgScripts/Feature_annotation
+    sbatch $ProgDir/hmmscan.sh $CazyHmm $Proteome $Prefix $OutDir
+    done
+    done
+
+### CAZy phase 2
+
+Run line by line
+Creates a file with CAZy module and gene
+
+    for File in $(ls gene_pred/CAZY/F.oxysporum_fsp_fragariae/DSA14_003/DSA14_003_CAZY.out.dm); do
+      Strain=$(echo $File | rev | cut -f2 -d '/' | rev)
+      Organism=$(echo $File | rev | cut -f3 -d '/' | rev)
+      OutDir=$(dirname $File)
+      echo "$Organism - $Strain"
+      ProgDir=../../dbCAN
+      $ProgDir/hmmscan-parser.sh $OutDir/"$Strain"_CAZY.out.dm > $OutDir/"$Strain"_CAZY.out.dm.ps
+      CazyHeaders=$(echo $File | sed 's/.out.dm/_headers.txt/g')
+      cat $OutDir/"$Strain"_CAZY.out.dm.ps | cut -f3 | sort | uniq > $CazyHeaders # Extract gene names
+      echo "Number of CAZY genes identified:"
+      cat $CazyHeaders | wc -l
+      Gff=$(ls gene_pred/codingquary/F.oxysporum_fsp_fragariae/DSA14_003/flye/final/final_genes_appended_renamed.gff3)
+      CazyGff=$OutDir/"$Strain"_CAZY.gff
+      ProgDir=/home/gomeza/git_repos/scripts/bioinformatics_tools/Feature_annotation
+      $ProgDir/extract_gff_for_sigP_hits.pl $CazyHeaders $Gff CAZyme ID > $CazyGff # Creates a gff for all CAZymes
+      SecretedProts=$(ls gene_pred/final_genes_signalp-4.1/F.oxysporum_fsp_fragariae/DSA14_003/DSA14_003_final_sp_no_trans_mem.aa)
+      SecretedHeaders=$(echo $SecretedProts | sed 's/.aa/_headers.txt/g')
+      cat $SecretedProts | grep '>' | tr -d '>' > $SecretedHeaders
+      CazyGffSecreted=$OutDir/"$Strain"_CAZY_secreted.gff
+      $ProgDir/extract_gff_for_sigP_hits.pl $SecretedHeaders $CazyGff Secreted_CAZyme ID > $CazyGffSecreted # Creates a gff for secreted CAZymes
+      echo "Number of Secreted CAZY genes identified:"
+      cat $CazyGffSecreted | grep -w 'gene' | cut -f9 | tr -d 'ID=' | wc -l
+      done
+
+Number of CAZY genes identified:
+936
+Number of Secreted CAZY genes identified:
+397
+
+## 8) Antismash
+
+Antismash was run to identify clusters of secondary metabolite genes within the genome. Antismash was run using the webserver at: http://antismash.secondarymetabolites.org.
+Use you polished unmasked contig genome as the genome input and the complementary "final_genes_appended_renamed.gff3" for the gene input.
+Download antiSMASH results
+
+    mkdir -p gene_pred/antiSMASH/F.oxysporum/DSA14_003/
+    cd # to new directory
+    wget download.link.com/results.zip # not actual result file
+    #Then unzip file
+    unzip results.zip
+
+Results of web-annotation of gene clusters within the assembly were downloaded to the following directories
+Run in conda env ( e.g. Repenv)
+Run line by line
+
+    for AntiSmash in $(ls -d gene_pred/antiSMASH/F.oxysporum_fsp_fragariae/DSA14_003/DSA14_003_contigs_unmasked.gbk); do
+      Organism=$(echo $AntiSmash | rev | cut -f3 -d '/' | rev)
+      Strain=$(echo $AntiSmash | rev | cut -f2 -d '/' | rev)
+      echo "$Organism - $Strain"
+      OutDir=analysis/secondary_metabolites/antismash/$Organism/$Strain
+      Prefix=$OutDir/"$Strain"_antismash_results
+      ProgDir=/home/gomeza/git_repos/scripts/bioinformatics_tools/Feature_annotation
+      # Antismash v5 output to gff file
+      $ProgDir/antismash2gffv5.py --inp_antismash $AntiSmash --out_prefix $Prefix
+      #$ProgDir/antismash2gff.py --inp_antismash $AntiSmash --out_prefix $Prefix # Use only for antismash v4.2 output
+      printf "Number of secondary metabolite detected:\t"
+      cat "$Prefix"_secmet_clusters.gff | wc -l
+      GeneGff=gene_pred/codingquary/F.oxysporum_fsp_fragariae/DSA14_003/flye/final/final_genes_appended_renamed.gff3
+      bedtools intersect -u -a $GeneGff -b "$Prefix"_secmet_clusters.gff > "$Prefix"_secmet_genes.gff
+      cat "$Prefix"_secmet_genes.gff | grep -w 'mRNA' | cut -f9 | cut -f2 -d '=' | cut -f1 -d ';' > "$Prefix"_secmet_genes.txt
+      bedtools intersect -wo -a $GeneGff -b "$Prefix"_secmet_clusters.gff | grep 'mRNA' | cut -f9,10,12,18 | sed "s/ID=//g" | perl -p -e "s/;Parent=g\w+//g" | perl -p -e "s/;Notes=.*//g" > "$Prefix"_secmet_genes.tsv
+      printf "Number of predicted proteins in secondary metabolite clusters:\t"
+      cat analysis/secondary_metabolites/antismash/F.oxysporum_fsp_fragariae/DSA14_003/*_secmet_genes.txt | wc -l     
+      printf "Number of predicted genes in secondary metabolite clusters:\t"
+      cat "$Prefix"_secmet_genes.gff | grep -w 'gene' | wc -l
+    done
+
+Results
+  Number of secondary metabolite detected:        57
+  Number of predicted proteins in secondary metabolite clusters:  1412
+  Number of predicted genes in secondary metabolite clusters:     704
+
+Antismash output correction. Some gene names contain ;. Remove manually with the following command.
+First sed command removes ;. Second and Third remove the cluster kind information (optional)
+  cat analysis/secondary_metabolites/antismash/F.oxysporum_fsp_fragariae/DSA14_003/DSA14_003_antismash_results_secmet_genes.tsv | sed 's/;//p' | sed 's/;.*//p' | sed 's/Kin.*//p' > analysis/secondary_metabolites/antismash/F.oxysporum_fsp_fragariae/DSA14_003/DSA14_003_antismash_results_secmet_genes_corrected.tsv
+Edit output file names from this script after completion
