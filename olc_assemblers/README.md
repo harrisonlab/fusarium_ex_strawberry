@@ -961,7 +961,7 @@ done
 
 Proteins with transmembrane domains were removed from lists of Signal peptide containing proteins
 
-    for File in $(ls gene_pred/trans_mem/F.oxysporum_fsp_fragariae/DSA14_003/*_TM_genes_neg.txt); do
+    for File in $(ls gene_pred/trans_mem/F.oxysporum_fsp_lactucae/race_1/*_TM_genes_neg.txt); do
     Strain=$(echo $File | rev | cut -f2 -d '/' | rev)
     Organism=$(echo $File | rev | cut -f3 -d '/' | rev)
     echo "$Organism - $Strain"
@@ -974,7 +974,7 @@ Proteins with transmembrane domains were removed from lists of Signal peptide co
     cat $OutDir/"$Strain"_final_sp_no_trans_mem.aa | grep '>' | wc -l
     done
 
-1525 proteins had transmembrane domains
+1544 proteins had transmembrane domains
 
 ## 5) EffectorP - Effector identification
 
@@ -984,41 +984,41 @@ Use full paths to scripts - EffectorP is extremely picky with inputs
   mkdir -p analysis/effectorP/$Organism/$Strain/flye
 Note down your paths
   Basename="$Organism"_"$Strain"_EffectorP
-  Proteome=$(ls -d gene_pred/codingquary/F.oxysporum_fsp_fragariae/DSA14_003/flye/final/final_genes_appended_renamed.pep.fasta)
-  OutDir=analysis/effectorP/F.oxysporum_fsp_fragariae/DSA14_003/flye
-  EffectorP.py -o analysis/effectorP/F.oxysporum_fsp_fragariae/DSA14_003/flye/F.oxysporum_fsp_fragariae_DSA14_003_EffectorP.txt -E analysis/effectorP/F.oxysporum_fsp_fragariae/DSA14_003/flye/F.oxysporum_fsp_fragariae_DSA14_003_EffectorP.fa -i gene_pred/codingquary/F.oxysporum_fsp_fragariae/DSA14_003/flye/final/final_genes_appended_renamed.pep.fasta
+  Proteome=$(ls -d gene_pred/codingquary/F.oxysporum_fsp_lactucae/race_1/final/final_genes_appended_renamed.pep.fasta)
+  OutDir=analysis/effectorP/F.oxysporum_fsp_lactucae/race_1/flye
+  EffectorP.py -o analysis/effectorP/F.oxysporum_fsp_lactucae/race_1/flye/F.oxysporum_fsp_lactucae_race_1_EffectorP.txt -E analysis/effectorP/F.oxysporum_fsp_lactucae/race_1/flye/F.oxysporum_fsp_lactucae_race_1_EffectorP.fa -i gene_pred/codingquary/F.oxysporum_fsp_lactucae/race_1/final/final_genes_appended_renamed.pep.fasta
 
 ### EffectorP - phase 2
-  for File in $(ls analysis/effectorP/F.oxysporum_fsp_fragariae/DSA14_003/flye/F.oxysporum_fsp_fragariae_DSA14_003_EffectorP.txt); do
+  for File in $(ls analysis/effectorP/F.oxysporum_fsp_lactucae/race_1/flye/F.oxysporum_fsp_lactucae_race_1_EffectorP.txt); do
     Strain=$(echo $File | rev | cut -f3 -d '/' | rev)
     Organism=$(echo $File | rev | cut -f4 -d '/' | rev)
     echo "$Organism - $Strain"
     Headers=$(echo "$File" | sed 's/_EffectorP.txt/_EffectorP_headers.txt/g')
     cat $File | grep 'Effector' | cut -f1 > $Headers
-    Secretome=$(ls gene_pred/final_genes_signalp-4.1/F.oxysporum_fsp_fragariae/DSA14_003/DSA14_003_final_sp_no_trans_mem.aa)
+    Secretome=$(ls gene_pred/final_genes_signalp-4.1/F.oxysporum_fsp_lactucae/race_1/race_1_final_sp_no_trans_mem.aa)
     OutFile=$(echo "$File" | sed 's/_EffectorP.txt/_EffectorP_secreted.aa/g')
     ProgDir=/home/gomeza/git_repos/scripts/bioinformatics_tools/Feature_annotation
     $ProgDir/extract_from_fasta.py --fasta $Secretome --headers $Headers > $OutFile
     OutFileHeaders=$(echo "$File" | sed 's/_EffectorP.txt/_EffectorP_secreted_headers.txt/g')
     cat $OutFile | grep '>' | tr -d '>' > $OutFileHeaders
     cat $OutFileHeaders | wc -l
-    Gff=$(ls gene_pred/codingquary/F.oxysporum_fsp_fragariae/DSA14_003/flye/final/final_genes_appended_renamed.gff3)
+    Gff=$(ls gene_pred/codingquary/F.oxysporum_fsp_lactucae/race_1/final/final_genes_appended_renamed.gff3)
     EffectorP_Gff=$(echo "$File" | sed 's/_EffectorP.txt/_EffectorP_secreted.gff/g')
     $ProgDir/extract_gff_for_sigP_hits.pl $OutFileHeaders $Gff effectorP ID > $EffectorP_Gff
     cat $EffectorP_Gff | grep -w 'gene' | wc -l
   done > tmp.txt
 
   nano tmp.txt - should state Org, Strain and Numbers
-
+169
 
 ## 6) Mimp analysis
 Miniature IMPala elements are short autonomous class II  transposable elements and can be used to identify candidate effectors
 Run in conda env (Repenv)
 
-  for Assembly in $(ls repeat_masked/F.oxysporum_fsp_fragariae/DSA14_003/flye/ncbi_edits_repmask/DSA14_003_contigs_unmasked.fa); do
+  for Assembly in $(ls repeat_masked/F.oxysporum_fsp_lactucae/race_1/flye/ncbi_edits_repmask/race_1_contigs_unmasked.fa); do
       Organism=$(echo "$Assembly" | rev | cut -d '/' -f5 | rev)
       Strain=$(echo "$Assembly" | rev | cut -d '/' -f4 | rev)
-      GeneGff=$(ls gene_pred/codingquary/F.oxysporum_fsp_fragariae/DSA14_003/flye/final/final_genes_appended_renamed.gff3)
+      GeneGff=$(ls gene_pred/codingquary/F.oxysporum_fsp_lactucae/race_1/final/final_genes_appended_renamed.gff3)
       OutDir=analysis/mimps/$Organism/$Strain
       mkdir -p "$OutDir"
       echo "$Organism - $Strain"
@@ -1039,10 +1039,10 @@ Run in conda env (Repenv)
     done
 
 The number of mimps identified:
-74
+211
 The following transcripts intersect mimps:
-53
-53
+175
+175
 
 ## 7) Cazy
 
@@ -1050,15 +1050,15 @@ CAZY analysis - program for searching and analyzing carbohydrate-active enzymes 
 "sub_hmmscan.sh" was edited and updated to "hmmscan.sh"
 make sure your directories are all correct
 
-    for Strain in DSA14_003; do
-    for Proteome in $(ls gene_pred/codingquary/F.oxysporum_fsp_fragariae/$Strain/flye/final/final_genes_combined.pep.fasta); do
-    Strain=$(echo $Proteome | rev | cut -f4 -d '/' | rev)
-    Organism=$(echo $Proteome | rev | cut -f5 -d '/' | rev)
+    for Strain in race_1; do
+    for Proteome in $(ls gene_pred/codingquary/F.oxysporum_fsp_lactucae/$Strain/final/final_genes_combined.pep.fasta); do
+    Strain=$(echo $Proteome | rev | cut -f3 -d '/' | rev)
+    Organism=$(echo $Proteome | rev | cut -f4 -d '/' | rev)
     echo "$Organism - $Strain"
     OutDir=gene_pred/CAZY/$Organism/$Strain
     mkdir -p $OutDir
     Prefix="$Strain"_CAZY
-    CazyHmm=../../dbCAN/dbCAN-fam-HMMs.txt
+    CazyHmm=../dbCAN/dbCAN-fam-HMMs.txt
     ProgDir=/home/akinya/git_repos/fusarium_ex_strawberry/ProgScripts/Feature_annotation
     sbatch $ProgDir/hmmscan.sh $CazyHmm $Proteome $Prefix $OutDir
     done
@@ -1069,22 +1069,22 @@ make sure your directories are all correct
 Run line by line
 Creates a file with CAZy module and gene
 
-    for File in $(ls gene_pred/CAZY/F.oxysporum_fsp_fragariae/DSA14_003/DSA14_003_CAZY.out.dm); do
+    for File in $(ls gene_pred/CAZY/F.oxysporum_fsp_lactucae/race_1/race_1_CAZY.out.dm); do
       Strain=$(echo $File | rev | cut -f2 -d '/' | rev)
       Organism=$(echo $File | rev | cut -f3 -d '/' | rev)
       OutDir=$(dirname $File)
       echo "$Organism - $Strain"
-      ProgDir=../../dbCAN
+      ProgDir=../dbCAN
       $ProgDir/hmmscan-parser.sh $OutDir/"$Strain"_CAZY.out.dm > $OutDir/"$Strain"_CAZY.out.dm.ps
       CazyHeaders=$(echo $File | sed 's/.out.dm/_headers.txt/g')
       cat $OutDir/"$Strain"_CAZY.out.dm.ps | cut -f3 | sort | uniq > $CazyHeaders # Extract gene names
       echo "Number of CAZY genes identified:"
       cat $CazyHeaders | wc -l
-      Gff=$(ls gene_pred/codingquary/F.oxysporum_fsp_fragariae/DSA14_003/flye/final/final_genes_appended_renamed.gff3)
+      Gff=$(ls gene_pred/codingquary/F.oxysporum_fsp_lactucae/race_1/final/final_genes_appended_renamed.gff3)
       CazyGff=$OutDir/"$Strain"_CAZY.gff
       ProgDir=/home/gomeza/git_repos/scripts/bioinformatics_tools/Feature_annotation
       $ProgDir/extract_gff_for_sigP_hits.pl $CazyHeaders $Gff CAZyme ID > $CazyGff # Creates a gff for all CAZymes
-      SecretedProts=$(ls gene_pred/final_genes_signalp-4.1/F.oxysporum_fsp_fragariae/DSA14_003/DSA14_003_final_sp_no_trans_mem.aa)
+      SecretedProts=$(ls gene_pred/final_genes_signalp-4.1/F.oxysporum_fsp_lactucae/race_1/race_1_final_sp_no_trans_mem.aa)
       SecretedHeaders=$(echo $SecretedProts | sed 's/.aa/_headers.txt/g')
       cat $SecretedProts | grep '>' | tr -d '>' > $SecretedHeaders
       CazyGffSecreted=$OutDir/"$Strain"_CAZY_secreted.gff
@@ -1094,17 +1094,17 @@ Creates a file with CAZy module and gene
       done
 
 Number of CAZY genes identified:
-936
+954
 Number of Secreted CAZY genes identified:
-397
+407
 
 ## 8) Antismash
 
 Antismash was run to identify clusters of secondary metabolite genes within the genome. Antismash was run using the webserver at: http://antismash.secondarymetabolites.org.
-Use you polished unmasked contig genome as the genome input and the complementary "final_genes_appended_renamed.gff3" for the gene input.
+Use you polished unmasked contig genome as the genome input "*_contigs_unmasked.fa" and the complementary "final_genes_appended_renamed.gff3" for the gene input.
 Download antiSMASH results
 
-    mkdir -p gene_pred/antiSMASH/F.oxysporum/DSA14_003/
+    mkdir -p gene_pred/antiSMASH/F.oxysporum_fsp_lactucae/race_1/
     cd # to new directory
     wget download.link.com/results.zip # not actual result file
     #Then unzip file
