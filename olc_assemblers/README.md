@@ -693,7 +693,6 @@ Merge with Braker to give final gene model set
 
 ## Codingquarry
 
-#To be edited - completed
 Run in env with Python 2.7 (betaenv)
 After first run, use cquarryV1
 GFT file from stringtie/cufflinks output
@@ -711,6 +710,8 @@ Antonio /home/gomeza/git_repos/scripts/bioinformatics_tools/Gene_prediction
       sbatch $ProgDir/codingquarry2.sh $Assembly $GTF $OutDir
     done
 
+Takes about 4-6 hours depends on genome size
+
 ## Add gene prediction transcripts together
 
 Additional transcripts - to be edited
@@ -719,13 +720,13 @@ Type full paths, do not use asterisks
 RUN LINE BY LINE AS IT WILL NOT WORK
 Do segments one at a time for peace of mind
 
-    BrakerGff=$(ls -d gene_pred/braker/F.oxysporum_fsp_fragariae/DSA15_041/F.oxysporum_fsp_fragariae_DSA15_041_brakerV2/augustus.gff3)
-    	Strain=$(echo $BrakerGff| rev | cut -d '/' -f3 | rev)
-    	Organism=$(echo $BrakerGff | rev | cut -d '/' -f4 | rev)
+    BrakerGff=$(ls -d gene_pred/braker/F.oxysporum_fsp_lactucae/race_1/flye/F.oxysporum_fsp_lactucae_race_1_braker_flye/augustus.gff3)
+    	Strain=$(echo $BrakerGff| rev | cut -d '/' -f4 | rev)
+    	Organism=$(echo $BrakerGff | rev | cut -d '/' -f5 | rev)
     	echo "$Organism - $Strain"
-    	Assembly=$(ls repeat_masked/F.oxysporum_fsp_fragariae/DSA15_041/ncbi_edits_repmask/DSA15_041_contigs_softmasked_repeatmasker_TPSI_appended.fa)
-    	CodingQuarryGff=gene_pred/codingquary/F.oxysporum_fsp_fragariae/DSA15_041/out/PredictedPass.gff3
-    	PGNGff=gene_pred/codingquary/F.oxysporum_fsp_fragariae/DSA15_041/out/PGN_predictedPass.gff3
+    	Assembly=$(ls repeat_masked/F.oxysporum_fsp_lactucae/race_1/flye/ncbi_edits_repmask/race_1_contigs_softmasked_repeatmasker_TPSI_appended.fa)
+    	CodingQuarryGff=gene_pred/codingquary/F.oxysporum_fsp_lactucae/race_1/flye/out/PredictedPass.gff3
+    	PGNGff=gene_pred/codingquary/F.oxysporum_fsp_lactucae/race_1/flye/out/PGN_predictedPass.gff3
     	AddDir=gene_pred/codingquary/$Organism/$Strain/additional
     	FinalDir=gene_pred/codingquary/$Organism/$Strain/final
     	AddGenesList=$AddDir/additional_genes.txt
@@ -777,32 +778,35 @@ Check the final number of genes
       echo "";
   	done
 
+For flye:
+Braker: 19605 CQ: 1295 combined: 20900
+
 ## Gene renaming
 Run line by line
 Run in conda env (Repenv)
-Remove duplicate and rename genes
 
-    GffAppended=$(ls -d gene_pred/final_genes/F.oxysporum_fsp_cepae/Fus2_canu_new/final/final_genes_appended.gff3)
+    #Remove duplicate and rename genes
+    GffAppended=$(ls -d gene_pred/codingquary/F.oxysporum_fsp_lactucae/race_1/final/final_genes_appended.gff3)
     Strain=$(echo $GffAppended | rev | cut -d '/' -f3 | rev)
     Organism=$(echo $GffAppended | rev | cut -d '/' -f4 | rev)
     echo "$Organism - $Strain"
-    FinalDir=gene_pred/final_genes/F.oxysporum_fsp_cepae/Fus2_canu_new/final
+    FinalDir=gene_pred/codingquary/F.oxysporum_fsp_lactucae/race_1/final
 
-    Remove duplicated genes
+    #Remove duplicated genes
     GffFiltered=$FinalDir/filtered_duplicates.gff
     ProgDir=/home/gomeza/git_repos/scripts/bioinformatics_tools/Gene_prediction
     $ProgDir/remove_dup_features.py --inp_gff $GffAppended --out_gff $GffFiltered
 
-    Rename genes
+    #Rename genes
     GffRenamed=$FinalDir/final_genes_appended_renamed.gff3
     LogFile=$FinalDir/final_genes_appended_renamed.log
     $ProgDir/gff_rename_genes.py --inp_gff $GffFiltered --conversion_log $LogFile > $GffRenamed
     rm $GffFiltered
 
-    Create renamed fasta files from each gene feature
-    Assembly=$(ls repeat_masked/F.oxysporum_fsp_cepae/Fus2_canu_new/edited_contigs_repmask/Fus2_canu_contigs_softmasked_repeatmasker_TPSI_appended.fa)
+    #Create renamed fasta files from each gene feature
+    Assembly=$(ls repeat_masked/F.oxysporum_fsp_lactucae/race_1/flye/ncbi_edits_repmask/race_1_contigs_softmasked_repeatmasker_TPSI_appended.fa)
     $ProgDir/gff2fasta.pl $Assembly $GffRenamed $FinalDir/final_genes_appended_renamed
-    The proteins fasta file contains * instead of Xs for stop codons, these should be changed
+    #The proteins fasta file contains * instead of Xs for stop codons, these should be changed
     sed -i 's/\*/X/g' $FinalDir/final_genes_appended_renamed.pep.fasta
 
     view gene names
@@ -814,7 +818,7 @@ Remove duplicate and rename genes
 ## 1) Interproscan
 
     ProgDir=/home/gomeza/git_repos/scripts/bioinformatics_tools/Feature_annotation
-      for Genes in $(ls gene_pred/codingquary/F.oxysporum_fsp_fragariae/DSA14_003/flye/final/final_genes_appended_renamed.pep.fasta); do
+      for Genes in $(ls gene_pred/codingquary/F.oxysporum_fsp_lactucae/race_1/final/final_genes_appended_renamed.pep.fasta); do
         echo $Genes
         $ProgDir/interproscan.sh $Genes
       done 2>&1 | tee -a interproscan_submission.log
@@ -823,26 +827,26 @@ Interproscan: all jobs failed - couldn't run all jobs simultaneously
 ERROR: uk.ac.ebi.interpro.scan.management.model.implementations.RunBinaryStep - Command line failed with exit code: 1
 Need to run in batches - Had to run split DNA in sets of 10.
 Split gene.pep.fasta like so:
-  InFile=gene_pred/codingquary/F.oxysporum_fsp_fragariae/DSA14_003/flye/final/final_genes_appended_renamed.pep.fasta
+  InFile=gene_pred/codingquary/F.oxysporum_fsp_lactucae/race_1/final/final_genes_appended_renamed.pep.fasta
   SplitDir=gene_pred/interproscan/$Organism/$Strain/flye
   InterproDir=/home/gomeza/git_repos/scripts/bioinformatics_tools/Feature_annotation
   InName=$(basename $InFile)
   mkdir -p $SplitDir
   $InterproDir/splitfile_500.py --inp_fasta $InFile --out_dir $SplitDir --out_base "$InName"_split
 
-  for file in $(ls gene_pred/interproscan/F.oxysporum_fsp_fragariae/DSA14_003/flye/*_split_9*); do
-    sbatch /home/gomeza/git_repos/scripts/bioinformatics_tools/Feature_annotation/run_interproscan.sh $file
+  for file in $(ls gene_pred/interproscan/F.oxysporum_fsp_lactucae/race_1/flye/*_split_2*); do
+    sbatch /home/akinya/git_repos/fusarium_ex_strawberry/ProgScripts/Feature_annotation/run_interproscan.sh $file
     done
 
 Need to merge interproscan output as follows
 
     ProgDir=/home/akinya/git_repos/fusarium_ex_strawberry/ProgScripts/Feature_annotation
-     for Proteins in $(ls gene_pred/codingquary/F.oxysporum_fsp_fragariae/DSA14_003/flye/final/final_genes_appended_renamed.pep.fasta); do
-       Strain=$(echo $Proteins | rev | cut -d '/' -f4 | rev)
-       Organism=$(echo $Proteins | rev | cut -d '/' -f5 | rev)
+     for Proteins in $(ls gene_pred/codingquary/F.oxysporum_fsp_lactucae/race_1/final/final_genes_appended_renamed.pep.fasta); do
+       Strain=$(echo $Proteins | rev | cut -d '/' -f3 | rev)
+       Organism=$(echo $Proteins | rev | cut -d '/' -f4 | rev)
        echo "$Organism - $Strain"
        echo $Strain
-       InterProRaw=gene_pred/interproscan/F.oxysporum_fsp_fragariae/DSA14_003/flye/raw
+       InterProRaw=gene_pred/interproscan/F.oxysporum_fsp_lactucae/race_1/raw/
        $ProgDir/append_interpro.sh $Proteins $InterProRaw
      done
 
@@ -888,12 +892,12 @@ Signal P script for fungi
 Add your strains name to first line
 Added codingquary to Proteome direc
 
-    for Strain in DSA14_003; do
+    for Strain in race_1; do
       ProgDir=/home/akinya/git_repos/fusarium_ex_strawberry/ProgScripts/Feature_annotation
       CurPath=$PWD
-      for Proteome in $(ls gene_pred/codingquary/F.oxysporum_fsp_fragariae/DSA14_003/flye/final/final_genes_combined.pep.fasta); do
-      Strain=$(echo $Proteome | rev | cut -f4 -d '/' | rev)
-      Organism=$(echo $Proteome | rev | cut -f5 -d '/' | rev)
+      for Proteome in $(ls gene_pred/codingquary/F.oxysporum_fsp_lactucae/race_1/final/final_genes_combined.pep.fasta); do
+      Strain=$(echo $Proteome | rev | cut -f3 -d '/' | rev)
+      Organism=$(echo $Proteome | rev | cut -f4 -d '/' | rev)
       SplitDir=gene_pred/final_genes_split/$Organism/$Strain/flye
       mkdir -p $SplitDir
       BaseName="$Organism""_$Strain"_final_preds
@@ -911,21 +915,22 @@ Change output directory name to "final_genes_signalp-4.1"
   mv gene_pred/F.oxysporum_fsp_fragariae_signalp-4.1 gene_pred/final_genes_signalp-4.1
 
 Need to combine the output of the first signal-P run
+Make sure path to directories is correct!
 
-  for Strain in DSA14_003; do
-   for SplitDir in $(ls -d gene_pred/final_genes_split/F.oxysporum_fsp_fragariae/$Strain/flye); do
-    Strain=$(echo $SplitDir | rev |cut -d '/' -f2 | rev)
-    Organism=$(echo $SplitDir | rev |cut -d '/' -f3 | rev)
+  for Strain in race_1; do
+   for SplitDir in $(ls -d gene_pred/final_genes_split/F.oxysporum_fsp_lactucae/$Strain); do
+    Strain=$(echo $SplitDir | rev |cut -d '/' -f1 | rev)
+    Organism=$(echo $SplitDir | rev |cut -d '/' -f2 | rev)
     InStringAA=''
     InStringNeg=''
     InStringTab=''
     InStringTxt=''
     SigpDir=final_genes_signalp-4.1
     for GRP in $(ls -l $SplitDir/*_final_preds_*.fa | rev | cut -d '_' -f1 | rev | sort -n); do
-      InStringAA="$InStringAA gene_pred/$SigpDir/$Organism/$Strain/"$Organism"_"$Strain"_final_preds_$GRP""_sp.aa";
-      InStringNeg="$InStringNeg gene_pred/$SigpDir/$Organism/$Strain/"$Organism"_"$Strain"_final_preds_$GRP""_sp_neg.aa";
-      InStringTab="$InStringTab gene_pred/$SigpDir/$Organism/$Strain/"$Organism"_"$Strain"_final_preds_$GRP""_sp.tab";
-      InStringTxt="$InStringTxt gene_pred/$SigpDir/$Organism/$Strain/"$Organism"_"$Strain"_final_preds_$GRP""_sp.txt";
+      InStringAA="$InStringAA gene_pred/$SigpDir/$Organism/$Strain/flye/split/"$Organism"_"$Strain"_final_preds_$GRP""_sp.aa";
+      InStringNeg="$InStringNeg gene_pred/$SigpDir/$Organism/$Strain/flye/split/"$Organism"_"$Strain"_final_preds_$GRP""_sp_neg.aa";
+      InStringTab="$InStringTab gene_pred/$SigpDir/$Organism/$Strain/flye/split/"$Organism"_"$Strain"_final_preds_$GRP""_sp.tab";
+      InStringTxt="$InStringTxt gene_pred/$SigpDir/$Organism/$Strain/flye/split/"$Organism"_"$Strain"_final_preds_$GRP""_sp.txt";
     done
     cat $InStringAA > gene_pred/$SigpDir/$Organism/$Strain/"$Strain"_final_sp.aa
     cat $InStringNeg > gene_pred/$SigpDir/$Organism/$Strain/"$Strain"_final_neg_sp.aa
@@ -945,10 +950,10 @@ Add paths to .profile
 
   . ~/.profile # Refresh your profile
 
-for Strain in DSA14_003; do
-	for Proteome in $(ls gene_pred/codingquary/F.oxysporum_fsp_fragariae/DSA14_003/flye/final/final_genes_combined.pep.fasta); do
-		Strain=$(echo $Proteome | rev | cut -f4 -d '/' | rev)
-		Organism=$(echo $Proteome | rev | cut -f5 -d '/' | rev)
+for Strain in race_1; do
+	for Proteome in $(ls gene_pred/codingquary/F.oxysporum_fsp_lactucae/*/final/final_genes_combined.pep.fasta); do
+		Strain=$(echo $Proteome | rev | cut -f3 -d '/' | rev)
+		Organism=$(echo $Proteome | rev | cut -f4 -d '/' | rev)
 		ProgDir=/home/akinya/git_repos/fusarium_ex_strawberry/ProgScripts/Feature_annotation
 		sbatch $ProgDir/TMHMM.sh $Proteome
 	done
