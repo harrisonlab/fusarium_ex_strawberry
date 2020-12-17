@@ -1114,7 +1114,7 @@ Results of web-annotation of gene clusters within the assembly were downloaded t
 Run in conda env ( e.g. Repenv)
 Run line by line
 
-    for AntiSmash in $(ls -d gene_pred/antiSMASH/F.oxysporum_fsp_fragariae/DSA14_003/DSA14_003_contigs_unmasked.gbk); do
+    for AntiSmash in $(ls -d gene_pred/antiSMASH/F.oxysporum_fsp_lactucae/race_1/race_1_contigs_unmasked.gbk); do
       Organism=$(echo $AntiSmash | rev | cut -f3 -d '/' | rev)
       Strain=$(echo $AntiSmash | rev | cut -f2 -d '/' | rev)
       echo "$Organism - $Strain"
@@ -1126,20 +1126,20 @@ Run line by line
       #$ProgDir/antismash2gff.py --inp_antismash $AntiSmash --out_prefix $Prefix # Use only for antismash v4.2 output
       printf "Number of secondary metabolite detected:\t"
       cat "$Prefix"_secmet_clusters.gff | wc -l
-      GeneGff=gene_pred/codingquary/F.oxysporum_fsp_fragariae/DSA14_003/flye/final/final_genes_appended_renamed.gff3
+      GeneGff=gene_pred/codingquary/F.oxysporum_fsp_lactucae/race_1/final/final_genes_appended_renamed.gff3
       bedtools intersect -u -a $GeneGff -b "$Prefix"_secmet_clusters.gff > "$Prefix"_secmet_genes.gff
       cat "$Prefix"_secmet_genes.gff | grep -w 'mRNA' | cut -f9 | cut -f2 -d '=' | cut -f1 -d ';' > "$Prefix"_secmet_genes.txt
       bedtools intersect -wo -a $GeneGff -b "$Prefix"_secmet_clusters.gff | grep 'mRNA' | cut -f9,10,12,18 | sed "s/ID=//g" | perl -p -e "s/;Parent=g\w+//g" | perl -p -e "s/;Notes=.*//g" > "$Prefix"_secmet_genes.tsv
       printf "Number of predicted proteins in secondary metabolite clusters:\t"
-      cat analysis/secondary_metabolites/antismash/F.oxysporum_fsp_fragariae/DSA14_003/*_secmet_genes.txt | wc -l     
+      cat analysis/secondary_metabolites/antismash/$Organism/$Strain/*_secmet_genes.txt | wc -l     
       printf "Number of predicted genes in secondary metabolite clusters:\t"
       cat "$Prefix"_secmet_genes.gff | grep -w 'gene' | wc -l
     done
 
 Results
-  Number of secondary metabolite detected:        57
-  Number of predicted proteins in secondary metabolite clusters:  1412
-  Number of predicted genes in secondary metabolite clusters:     704
+  Number of secondary metabolite detected:        58
+  Number of predicted proteins in secondary metabolite clusters: 663
+  Number of predicted genes in secondary metabolite clusters:     659
 
 Antismash output correction. Some gene names contain ;. Remove manually with the following command.
 First sed command removes ;. Second and Third remove the cluster kind information (optional)
