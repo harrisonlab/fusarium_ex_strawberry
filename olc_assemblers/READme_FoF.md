@@ -775,9 +775,9 @@ Now run swissprot
   Organism=$(echo $Proteome | rev | cut -f5 -d '/' | rev)
   OutDir=gene_pred/swissprot/$Organism/$Strain
   SwissDbDir=../../dbUniprot/swissprot_2020_June
-  SwissDbName=uniprot_sprot
+  SwissDbName=swissprot_vAG
   ProgDir=/home/akinya/git_repos/fusarium_ex_strawberry/ProgScripts/Feature_annotation
-  sbatch $ProgDir/sub_swissprot_akin.sh $Proteome $OutDir $SwissDbDir $SwissDbName
+  sbatch $ProgDir/sub_swissprot.sh $Proteome $OutDir $SwissDbDir $SwissDbName
   done
 
 ## 3) Signal-P
