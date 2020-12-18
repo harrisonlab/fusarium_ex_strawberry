@@ -1,4 +1,5 @@
 #Use to find families in Rep modeler output
+#Identifying TE families on cand LS/PS contig
 
 Sort no. TEs by family and function
     for TEfamily in $(ls repeat_masked/F.oxysporum_fsp_fragariae/DSA14_003/flye/ncbi_edits_repmask/DSA14_003_RepMod-families.stk); do
