@@ -759,6 +759,7 @@ Use this command to view particular features in interproscan data:
 SWISS-PROT is a curated protein sequence database which strives to provide a high level of annotation, a minimal level of redundancy and a high level of integration with other databases.
 No requirements to run Swissprot
 Uniprot databases are downloaded to /projects/dbUniprot
+#if you want to run a script in an specific queue, you can add -p option and the queue when submitting . e.g sbatch -p long $ProgDir/sub_swissprot.sh
 
 Intructions to create a database- do this first will save you a headache
     dbFasta=$(ls /projects/dbUniprot/swissprot_2020_June/uniprot_sprot.fasta)
@@ -1045,3 +1046,61 @@ Antismash output correction. Some gene names contain ;. Remove manually with the
 First sed command removes ;. Second and Third remove the cluster kind information (optional)
   cat analysis/secondary_metabolites/antismash/F.oxysporum_fsp_fragariae/DSA14_003/DSA14_003_antismash_results_secmet_genes.tsv | sed 's/;//p' | sed 's/;.*//p' | sed 's/Kin.*//p' > analysis/secondary_metabolites/antismash/F.oxysporum_fsp_fragariae/DSA14_003/DSA14_003_antismash_results_secmet_genes_corrected.tsv
 Edit output file names from this script after completion
+
+Sort no. metabolites by family and function
+    for Antismash in $(ls analysis/secondary_metabolites/antismash/F.oxysporum_fsp_fragariae/DSA14_003/DSA14_003_antismash_results_secmet_clusters.gff); do
+    	Organism=$(echo $Antismash | rev | cut -f3 -d '/' | rev)
+    	Strain=$(echo $Antismash | rev | cut -f2 -d '/' | rev)
+    	echo "$Organism - $Strain"
+    	cat $Antismash | cut -f3 | sort | uniq -c
+    done
+
+    2 betalactone
+      3 indole
+     12 NRPS
+     11 NRPS-like
+      1 NRPS-like_T1PKS
+      1 NRPS_NRPS-like
+      2 NRPS_T1PKS
+      1 NRPS_T1PKS_indole
+      9 T1PKS
+      1 T1PKS_NRPS
+      1 T3PKS
+     12 terpene
+      1 terpene_T1PKS_NRPS
+
+## Further mimp analysis
+
+Those genes that were predicted as secreted and within 2Kb of a MIMP were identified:
+
+      for File in $(ls analysis/mimps/*/*/*_genes_in_2kb_mimp.txt); do
+      Strain=$(echo $File | rev | cut -f2 -d '/' | rev )
+      Organism=$(echo $File | rev | cut -f3 -d '/' | rev)
+      echo "$Organism - $Strain"
+      ProtsFile=$(echo $File | sed 's/genes/prots/g')
+      Secretome=$(ls gene_pred/final_genes_signalp-4.1/$Organism/$Strain/*_final_sp_no_trans_mem.aa)
+      OutFile=$(echo "$File" | sed 's/.gff/_secreted.gff/g')
+      SecretedHeaders=$(echo "$Secretome" | sed 's/.aa/_headers.txt/g')
+      cat $Secretome | grep '>' | tr -d '>' | sed 's/-p.//g' > $SecretedHeaders
+      cat $ProtsFile $SecretedHeaders | cut -f1 | sort | uniq -d | wc -l
+      cat $SecretedHeaders | cut -f1 | cut -f1 -d '.' | sort | uniq | grep -f $File | wc -l
+      # ProgDir=/home/armita/git_repos/emr_repos/tools/gene_prediction/ORF_finder
+      # $ProgDir/extract_gff_for_sigP_hits.pl $SecretedHeaders $File secreted_mimp ID > $OutFile
+      # cat $OutFile | grep -w 'mRNA' | wc -l
+      done
+
+F.oxysporum_fsp_fragariae - DSA14_003
+3
+
+## Further blast analysis
+Run in betaenv as python prograamme runs on V2.7
+
+  for BlastHits in $(ls Orthology/flye/blastn/F.oxysporum_fsp_fragariae/*/*/*.fasta_homologs.csv); do
+  Strain=$(echo $BlastHits | rev | cut -f3 -d '/' | rev)
+  Organism=$(echo $BlastHits | rev | cut -f4 -d '/' | rev)
+  ProgDir=/projects/oldhome/armita/git_repos/emr_repos/tools/pathogen/blast
+  HitsGff=$(echo $BlastHits | sed  's/.csv/.gff/g')
+  Column2=SIX_homolog
+  NumHits=12 # try varying no hits
+  $ProgDir/blast2gff.pl $Column2 $NumHits $BlastHits > $HitsGff
+  done

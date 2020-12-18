@@ -868,11 +868,11 @@ Intructions to create a database- do this first will save you a headache
 
 Now run swissprot
 
-  for Proteome in $(ls gene_pred/codingquary/F.oxysporum_fsp_fragariae/DSA14_003/flye/final/final_genes_appended_renamed.pep.fasta); do
+  for Proteome in $(ls gene_pred/codingquary/F.oxysporum_fsp_lactucae/race_1/flye/final/final_genes_appended_renamed.pep.fasta); do
   Strain=$(echo $Proteome | rev | cut -f4 -d '/' | rev)
   Organism=$(echo $Proteome | rev | cut -f5 -d '/' | rev)
   OutDir=gene_pred/swissprot/$Organism/$Strain
-  SwissDbDir=../../dbUniprot/swissprot_2020_June
+  SwissDbDir=../dbUniprot/swissprot_2020_June
   SwissDbName=uniprot_sprot
   ProgDir=/home/akinya/git_repos/fusarium_ex_strawberry/ProgScripts/Feature_annotation
   sbatch $ProgDir/sub_swissprot_akin.sh $Proteome $OutDir $SwissDbDir $SwissDbName
@@ -1145,3 +1145,70 @@ Antismash output correction. Some gene names contain ;. Remove manually with the
 First sed command removes ;. Second and Third remove the cluster kind information (optional)
   cat analysis/secondary_metabolites/antismash/F.oxysporum_fsp_fragariae/DSA14_003/DSA14_003_antismash_results_secmet_genes.tsv | sed 's/;//p' | sed 's/;.*//p' | sed 's/Kin.*//p' > analysis/secondary_metabolites/antismash/F.oxysporum_fsp_fragariae/DSA14_003/DSA14_003_antismash_results_secmet_genes_corrected.tsv
 Edit output file names from this script after completion
+
+Sort no. metabolites by family and function
+    for Antismash in $(ls analysis/secondary_metabolites/antismash/F.oxysporum_fsp_lactucae/race_1/race_1_antismash_results_secmet_clusters.gff); do
+    	Organism=$(echo $Antismash | rev | cut -f3 -d '/' | rev)
+    	Strain=$(echo $Antismash | rev | cut -f2 -d '/' | rev)
+    	echo "$Organism - $Strain"
+    	cat $Antismash | cut -f3 | sort | uniq -c
+    done
+
+    2 betalactone
+      1 CDPS
+      5 indole
+      1 indole_NRPS_T1PKS
+      9 NRPS
+      1 NRPS_indole
+     10 NRPS-like
+      1 NRPS-like_NRPS
+      2 NRPS_T1PKS
+      9 T1PKS
+      1 T1PKS_indole
+      1 T1PKS_NRPS
+      1 T1PKS_NRPS-like
+      2 T3PKS
+      1 T3PKS_T1PKS
+     10 terpene
+      1 terpene_T1PKS_NRPS
+
+## Further mimp analysis
+
+Those genes that were predicted as secreted and within 2Kb of a MIMP were identified:
+
+for File in $(ls analysis/mimps/*/*/*_genes_in_2kb_mimp.txt); do
+Strain=$(echo $File | rev | cut -f2 -d '/' | rev )
+Organism=$(echo $File | rev | cut -f3 -d '/' | rev)
+echo "$Organism - $Strain"
+ProtsFile=$(echo $File | sed 's/genes/prots/g')
+Secretome=$(ls gene_pred/final_genes_signalp-4.1/$Organism/$Strain/*_final_sp_no_trans_mem.aa)
+OutFile=$(echo "$File" | sed 's/.gff/_secreted.gff/g')
+SecretedHeaders=$(echo "$Secretome" | sed 's/.aa/_headers.txt/g')
+cat $Secretome | grep '>' | tr -d '>' | sed 's/-p.//g' > $SecretedHeaders
+cat $ProtsFile $SecretedHeaders | cut -f1 | sort | uniq -d | wc -l
+cat $SecretedHeaders | cut -f1 | cut -f1 -d '.' | sort | uniq | grep -f $File | wc -l
+# ProgDir=/home/armita/git_repos/emr_repos/tools/gene_prediction/ORF_finder
+# $ProgDir/extract_gff_for_sigP_hits.pl $SecretedHeaders $File secreted_mimp ID > $OutFile
+# cat $OutFile | grep -w 'mRNA' | wc -l
+done
+
+  F.oxysporum_fsp_lactucae - race_1
+  3
+  3
+
+Further BLAST Feature_analysis
+
+## Further blast analysis
+Run in betaenv as python prograamme runs on V2.7
+
+  for BlastHits in $(ls Orthology/flye/blastn/F.oxysporum_fsp_lactucae/race_1/FolR1vsFoCep_mimps/*.fasta_homologs.csv); do
+  Strain=$(echo $BlastHits | rev | cut -f3 -d '/' | rev)
+  Organism=$(echo $BlastHits | rev | cut -f4 -d '/' | rev)
+  ProgDir=/projects/oldhome/armita/git_repos/emr_repos/tools/pathogen/blast
+  HitsGff=$(echo $BlastHits | sed  's/.csv/.gff/g')
+  Column2=SIX_homolog
+  NumHits=12 # try varying no hits
+  $ProgDir/blast2gff.pl $Column2 $NumHits $BlastHits > $HitsGff
+  done
+
+Output file in : Orthology/flye/blastn/F.oxysporum_fsp_lactucae/race_1/FolR1vsFoLy/
