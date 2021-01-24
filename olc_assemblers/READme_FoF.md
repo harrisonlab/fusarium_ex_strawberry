@@ -585,7 +585,7 @@ Merge with Braker to give final gene model set
         OutDir=gene_pred/stringtie/$Organism/$Strain/flye/concatenated_prelim
         mkdir -p $OutDir
         AcceptedHits=alignment/star/F.oxysporum_fsp_fragariae/DSA14_003/concatenated/concatenated.bam
-        ProgDir=/home/akinya/git_repos/assembly_fusarium_ex/ProgScripts
+        ProgDir=/home/akinya/git_repos/assembly_fusarium_ex/ProgScripts/Genome_alignment
         sbatch $ProgDir/stringtie.sh $AcceptedHits $OutDir
        done
 

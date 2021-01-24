@@ -37,9 +37,18 @@ Sort no. TEs by family and function
 # pulling families just on contig 12 repeat_masked/F.oxysporum_fsp_fragariae/DSA14_003/flye/ncbi_edits_repmask/contig_12/DSA14_003_RepMod-families.stk
 # search for diff values: Retrotransposon , Retrotransposed_Element , DNA_Transposon
 
-for TEfamily in $(ls repeat_masked/F.oxysporum_fsp_fragariae/DSA14_003/flye/ncbi_edits_repmask/contig_12/DSA14_003_RepMod-families.stk); do
-  Organism=$(echo $Antismash | rev | cut -f5 -d '/' | rev)
-  Strain=$(echo $Antismash | rev | cut -f4 -d '/' | rev)
-  echo "$Organism - $Strain"
-  cat $TEfamily | grep 'Retrotransposed_Element' | sort | uniq -c
-done
+  for TEfamily in $(ls repeat_masked/F.oxysporum_fsp_fragariae/DSA14_003/flye/ncbi_edits_repmask/contig_12/DSA14_003_RepMod-families.stk); do
+    Organism=$(echo $Antismash | rev | cut -f5 -d '/' | rev)
+    Strain=$(echo $Antismash | rev | cut -f4 -d '/' | rev)
+    echo "$Organism - $Strain"
+    cat $TEfamily | grep 'Retrotransposed_Element' | sort | uniq -c
+  done
+
+# Contrasting Repeatmodel/masker data with my own
+#repeat_masked/Fus2_canu_new/edited_contigs_repmask/Fus2_canu_new_contigs_unmasked.fa
+# file in Fus2 doesn't have .stk file
+ProgDir=/home/gomeza/git_repos/scripts/bioinformatics_tools/Repeat_masking
+BestAssembly=../../oldhome/groups/harrisonlab/project_files/fusarium/repeat_masked/F.oxysporum_fsp_cepae/Fus2_canu_new/edited_contigs_repmask/Fus2_canu_contigs_unmasked.fa
+OutDir=repeat_masked/F.oxysporum_fsp_cepae/Fus2_canu_new/ncbi_edits_repmask
+sbatch $ProgDir/rep_modeling.sh $BestAssembly $OutDir
+sbatch $ProgDir/transposonPSI.sh $BestAssembly $OutDir
