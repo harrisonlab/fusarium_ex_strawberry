@@ -2,6 +2,15 @@
 # Check if STAR has been run
 # Run Braker then cquary
 
+# Mask it all
+
+conda activate RMask
+    ProgDir=/home/gomeza/git_repos/scripts/bioinformatics_tools/Repeat_masking
+    BestAssembly=../../oldhome/groups/harrisonlab/project_files/fusarium/repeat_masked/F.oxysporum_fsp_cepae/Fus2_canu_new/edited_contigs_repmask/Fus2_canu_contigs_unmasked.fa
+    OutDir=Fo_Cepae/repeat_masked
+    sbatch $ProgDir/rep_modeling.sh $BestAssembly $OutDir
+    sbatch $ProgDir/transposonPSI.sh $BestAssembly $OutDir
+
 ## STAR
 
 Run in Repenv - condaenv
@@ -84,18 +93,18 @@ GFT file from stringtie/cufflinks output
 my repo /home/akinya/git_repos/assembly_fusarium_ex/scripts
 Antonio /home/gomeza/git_repos/scripts/bioinformatics_tools/Gene_prediction
 
-  for Assembly in $(ls repeat_masked/F.oxysporum_fsp_fragariae/DSA14_003/flye/ncbi_edits_repmask/DSA14_003_contigs_unmasked.fa); do
-      Strain=$(echo $Assembly| rev | cut -d '/' -f4 | rev)
-      Organism=$(echo $Assembly| rev | cut -d '/' -f5 | rev)
+  for Assembly in $(ls ../../oldhome/groups/harrisonlab/project_files/fusarium/repeat_masked/F.oxysporum_fsp_cepae/Fus2_canu_new/edited_contigs_repmask/Fus2_canu_contigs_unmasked.fa); do
+      Strain=$(echo $Assembly| rev | cut -d '/' -f3 | rev)
+      Organism=$(echo $Assembly| rev | cut -d '/' -f4 | rev)
       echo "$Organism - $Strain"
-      OutDir=gene_pred/codingquary/$Organism/$Strain/flye
+      OutDir=Fo_Cepae/gene_pred/codingquary/$Organism/$Strain/Gp
       mkdir -p $OutDir
-      GTF=gene_pred/stringtie/F.oxysporum_fsp_fragariae/DSA14_003/flye/concatenated_prelim/out.gtf
+      GTF=Fo_Cepae/gene_pred/stringtie/F.oxysporum_fsp_cepae/Fus2_canu_new/Gp/out.gtf
       ProgDir=/home/akinya/git_repos/assembly_fusarium_ex/ProgScripts
       sbatch $ProgDir/codingquarry2.sh $Assembly $GTF $OutDir
     done
 
-
+>>>
 ## Add gene prediction transcripts together
 
 Additional transcripts - to be edited
@@ -104,15 +113,15 @@ Type full paths, do not use asterisks
 RUN LINE BY LINE AS IT WILL NOT WORK
 Do segments one at a time for peace of mind
 
-    BrakerGff=$(ls -d gene_pred/braker/F.oxysporum_fsp_fragariae/DSA14_003/flye/F.oxysporum_fsp_fragariae_DSA14_003_braker_flye_V2/augustus.gff3)
+    BrakerGff=$(ls -d Fo_Cepae/gene_pred/braker/F.oxysporum_fsp_cepae/Fus2_canu_new/Czap/F.oxysporum_fsp_cepae_Fus2_canu_new_braker/augustus.gff3)
     	Strain=$(echo $BrakerGff| rev | cut -d '/' -f4 | rev)
     	Organism=$(echo $BrakerGff | rev | cut -d '/' -f5 | rev)
     	echo "$Organism - $Strain"
-    	Assembly=$(ls repeat_masked/F.oxysporum_fsp_fragariae/DSA14_003/flye/ncbi_edits_repmask/DSA14_003_contigs_softmasked_repeatmasker_TPSI_appended.fa)
-    	CodingQuarryGff=gene_pred/codingquary/F.oxysporum_fsp_fragariae/DSA14_003/flye/out/PredictedPass.gff3
-    	PGNGff=gene_pred/codingquary/F.oxysporum_fsp_fragariae/DSA14_003/flye/out/PGN_predictedPass.gff3
-    	AddDir=gene_pred/codingquary/$Organism/$Strain/flye/additional
-    	FinalDir=gene_pred/codingquary/$Organism/$Strain/flye/final
+    	Assembly=$(ls /projects/oldhome/groups/harrisonlab/project_files/fusarium/repeat_masked/F.oxysporum_fsp_cepae/Fus2_canu_new/edited_contigs_repmask/Fus2_canu_contigs_softmasked_repeatmasker_TPSI_appended.fa)
+    	CodingQuarryGff=Fo_Cepae/gene_pred/codingquary/F.oxysporum_fsp_cepae/Fus2_canu_new/Czap/out/PredictedPass.gff3
+    	PGNGff=Fo_Cepae/gene_pred/codingquary/F.oxysporum_fsp_cepae/Fus2_canu_new/Czap/out/PredictedPass.gff3
+    	AddDir=Fo_Cepae/gene_pred/codingquary/$Organism/$Strain/Czap/additional
+    	FinalDir=Fo_Cepae/gene_pred/codingquary/$Organism/$Strain/Czap/final
     	AddGenesList=$AddDir/additional_genes.txt
     	AddGenesGff=$AddDir/additional_genes.gff
     	FinalGff=$AddDir/combined_genes.gff
@@ -168,44 +177,68 @@ Check the final number of genes
       echo "";
   	done
 
-For flye assembly Braker genes: 17980, CQ: 1103 & combined: 19083
+For Czap assembly Braker genes: 17387, CQ: 2030 & combined: 19417
+Gp Braker: 17387, Cq : 2184 & comb: 19571
+PDA 17438, CQ 1374, COMB 18812
+PDB 17271, CQ 1484, COMB 18755
 
+## Gene renaming
+Rename genes too
+Run line by line
+Run in conda env (Repenv)
+
+    #Remove duplicate and rename genes
+    GffAppended=$(ls -d gene_pred/codingquary/F.oxysporum_fsp_lactucae/race_1/final/final_genes_appended.gff3)
+    Strain=$(echo $GffAppended | rev | cut -d '/' -f3 | rev)
+    Organism=$(echo $GffAppended | rev | cut -d '/' -f4 | rev)
+    echo "$Organism - $Strain"
+    FinalDir=gene_pred/codingquary/F.oxysporum_fsp_lactucae/race_1/final
+
+    #Remove duplicated genes
+    GffFiltered=$FinalDir/filtered_duplicates.gff
+    ProgDir=/home/gomeza/git_repos/scripts/bioinformatics_tools/Gene_prediction
+    $ProgDir/remove_dup_features.py --inp_gff $GffAppended --out_gff $GffFiltered
+
+    #Rename genes
+    GffRenamed=$FinalDir/final_genes_appended_renamed.gff3
+    LogFile=$FinalDir/final_genes_appended_renamed.log
+    $ProgDir/gff_rename_genes.py --inp_gff $GffFiltered --conversion_log $LogFile > $GffRenamed
+    rm $GffFiltered
+
+    #Create renamed fasta files from each gene feature
+    Assembly=$(ls repeat_masked/F.oxysporum_fsp_lactucae/race_1/flye/ncbi_edits_repmask/race_1_contigs_softmasked_repeatmasker_TPSI_appended.fa)
+    $ProgDir/gff2fasta.pl $Assembly $GffRenamed $FinalDir/final_genes_appended_renamed
+    #The proteins fasta file contains * instead of Xs for stop codons, these should be changed
+    sed -i 's/\*/X/g' $FinalDir/final_genes_appended_renamed.pep.fasta
+
+    view gene names
+    cat $FinalDir/final_genes_appended_renamed.cdna.fasta | grep '>'
 
 # Genome annotations
 
 ## 1) Interproscan
+# DO NOT RUN IN CONDA ENV
+# This command will split your gene fasta file and run multiple interproscan jobs.
+ProgDir=/home/gomeza/git_repos/scripts/bioinformatics_tools/Feature_annotation
+for Genes in $(ls Fo_Cepae/gene_pred/codingquary/F.oxysporum_fsp_cepae/Fus2_canu_new/Czap/final/final_genes_combined.pep.fasta); do
+echo $Genes
+$ProgDir/interproscan.sh $Genes
+done 2>&1 | tee -a interproscan_submisison_Czap.log
 
-    ProgDir=/home/gomeza/git_repos/scripts/bioinformatics_tools/Feature_annotation
-      for Genes in $(ls gene_pred/codingquary/F.oxysporum_fsp_fragariae/DSA14_003/flye/final/final_genes_appended_renamed.pep.fasta); do
-        echo $Genes
-        $ProgDir/interproscan.sh $Genes
-      done 2>&1 | tee -a interproscan_submission.log
-
-Interproscan: all jobs failed - couldn't run all jobs simultaneously
-ERROR: uk.ac.ebi.interpro.scan.management.model.implementations.RunBinaryStep - Command line failed with exit code: 1
-Need to run in batches - Had to run split DNA in sets of 10.
-Split gene.pep.fasta like so:
-  InFile=gene_pred/codingquary/F.oxysporum_fsp_fragariae/DSA14_003/flye/final/final_genes_appended_renamed.pep.fasta
-  SplitDir=gene_pred/interproscan/$Organism/$Strain/flye
-  InterproDir=/home/gomeza/git_repos/scripts/bioinformatics_tools/Feature_annotation
-  InName=$(basename $InFile)
-  mkdir -p $SplitDir
-  $InterproDir/splitfile_500.py --inp_fasta $InFile --out_dir $SplitDir --out_base "$InName"_split
-
-  for file in $(ls gene_pred/interproscan/F.oxysporum_fsp_fragariae/DSA14_003/flye/*_split_9*); do
-    sbatch /home/gomeza/git_repos/scripts/bioinformatics_tools/Feature_annotation/run_interproscan.sh $file
-    done
 
 Need to merge interproscan output as follows
 
+#gene_pred/interproscan/Fus2_canu_new/Czap/raw/final_genes_combined.pep.fasta
+
     ProgDir=/home/akinya/git_repos/fusarium_ex_strawberry/ProgScripts/Feature_annotation
-     for Proteins in $(ls gene_pred/codingquary/F.oxysporum_fsp_fragariae/DSA14_003/flye/final/final_genes_appended_renamed.pep.fasta); do
+     for Proteins in $(ls gene_pred/codingquary/F.oxysporum_fsp_cepae/Fus2_canu_new/Czap/final/final_genes_combined.pep.fasta); do
+       Media=$(echo $Proteins | rev | cut -d '/' -f3 | rev)
        Strain=$(echo $Proteins | rev | cut -d '/' -f4 | rev)
        Organism=$(echo $Proteins | rev | cut -d '/' -f5 | rev)
        echo "$Organism - $Strain"
        echo $Strain
-       InterProRaw=gene_pred/interproscan/F.oxysporum_fsp_fragariae/DSA14_003/flye/raw
-       $ProgDir/append_interpro.sh $Proteins $InterProRaw
+       InterProRaw=gene_pred/interproscan/F.oxysporum_fsp_cepae/Fus2_canu_new/Czap/raw/
+       $ProgDir/append_interpro_Cep.sh $Proteins $InterProRaw
      done
 
 Use this command to view particular features in interproscan data:
