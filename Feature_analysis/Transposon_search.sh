@@ -32,3 +32,27 @@ faidx -d '|' final_genes_appended_renamed.cdna.fasta $(tr '\n' ' ' < DNA_H_cand.
 
 cat repeat_masked/F.oxysporum_fsp_fragariae/DSA14_003/flye/ncbi_edits_repmask/DSA14_003_RepMod-families.stk | grep 'DNA' | cut -f1 | cut -f2 | sort | uniq > DNA_Tsons_RepMod.txt
 # not tsv file so it won't remove things in "column1 & 2"
+# count no of each element
+cat DNA_Tsons_RepMod.txt | grep 'Helitron-1' | wc -l
+
+####
+# Manual blast for imapala sequences
+# found sequences on NCBI
+
+# Blast pipe search
+# Run in conda env with perly (Repenv)
+# for $Assembly Use files with nucleotides
+# Assembly can be final_genes_appended_renamed.fasta or DSA14_003_contigs_unmasked.fasta
+# Do both
+# Had to cp and edit blast_pipe - slight error in directories
+
+    for Assembly in $(ls assembly/flye/F.oxysporum_fsp_fragariae/DSA14_003/pilon/pilon_10_renamed.fasta); do
+      Strain=$(echo $Assembly| rev | cut -d '/' -f3 | rev)
+      Organism=$(echo $Assembly | rev | cut -d '/' -f4 | rev)
+      echo "$Organism - $Strain"
+      Query=Impala_seq.fa
+      ProgDir=/home/gomeza/git_repos/scripts/bioinformatics_tools/Feature_analysis
+      sbatch $ProgDir/blast_pipe.sh $Query dna $Assembly
+    done
+
+# output location - /analysis/blast_homology/Organism/strain
