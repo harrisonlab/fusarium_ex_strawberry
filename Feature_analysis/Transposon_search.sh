@@ -29,3 +29,6 @@ faidx -d '|' final_genes_appended_renamed.cdna.fasta $(tr '\n' ' ' < DNA_H_cand.
 # 4) Now you have gene sequence find intron and exon regions in gene in DSA14_003_interproscan
 
 # look for reverse complement too -  cat dummyfile.fa | tr -d "\n" > rev_comp.fa
+
+cat repeat_masked/F.oxysporum_fsp_fragariae/DSA14_003/flye/ncbi_edits_repmask/DSA14_003_RepMod-families.stk | grep 'DNA' | cut -f1 | cut -f2 | sort | uniq > DNA_Tsons_RepMod.txt
+# not tsv file so it won't remove things in "column1 & 2"
