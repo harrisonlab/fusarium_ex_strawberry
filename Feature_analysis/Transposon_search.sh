@@ -56,3 +56,4 @@ cat DNA_Tsons_RepMod.txt | grep 'Helitron-1' | wc -l
     done
 
 # output location - /analysis/blast_homology/Organism/strain
+# change blast output to xyz.tsv and open in excel
