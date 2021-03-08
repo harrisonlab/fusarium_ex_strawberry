@@ -57,3 +57,6 @@ cat DNA_Tsons_RepMod.txt | grep 'Helitron-1' | wc -l
 
 # output location - /analysis/blast_homology/Organism/strain
 # change blast output to xyz.tsv and open in excel
+# wc -l command gives number of what ou're looking for
+
+less Fus2_canu_new_contigs_unmasked.fa.TPSI.allHits.chains.bestPerLocus.gff3 | grep 'TY1_Copia' | grep 'E=0.0' | wc -l
