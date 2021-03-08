@@ -12,8 +12,8 @@
 
 CUR_PATH=$PWD
 IN_FILE=$1
-ORGANISM=$(echo $IN_FILE | rev | cut -d "/" -f3 | rev)
-STRAIN=$(echo $IN_FILE | rev | cut -d "/" -f2 | rev)
+ORGANISM=$(echo $IN_FILE | rev | cut -d "/" -f4 | rev)
+STRAIN=$(echo $IN_FILE | rev | cut -d "/" -f3 | rev)
 IN_NAME=$(basename $IN_FILE)
 
 WORK_DIR=$PWD/${SLURM_JOB_USER}_${SLURM_JOBID}

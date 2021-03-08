@@ -29,7 +29,7 @@ cd $WorkDir
 
 cp $CurDir/$Proteome proteins.fa
 mkdir -p $WorkDir/db
-cp -r $CurDir/$SwissDB_Dir/uniprot_sprot* $WorkDir/db/.
+cp -r $CurDir/$SwissDB_Dir/* db/.
 
 blastp \
   -db db/$SwissDB_Name \
@@ -47,4 +47,5 @@ mkdir -p $CurDir/$OutDir
 cp -r $WorkDir/*hits.tbl $CurDir/$OutDir/.
 cp -r $WorkDir/*parsed.tbl $CurDir/$OutDir/.
 rm -r $WorkDir
+
 

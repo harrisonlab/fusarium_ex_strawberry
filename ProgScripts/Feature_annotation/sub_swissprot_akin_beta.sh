@@ -29,7 +29,10 @@ cd $WorkDir
 
 cp $CurDir/$Proteome proteins.fa
 mkdir -p $WorkDir/db
-cp -r $CurDir/$SwissDB_Dir/uniprot_sprot* $WorkDir/db/.
+cd $WorkDir/db
+makeblastdb -in ../../../../dbUniprot/swissprot_2020_June/uniprot_sprot.fasta -input_type fasta -dbtype prot -title uniprot_sprot.db -parse_seqids -out uniprot_sprot.db
+
+cd ..
 
 blastp \
   -db db/$SwissDB_Name \
@@ -46,5 +49,5 @@ $ProgDir/swissprot_parser.py --blast_tbl swissprot_vJun2020_10_hits.tbl --blast_
 mkdir -p $CurDir/$OutDir
 cp -r $WorkDir/*hits.tbl $CurDir/$OutDir/.
 cp -r $WorkDir/*parsed.tbl $CurDir/$OutDir/.
-rm -r $WorkDir
+
 

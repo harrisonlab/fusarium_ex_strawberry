@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #SBATCH -J tmhmm
-#SBATCH --partition=long
+#SBATCH --partition=himem
 #SBATCH --mem-per-cpu=10G
 #SBATCH --cpus-per-task=8
 
