@@ -32,3 +32,6 @@ Need to manually configure Repeatmasker
 # wc -l command gives number of what ou're looking for
 
 less *_unmasked.fa.TPSI.allHits.chains.bestPerLocus.gff3 | grep 'TY1_Copia' | grep 'E=0.0' | wc -l
+
+# to grep 2 lines
+less repeat_masked/F.oxysporum_fsp_fragariae/DSA14_003/flye/ncbi_edits_repmask/DSA14_003_RepMod-families.stk | grep -E 'ID|hAT'
