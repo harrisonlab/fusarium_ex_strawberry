@@ -146,7 +146,7 @@ Ran on genome(softmasked) and gene models (final_genes_appended_renamed.gene.fas
       Strain=$(echo $Assembly| rev | cut -d '/' -f2 | rev)
       Organism=$(echo $Assembly | rev | cut -d '/' -f3 | rev)
       echo "$Organism - $Strain"
-      ProgDir=/home/akinya/git_repos/fusarium_ex_strawberry/ProgScripts
+      ProgDir=/home/akinya/git_repos/fusarium_ex_strawberry/ProgScripts/quality_check
       BuscoDB=$(ls -d /projects/dbBusco/sordariomycetes_odb10)
       OutDir=$(dirname $Assembly)/busco_sordariomycetes_obd10
       sbatch $ProgDir/busco.sh $Assembly $BuscoDB $OutDir
