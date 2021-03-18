@@ -14,7 +14,7 @@ for TrimReads in $(ls FAL_trim.fastq.gz); do
   done
 
 # Step 1
-# Login to node srun --partition long --time 0-06:00:00 --mem 40G --cpus-per-task 24 --pty bash
+# Login to node srun --partition himem --time 0-06:00:00 --mem-per-cpu 40G --cpus-per-task 24 --pty bash
 # Concatenate sequence reads first
 #Use command below if you are working in the same directory as the raw sequence reads
 
