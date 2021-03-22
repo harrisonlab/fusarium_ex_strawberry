@@ -41,7 +41,8 @@ cd $WorkDir
 
 cp $CurPath/$InFile "$Strain"_contigs_unmasked.fa
 BuildDatabase -name "$Strain"_RepMod "$Strain"_contigs_unmasked.fa
-RepeatModeler -pa 16 -database "$Strain"_RepMod
+RepeatModeler -pa 16 -ninja_dir /scratch/software/NINJA-0.97-cluster_only/NINJA -LTRStruct -database "$Strain"_RepMod
+
 
 RepeatClassifier -consensi RM_*.*/consensi.fa -stockholm RM_*.*/families.stk
 
