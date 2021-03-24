@@ -552,16 +552,16 @@ sub Wanted{
       ### Here  we define all scaffold dependent output files were resultats will be written
       ### Nothing is created except the log file in --dry-run mode
       unless($dry==1){
-	$out=$file."_".$contig.".transposons.csv";
+	$out=$file."_".$contig.".transposons.tsv";
 	open OUT,">$out" or die("Cannot open (create?) file $out");
 
-	$outltr=$file."_".$contig.".ltr.csv";
+	$outltr=$file."_".$contig.".ltr.tsv";
 	open OUTLTR,">$outltr" or die("Cannot open (create?) file $outltr");
 	
-	$outorder=$file."_".$contig.".elem_sorted.csv";
+	$outorder=$file."_".$contig.".elem_sorted.tsv";
 	open OUTORDER,">$outorder" or die("Cannot open (create?) file $outorder");
 
-	$outstat=$file."_".$contig.".copynumber.csv";
+	$outstat=$file."_".$contig.".copynumber.tsv";
 	open OUTSTAT,">$outstat" or die("Cannot open (create?) file $outstat");
 	
 	if($fasta_file ne "no_value"){
