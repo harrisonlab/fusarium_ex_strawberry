@@ -29,18 +29,6 @@ with open(conf.inp_gff) as f:
 # Order gff features by input contigs and gene start
 #-----------------------------------------------------
 
-
-def function has_overlap(start1,end1,start2,end2):
-    # This function checks to determine if two ranges overlap.
-    # The ranges are defined by two co-ordinates - start and end
-    # note this function assumes that start <= end and that the contig ids match
-    # Why?
-    # The function returns true if?
-    # and False if not.
-     if start1<=end2 and start2<=end1 (or something like that)
-        return true
-    else
-        return false if not
 open gene gff file # This will be the final_genes_appended.gff which is finished annotation of genes in genome
 gene_hash = {} # Will giive the gene names i.e. g1.t1 a value in the contig it is located in to sort
 for each line:
@@ -49,6 +37,18 @@ for each line:
     if contig_list not yet in genehash create blank list under this key
     contig_list=[] # create blank list using square brackets - positioning may be incorrect
     store [geneid,genestart,geneend] in genehash under contig_list
+    # produced invalid syntax error
+    def function has_overlap(start1,end1,start2,end2):
+        # This function checks to determine if two ranges overlap.
+        # The ranges are defined by two co-ordinates - start and end
+        # note this function assumes that start <= end and that the contig ids match
+        # Why?
+        # The function returns true if?
+        # and False if not.
+         if start1<=end2 and start2<=end1 (or something like that)
+            return true
+        else
+            return false if not
 open transp gff file
 transp_hash = {}
 for each line:
