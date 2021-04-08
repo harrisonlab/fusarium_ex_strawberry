@@ -102,7 +102,18 @@ for CONTIG in sorted(CONTIG_LIST, key = lambda x: (int(x.split('_')[1]))):
 # MERGE OVERLAPS
 #-----------------------------------------------------
 
+<<<<<<< HEAD
 for each line in TE_lines:
+=======
+split_line = []
+outlines = []
+gene_set = Set([])
+gene_dict = defaultdict(list)
+split_ROW = []
+for each ROW in TE_lines:
+    ROW = ROW.strip("\n")
+    split_ROW = ROW.split()
+>>>>>>> 510b2b1d69e37d8920738ed4a1e3af305613d8cc
     def function has_overlap(gene_start,gene_end,TE_start,TE_end):
          if gene_start<=TE_end and TE_start<=gene_end
             return true
