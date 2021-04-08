@@ -15,8 +15,8 @@ from sets import Set
 #-----------------------------------------------------
 ap = argparse.ArgumentParser()
 ap.add_argument('--inp_gff',required=True,type=str,help='input genes file')
-ap.add_argument('--te_gff', required = False, type=str, default = False, help = 'input TE file')
-ap.add_argument('--Output')
+ap.add_argument('--te_gff', required =True, type=str, default = False, help = 'input TE file')
+ap.add_argument('--Output', required=True,type=str,help='output file required')
 conf = ap.parse_args() #sys.argv
 
 
@@ -71,9 +71,11 @@ for each line in INP_ROWS:
         TE_ID = split_ROW[8]
     if not relevant line continue to next line # Excises
 
-open(Output)
+if Output:
+    z = open(Output, "w")
 for each contig in gene_hash:
     for each gene in list:
         for each transp item in transp_hash for this contig_list
             if has_overlap(gene_start,gene_end,TE_start,TE_end):
-                write contig,gene_id,TE_id
+                z.write(contig,gene_id,TE_id)
+            z.close()
