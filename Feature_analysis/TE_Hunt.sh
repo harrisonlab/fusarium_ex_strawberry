@@ -85,5 +85,5 @@ ProgDir=/home/akinya/git_repos/fusarium_ex_strawberry/ProgScripts/PythonScripts
 OutDir=repeat_masked/F.oxysporum_fsp_fragariae/DSA14_003/flye/ncbi_edits_repmask
 Gff=gene_pred/codingquary/F.oxysporum_fsp_fragariae/DSA14_003/flye/final/final_genes_appended_renamed.gff3
 TE_gff=repeat_masked/F.oxysporum_fsp_fragariae/DSA14_003/flye/ncbi_edits_repmask/DSA14_003_contigs_unmasked.fa.TPSI.allHits.chains.gff3
-Gff+TE=$OutDir/geneXTE.gff3
-$ProgDir/TE_to_gff.py --inp_gff $Gff --te_gff $TE_gff > $Gff+TE
+Output=$OutDir/geneXTE.gff3
+$ProgDir/TE_to_gff.py --inp_gff $Gff --te_gff $TE_gff -Output $Gff+TE

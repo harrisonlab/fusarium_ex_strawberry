@@ -30,7 +30,7 @@ conf.inp_gff = f
 inp_lines = f.readlines()
 contig_list=[] # This will be the final_genes_appended.gff which is finished annotation of genes in genome
 gene_hash = {} # Will giive the gene names i.e. g1.t1 a value in the contig it is located in to sort
-for each line in inp_lines:
+for line in inp_lines:
     line = line.strip("\n")
     if line.startswith("contig"):
         print line
