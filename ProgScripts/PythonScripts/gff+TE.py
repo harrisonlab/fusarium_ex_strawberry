@@ -53,6 +53,7 @@ for line in inp_lines:
             return true
             return false if not
 
+
 open(conf.te_gff)
 conf.te_gff = TE
 INP_ROWS = TE.readlines()
