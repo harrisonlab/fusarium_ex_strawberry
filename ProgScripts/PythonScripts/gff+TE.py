@@ -46,7 +46,7 @@ for line in inp_lines:
         gene_start_dict[contig].append(int(gene_start))
         key = "_".join([contig, gene_start])
     features_dict[key].append(line)
-    if not 'gene' line continue to next line # only interested in genes that overlap TEs
+    if not 'gene' continue to next line # only interested in genes that overlap TEs
     def function has_overlap(gene_start,gene_end,TE_start,TE_end):
          if gene_start<=TE_end and TE_start<=gene_end
             return true
