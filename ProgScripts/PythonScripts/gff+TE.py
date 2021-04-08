@@ -48,7 +48,7 @@ for line in inp_lines:
     features_dict[key].append(line)
     if not 'gene':
         continue # only interested in genes that overlap TEs
-    def function has_overlap(gene_start,gene_end,TE_start,TE_end):
+    def overlap(gene_start,gene_end,TE_start,TE_end):
          if gene_start<=TE_end and TE_start<=gene_end
             return true
         else
@@ -76,6 +76,6 @@ if Output:
 for each contig in gene_hash:
     for each gene in list:
         for each transp item in transp_hash for this contig_list
-            if has_overlap(gene_start,gene_end,TE_start,TE_end):
-                z.write(contig,gene_id,TE_id)
+            if overlap(gene_start,gene_end,TE_start,TE_end):
+                z.write(contig,gene_id,gene_start,gene_end,TE_start,TE_end,TE_id)
             z.close()
