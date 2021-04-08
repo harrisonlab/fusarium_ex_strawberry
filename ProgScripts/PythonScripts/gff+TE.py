@@ -51,7 +51,7 @@ for line in inp_lines:
     def overlap(gene_start,gene_end,TE_start,TE_end):
          if gene_start<=TE_end and TE_start<=gene_end:
             return true
-            else:
+            else
             return false if not
 
 open(conf.te_gff)
