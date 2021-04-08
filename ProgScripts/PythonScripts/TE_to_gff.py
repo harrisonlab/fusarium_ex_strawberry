@@ -18,8 +18,9 @@ ap.add_argument('--inp_gff',required=True,type=str,help='input gff file')
 ap.add_argument('--te_gff', required =True, type=str, default = False, help = 'TE gff file')
 conf = ap.parse_args() #sys.argv
 
-if open(conf.inp_gff) as f:
-    inp_lines = f.readlines()
+open(conf.inp_gff)
+conf.inp_gff = f
+inp_lines = f.readlines()
 
 with open(conf.te_gff) as g:
     te_lines= g.readlines()
@@ -101,7 +102,14 @@ for CONTIG in sorted(CONTIG_LIST, key = lambda x: (int(x.split('_')[1]))):
 # MERGE OVERLAPS
 #-----------------------------------------------------
 
-for each line:
+split_line = []
+outlines = []
+gene_set = Set([])
+gene_dict = defaultdict(list)
+split_ROW = []
+for each ROW in TE_lines:
+    ROW = ROW.strip("\n")
+    split_ROW = ROW.split()
     def function has_overlap(gene_start,gene_end,TE_start,TE_end):
          if gene_start<=TE_end and TE_start<=gene_end
             return true
