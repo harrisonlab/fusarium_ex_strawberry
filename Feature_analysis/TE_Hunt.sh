@@ -80,10 +80,11 @@ Pos_Repeat_End  the count of bases in the reference located after the end of the
 ID                              the RepeatMasker fragment ID
 Num_Assembled   the number of fragments merged or assembled into this copy
 
+# to ge contig sizes xargs faidx --transform chromsizes Fus2_canu_new_contigs_unmasked1.fa < contigs.txt
 # Merging gene prediciton with TE prediciton
 ProgDir=/home/akinya/git_repos/fusarium_ex_strawberry/ProgScripts/PythonScripts
 OutDir=repeat_masked/F.oxysporum_fsp_fragariae/DSA14_003/flye/ncbi_edits_repmask
 Gff=gene_pred/codingquary/F.oxysporum_fsp_fragariae/DSA14_003/flye/final/final_genes_appended_renamed.gff3
 TE_gff=repeat_masked/F.oxysporum_fsp_fragariae/DSA14_003/flye/ncbi_edits_repmask/DSA14_003_contigs_unmasked.fa.TPSI.allHits.chains.gff3
 Output=$OutDir/geneXTE.gff3
-$ProgDir/TE_to_gff.py --inp_gff $Gff --te_gff $TE_gff -Output $Gff+TE
+$ProgDir/TE_to_gff.py --inp_gff $Gff --te_gff $TE_gff -Output $Output

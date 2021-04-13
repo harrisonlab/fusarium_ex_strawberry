@@ -49,9 +49,9 @@ for line in inp_lines:
     if not 'gene':
         continue # only interested in genes that overlap TEs
     def overlap(gene_start,gene_end,TE_start,TE_end):
-         if gene_start<=TE_end and TE_start<=gene_end:
+        if gene_start<=TE_end and TE_start<=gene_end:
             return true
-            return false if not
+        return false
 
 
 open(conf.te_gff)
