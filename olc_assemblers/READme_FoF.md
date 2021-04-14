@@ -879,9 +879,11 @@ Proteins with transmembrane domains were removed from lists of Signal peptide co
 
 ## 5) EffectorP - Effector identification
 
-Add path to .profile PATH=${PATH}:/scratch/software/EffectorP-2.0/Scripts
+Add path to .profile
+  PATH=${PATH}:/scratch/software/EffectorP-2.0/Scripts
 Use full paths to scripts - EffectorP is extremely picky with inputs
-  # Make directory first
+Make directory first
+
   mkdir -p analysis/effectorP/$Organism/$Strain/flye
 Note down your paths
   Basename="$Organism"_"$Strain"_EffectorP
@@ -890,6 +892,7 @@ Note down your paths
   EffectorP.py -o analysis/effectorP/F.oxysporum_fsp_fragariae/DSA14_003/flye/F.oxysporum_fsp_fragariae_DSA14_003_EffectorP.txt -E analysis/effectorP/F.oxysporum_fsp_fragariae/DSA14_003/flye/F.oxysporum_fsp_fragariae_DSA14_003_EffectorP.fa -i gene_pred/codingquary/F.oxysporum_fsp_fragariae/DSA14_003/flye/final/final_genes_appended_renamed.pep.fasta
 
 ### EffectorP - phase 2
+
   for File in $(ls analysis/effectorP/F.oxysporum_fsp_fragariae/DSA14_003/flye/F.oxysporum_fsp_fragariae_DSA14_003_EffectorP.txt); do
     Strain=$(echo $File | rev | cut -f3 -d '/' | rev)
     Organism=$(echo $File | rev | cut -f4 -d '/' | rev)
