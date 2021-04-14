@@ -880,37 +880,37 @@ Proteins with transmembrane domains were removed from lists of Signal peptide co
 ## 5) EffectorP - Effector identification
 
 Add path to .profile
-  PATH=${PATH}:/scratch/software/EffectorP-2.0/Scripts
+    PATH=${PATH}:/scratch/software/EffectorP-2.0/Scripts
 Use full paths to scripts - EffectorP is extremely picky with inputs
 Make directory first
 
-  mkdir -p analysis/effectorP/$Organism/$Strain/flye
+    mkdir -p analysis/effectorP/$Organism/$Strain/flye
 Note down your paths
-  Basename="$Organism"_"$Strain"_EffectorP
-  Proteome=$(ls -d gene_pred/codingquary/F.oxysporum_fsp_fragariae/DSA14_003/flye/final/final_genes_appended_renamed.pep.fasta)
-  OutDir=analysis/effectorP/F.oxysporum_fsp_fragariae/DSA14_003/flye
-  EffectorP.py -o analysis/effectorP/F.oxysporum_fsp_fragariae/DSA14_003/flye/F.oxysporum_fsp_fragariae_DSA14_003_EffectorP.txt -E analysis/effectorP/F.oxysporum_fsp_fragariae/DSA14_003/flye/F.oxysporum_fsp_fragariae_DSA14_003_EffectorP.fa -i gene_pred/codingquary/F.oxysporum_fsp_fragariae/DSA14_003/flye/final/final_genes_appended_renamed.pep.fasta
+    Basename="$Organism"_"$Strain"_EffectorP
+    Proteome=$(ls -d gene_pred/codingquary/F.oxysporum_fsp_fragariae/DSA14_003/flye/final/final_genes_appended_renamed.pep.fasta)
+    OutDir=analysis/effectorP/F.oxysporum_fsp_fragariae/DSA14_003/flye
+    EffectorP.py -o analysis/effectorP/F.oxysporum_fsp_fragariae/DSA14_003/flye/F.oxysporum_fsp_fragariae_DSA14_003_EffectorP.txt -E analysis/effectorP/F.oxysporum_fsp_fragariae/DSA14_003/flye/F.oxysporum_fsp_fragariae_DSA14_003_EffectorP.fa -i gene_pred/codingquary/F.oxysporum_fsp_fragariae/DSA14_003/flye/final/final_genes_appended_renamed.pep.fasta
 
 ### EffectorP - phase 2
 
-  for File in $(ls analysis/effectorP/F.oxysporum_fsp_fragariae/DSA14_003/flye/F.oxysporum_fsp_fragariae_DSA14_003_EffectorP.txt); do
-    Strain=$(echo $File | rev | cut -f3 -d '/' | rev)
-    Organism=$(echo $File | rev | cut -f4 -d '/' | rev)
-    echo "$Organism - $Strain"
-    Headers=$(echo "$File" | sed 's/_EffectorP.txt/_EffectorP_headers.txt/g')
-    cat $File | grep 'Effector' | cut -f1 > $Headers
-    Secretome=$(ls gene_pred/final_genes_signalp-4.1/F.oxysporum_fsp_fragariae/DSA14_003/DSA14_003_final_sp_no_trans_mem.aa)
-    OutFile=$(echo "$File" | sed 's/_EffectorP.txt/_EffectorP_secreted.aa/g')
-    ProgDir=/home/gomeza/git_repos/scripts/bioinformatics_tools/Feature_annotation
-    $ProgDir/extract_from_fasta.py --fasta $Secretome --headers $Headers > $OutFile
-    OutFileHeaders=$(echo "$File" | sed 's/_EffectorP.txt/_EffectorP_secreted_headers.txt/g')
-    cat $OutFile | grep '>' | tr -d '>' > $OutFileHeaders
-    cat $OutFileHeaders | wc -l
-    Gff=$(ls gene_pred/codingquary/F.oxysporum_fsp_fragariae/DSA14_003/flye/final/final_genes_appended_renamed.gff3)
-    EffectorP_Gff=$(echo "$File" | sed 's/_EffectorP.txt/_EffectorP_secreted.gff/g')
-    $ProgDir/extract_gff_for_sigP_hits.pl $OutFileHeaders $Gff effectorP ID > $EffectorP_Gff
-    cat $EffectorP_Gff | grep -w 'gene' | wc -l
-  done > tmp.txt
+    for File in $(ls analysis/effectorP/F.oxysporum_fsp_fragariae/DSA14_003/flye/F.oxysporum_fsp_fragariae_DSA14_003_EffectorP.txt); do
+      Strain=$(echo $File | rev | cut -f3 -d '/' | rev)
+      Organism=$(echo $File | rev | cut -f4 -d '/' | rev)
+      echo "$Organism - $Strain"
+      Headers=$(echo "$File" | sed 's/_EffectorP.txt/_EffectorP_headers.txt/g')
+      cat $File | grep 'Effector' | cut -f1 > $Headers
+      Secretome=$(ls gene_pred/final_genes_signalp-4.1/F.oxysporum_fsp_fragariae/DSA14_003/DSA14_003_final_sp_no_trans_mem.aa)
+      OutFile=$(echo "$File" | sed 's/_EffectorP.txt/_EffectorP_secreted.aa/g')
+      ProgDir=/home/gomeza/git_repos/scripts/bioinformatics_tools/Feature_annotation
+      $ProgDir/extract_from_fasta.py --fasta $Secretome --headers $Headers > $OutFile
+      OutFileHeaders=$(echo "$File" | sed 's/_EffectorP.txt/_EffectorP_secreted_headers.txt/g')
+      cat $OutFile | grep '>' | tr -d '>' > $OutFileHeaders
+      cat $OutFileHeaders | wc -l
+      Gff=$(ls gene_pred/codingquary/F.oxysporum_fsp_fragariae/DSA14_003/flye/final/final_genes_appended_renamed.gff3)
+      EffectorP_Gff=$(echo "$File" | sed 's/_EffectorP.txt/_EffectorP_secreted.gff/g')
+      $ProgDir/extract_gff_for_sigP_hits.pl $OutFileHeaders $Gff effectorP ID > $EffectorP_Gff
+      cat $EffectorP_Gff | grep -w 'gene' | wc -l
+    done > tmp.txt
 
   nano tmp.txt - should state Org, Strain and Numbers
 
@@ -919,28 +919,28 @@ Note down your paths
 Miniature IMPala elements are short autonomous class II  transposable elements and can be used to identify candidate effectors
 Run in conda env (Repenv)
 
-  for Assembly in $(ls repeat_masked/F.oxysporum_fsp_fragariae/DSA14_003/flye/ncbi_edits_repmask/DSA14_003_contigs_unmasked.fa); do
-      Organism=$(echo "$Assembly" | rev | cut -d '/' -f5 | rev)
-      Strain=$(echo "$Assembly" | rev | cut -d '/' -f4 | rev)
-      GeneGff=$(ls gene_pred/codingquary/F.oxysporum_fsp_fragariae/DSA14_003/flye/final/final_genes_appended_renamed.gff3)
-      OutDir=analysis/mimps/$Organism/$Strain
-      mkdir -p "$OutDir"
-      echo "$Organism - $Strain"
-      ProgDir=/home/gomeza/git_repos/scripts/bioinformatics_tools/Feature_annotation
-      $ProgDir/mimp_finder.pl $Assembly $OutDir/"$Strain"_mimps.fa $OutDir/"$Strain"_mimps.gff > $OutDir/"$Strain"_mimps.log
-      $ProgDir/gffexpander.pl +- 2000 $OutDir/"$Strain"_mimps.gff > $OutDir/"$Strain"_mimps_exp.gff
-      echo "The number of mimps identified:"
-      cat $OutDir/"$Strain"_mimps.fa | grep '>' | wc -l
-      bedtools intersect -u -a $GeneGff -b $OutDir/"$Strain"_mimps_exp.gff > $OutDir/"$Strain"_genes_in_2kb_mimp.gff
-      echo "The following transcripts intersect mimps:"
-      MimpProtsTxt=$OutDir/"$Strain"_prots_in_2kb_mimp.txt
-      MimpGenesTxt=$OutDir/"$Strain"_genes_in_2kb_mimp.txt
-      cat $OutDir/"$Strain"_genes_in_2kb_mimp.gff | grep -w 'mRNA' | cut -f9 | cut -f1 -d';' | cut -f2 -d'=' | sort | uniq > $MimpProtsTxt
-      cat $OutDir/"$Strain"_genes_in_2kb_mimp.gff | grep -w 'mRNA' | cut -f9 | cut -f1 -d';' | cut -f2 -d'=' | cut -f1 -d '.'| sort | uniq > $MimpGenesTxt
-      cat $MimpProtsTxt | wc -l
-      cat $MimpGenesTxt | wc -l
-      echo ""
-    done
+    for Assembly in $(ls repeat_masked/F.oxysporum_fsp_fragariae/DSA14_003/flye/ncbi_edits_repmask/DSA14_003_contigs_unmasked.fa); do
+        Organism=$(echo "$Assembly" | rev | cut -d '/' -f5 | rev)
+        Strain=$(echo "$Assembly" | rev | cut -d '/' -f4 | rev)
+        GeneGff=$(ls gene_pred/codingquary/F.oxysporum_fsp_fragariae/DSA14_003/flye/final/final_genes_appended_renamed.gff3)
+        OutDir=analysis/mimps/$Organism/$Strain
+        mkdir -p "$OutDir"
+        echo "$Organism - $Strain"
+        ProgDir=/home/gomeza/git_repos/scripts/bioinformatics_tools/Feature_annotation
+        $ProgDir/mimp_finder.pl $Assembly $OutDir/"$Strain"_mimps.fa $OutDir/"$Strain"_mimps.gff > $OutDir/"$Strain"_mimps.log
+        $ProgDir/gffexpander.pl +- 2000 $OutDir/"$Strain"_mimps.gff > $OutDir/"$Strain"_mimps_exp.gff
+        echo "The number of mimps identified:"
+        cat $OutDir/"$Strain"_mimps.fa | grep '>' | wc -l
+        bedtools intersect -u -a $GeneGff -b $OutDir/"$Strain"_mimps_exp.gff > $OutDir/"$Strain"_genes_in_2kb_mimp.gff
+        echo "The following transcripts intersect mimps:"
+        MimpProtsTxt=$OutDir/"$Strain"_prots_in_2kb_mimp.txt
+        MimpGenesTxt=$OutDir/"$Strain"_genes_in_2kb_mimp.txt
+        cat $OutDir/"$Strain"_genes_in_2kb_mimp.gff | grep -w 'mRNA' | cut -f9 | cut -f1 -d';' | cut -f2 -d'=' | sort | uniq > $MimpProtsTxt
+        cat $OutDir/"$Strain"_genes_in_2kb_mimp.gff | grep -w 'mRNA' | cut -f9 | cut -f1 -d';' | cut -f2 -d'=' | cut -f1 -d '.'| sort | uniq > $MimpGenesTxt
+        cat $MimpProtsTxt | wc -l
+        cat $MimpGenesTxt | wc -l
+        echo ""
+      done
 
 The number of mimps identified:
 74
@@ -954,48 +954,48 @@ CAZY analysis - program for searching and analyzing carbohydrate-active enzymes 
 "sub_hmmscan.sh" was edited and updated to "hmmscan.sh"
 make sure your directories are all correct
 
-    for Strain in DSA14_003; do
-    for Proteome in $(ls gene_pred/codingquary/F.oxysporum_fsp_fragariae/$Strain/flye/final/final_genes_combined.pep.fasta); do
-    Strain=$(echo $Proteome | rev | cut -f4 -d '/' | rev)
-    Organism=$(echo $Proteome | rev | cut -f5 -d '/' | rev)
-    echo "$Organism - $Strain"
-    OutDir=gene_pred/CAZY/$Organism/$Strain
-    mkdir -p $OutDir
-    Prefix="$Strain"_CAZY
-    CazyHmm=../../dbCAN/dbCAN-fam-HMMs.txt
-    ProgDir=/home/akinya/git_repos/fusarium_ex_strawberry/ProgScripts/Feature_annotation
-    sbatch $ProgDir/hmmscan.sh $CazyHmm $Proteome $Prefix $OutDir
-    done
-    done
+      for Strain in DSA14_003; do
+      for Proteome in $(ls gene_pred/codingquary/F.oxysporum_fsp_fragariae/$Strain/flye/final/final_genes_combined.pep.fasta); do
+      Strain=$(echo $Proteome | rev | cut -f4 -d '/' | rev)
+      Organism=$(echo $Proteome | rev | cut -f5 -d '/' | rev)
+      echo "$Organism - $Strain"
+      OutDir=gene_pred/CAZY/$Organism/$Strain
+      mkdir -p $OutDir
+      Prefix="$Strain"_CAZY
+      CazyHmm=../../dbCAN/dbCAN-fam-HMMs.txt
+      ProgDir=/home/akinya/git_repos/fusarium_ex_strawberry/ProgScripts/Feature_annotation
+      sbatch $ProgDir/hmmscan.sh $CazyHmm $Proteome $Prefix $OutDir
+      done
+      done
 
 ### CAZy phase 2
 
 Run line by line
 Creates a file with CAZy module and gene
 
-    for File in $(ls gene_pred/CAZY/F.oxysporum_fsp_fragariae/DSA14_003/DSA14_003_CAZY.out.dm); do
-      Strain=$(echo $File | rev | cut -f2 -d '/' | rev)
-      Organism=$(echo $File | rev | cut -f3 -d '/' | rev)
-      OutDir=$(dirname $File)
-      echo "$Organism - $Strain"
-      ProgDir=../../dbCAN
-      $ProgDir/hmmscan-parser.sh $OutDir/"$Strain"_CAZY.out.dm > $OutDir/"$Strain"_CAZY.out.dm.ps
-      CazyHeaders=$(echo $File | sed 's/.out.dm/_headers.txt/g')
-      cat $OutDir/"$Strain"_CAZY.out.dm.ps | cut -f3 | sort | uniq > $CazyHeaders # Extract gene names
-      echo "Number of CAZY genes identified:"
-      cat $CazyHeaders | wc -l
-      Gff=$(ls gene_pred/codingquary/F.oxysporum_fsp_fragariae/DSA14_003/flye/final/final_genes_appended_renamed.gff3)
-      CazyGff=$OutDir/"$Strain"_CAZY.gff
-      ProgDir=/home/gomeza/git_repos/scripts/bioinformatics_tools/Feature_annotation
-      $ProgDir/extract_gff_for_sigP_hits.pl $CazyHeaders $Gff CAZyme ID > $CazyGff # Creates a gff for all CAZymes
-      SecretedProts=$(ls gene_pred/final_genes_signalp-4.1/F.oxysporum_fsp_fragariae/DSA14_003/DSA14_003_final_sp_no_trans_mem.aa)
-      SecretedHeaders=$(echo $SecretedProts | sed 's/.aa/_headers.txt/g')
-      cat $SecretedProts | grep '>' | tr -d '>' > $SecretedHeaders
-      CazyGffSecreted=$OutDir/"$Strain"_CAZY_secreted.gff
-      $ProgDir/extract_gff_for_sigP_hits.pl $SecretedHeaders $CazyGff Secreted_CAZyme ID > $CazyGffSecreted # Creates a gff for secreted CAZymes
-      echo "Number of Secreted CAZY genes identified:"
-      cat $CazyGffSecreted | grep -w 'gene' | cut -f9 | tr -d 'ID=' | wc -l
-      done
+      for File in $(ls gene_pred/CAZY/F.oxysporum_fsp_fragariae/DSA14_003/DSA14_003_CAZY.out.dm); do
+        Strain=$(echo $File | rev | cut -f2 -d '/' | rev)
+        Organism=$(echo $File | rev | cut -f3 -d '/' | rev)
+        OutDir=$(dirname $File)
+        echo "$Organism - $Strain"
+        ProgDir=../../dbCAN
+        $ProgDir/hmmscan-parser.sh $OutDir/"$Strain"_CAZY.out.dm > $OutDir/"$Strain"_CAZY.out.dm.ps
+        CazyHeaders=$(echo $File | sed 's/.out.dm/_headers.txt/g')
+        cat $OutDir/"$Strain"_CAZY.out.dm.ps | cut -f3 | sort | uniq > $CazyHeaders # Extract gene names
+        echo "Number of CAZY genes identified:"
+        cat $CazyHeaders | wc -l
+        Gff=$(ls gene_pred/codingquary/F.oxysporum_fsp_fragariae/DSA14_003/flye/final/final_genes_appended_renamed.gff3)
+        CazyGff=$OutDir/"$Strain"_CAZY.gff
+        ProgDir=/home/gomeza/git_repos/scripts/bioinformatics_tools/Feature_annotation
+        $ProgDir/extract_gff_for_sigP_hits.pl $CazyHeaders $Gff CAZyme ID > $CazyGff # Creates a gff for all CAZymes
+        SecretedProts=$(ls gene_pred/final_genes_signalp-4.1/F.oxysporum_fsp_fragariae/DSA14_003/DSA14_003_final_sp_no_trans_mem.aa)
+        SecretedHeaders=$(echo $SecretedProts | sed 's/.aa/_headers.txt/g')
+        cat $SecretedProts | grep '>' | tr -d '>' > $SecretedHeaders
+        CazyGffSecreted=$OutDir/"$Strain"_CAZY_secreted.gff
+        $ProgDir/extract_gff_for_sigP_hits.pl $SecretedHeaders $CazyGff Secreted_CAZyme ID > $CazyGffSecreted # Creates a gff for secreted CAZymes
+        echo "Number of Secreted CAZY genes identified:"
+        cat $CazyGffSecreted | grep -w 'gene' | cut -f9 | tr -d 'ID=' | wc -l
+        done
 
 Number of CAZY genes identified:
 936
