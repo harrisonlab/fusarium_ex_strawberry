@@ -980,10 +980,14 @@ Proteins with transmembrane domains were removed from lists of Signal peptide co
 
 Add path to .profile
       PATH=${PATH}:/scratch/software/EffectorP-2.0/Scripts
+
 Use full paths to scripts - EffectorP is extremely picky with inputs
 Make directory first
+
       mkdir -p analysis/effectorP/$Organism/$Strain/flye
+
 Note down your paths
+
       Basename="$Organism"_"$Strain"_EffectorP
       Proteome=$(ls -d gene_pred/codingquary/F.oxysporum_fsp_lactucae/race_1/final/final_genes_appended_renamed.pep.fasta)
       OutDir=analysis/effectorP/F.oxysporum_fsp_lactucae/race_1/flye
