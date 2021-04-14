@@ -979,15 +979,15 @@ Proteins with transmembrane domains were removed from lists of Signal peptide co
 ## 5) EffectorP - Effector identification
 
 Add path to .profile
-    PATH=${PATH}:/scratch/software/EffectorP-2.0/Scripts
+      PATH=${PATH}:/scratch/software/EffectorP-2.0/Scripts
 Use full paths to scripts - EffectorP is extremely picky with inputs
 Make directory first
-    mkdir -p analysis/effectorP/$Organism/$Strain/flye
+      mkdir -p analysis/effectorP/$Organism/$Strain/flye
 Note down your paths
-    Basename="$Organism"_"$Strain"_EffectorP
-    Proteome=$(ls -d gene_pred/codingquary/F.oxysporum_fsp_lactucae/race_1/final/final_genes_appended_renamed.pep.fasta)
-    OutDir=analysis/effectorP/F.oxysporum_fsp_lactucae/race_1/flye
-    EffectorP.py -o analysis/effectorP/F.oxysporum_fsp_lactucae/race_1/flye/F.oxysporum_fsp_lactucae_race_1_EffectorP.txt -E analysis/effectorP/F.oxysporum_fsp_lactucae/race_1/flye/F.oxysporum_fsp_lactucae_race_1_EffectorP.fa -i gene_pred/codingquary/F.oxysporum_fsp_lactucae/race_1/final/final_genes_appended_renamed.pep.fasta
+      Basename="$Organism"_"$Strain"_EffectorP
+      Proteome=$(ls -d gene_pred/codingquary/F.oxysporum_fsp_lactucae/race_1/final/final_genes_appended_renamed.pep.fasta)
+      OutDir=analysis/effectorP/F.oxysporum_fsp_lactucae/race_1/flye
+      EffectorP.py -o analysis/effectorP/F.oxysporum_fsp_lactucae/race_1/flye/F.oxysporum_fsp_lactucae_race_1_EffectorP.txt -E analysis/effectorP/F.oxysporum_fsp_lactucae/race_1/flye/F.oxysporum_fsp_lactucae_race_1_EffectorP.fa -i gene_pred/codingquary/F.oxysporum_fsp_lactucae/race_1/final/final_genes_appended_renamed.pep.fasta
 
 ### EffectorP - phase 2
 Organises you predicted effectors by catergory
