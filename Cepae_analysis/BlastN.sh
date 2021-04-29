@@ -6,7 +6,7 @@
 # Do both
 # Had to cp and edit blast_pipe - slight error in directories
 
-for Assembly in $(ls repeat_masked/F.oxysporum_fsp_fragariae/15-074/15-074_contigs_unmasked.fa); do
+for Assembly in $(ls repeat_masked/F.oxysporum_fsp_fragariae/Straw465/Straw465_contigs_unmasked.fa); do
   Strain=$(echo $Assembly| rev | cut -d '/' -f2 | rev)
   Organism=$(echo $Assembly | rev | cut -d '/' -f3 | rev)
   echo "$Organism - $Strain"
@@ -19,3 +19,4 @@ done
 # To turn dna from DNA to proteins use this but use full paths
 # sbatch $ProgDir/blast_pipe.sh $Query DNA $Assembly
 # output location - /analysis/blast_homology/Organism/strain
+# rename files amd change to ".tsv" files afterwards 

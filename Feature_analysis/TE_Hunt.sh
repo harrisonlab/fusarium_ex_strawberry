@@ -80,7 +80,7 @@ Pos_Repeat_End  the count of bases in the reference located after the end of the
 ID                              the RepeatMasker fragment ID
 Num_Assembled   the number of fragments merged or assembled into this copy
 
-# to ge contig sizes xargs faidx --transform chromsizes Fus2_canu_new_contigs_unmasked1.fa < contigs.txt
+# to get contig sizes xargs faidx --transform chromsizes Fus2_canu_new_contigs_unmasked1.fa < contigs.txt
 # Merging gene prediciton with TE prediciton
 ProgDir=/home/akinya/git_repos/fusarium_ex_strawberry/ProgScripts/PythonScripts
 OutDir=repeat_masked/F.oxysporum_fsp_fragariae/DSA14_003/flye/ncbi_edits_repmask
