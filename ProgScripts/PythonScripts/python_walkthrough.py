@@ -188,3 +188,81 @@ total = car + rent + jet + gifts + food + staff + guru + games
 
 print("\nGrand Total:", total)
 input("\n\nPress the enter key to exit.")
+
+# Quick maths problem
+
+# import math to get value of pi to 10 decimal places
+import math
+# You need to give radius of the sphere - do this using 'input' function
+r = input("\nWhat is the radius? ")
+# Convert the string into an interger, basically changing it from 'fourty-two' -> '42'
+# if doing value with decimal place, use "float" instead of interger
+r = int(r)
+print(r)
+input("Press the enter key to find volume.")
+print("\nThe volume of the sphere is =", 4/3 * math.pi * r**3)
+
+# import libraries for arguments and math values
+import sys
+# allows you to put values in the command line
+import math
+
+# convert argument into number with decimal place
+# (sys.argv[1]) - uses the first value entered in the command line to edit the value
+# sys.argv[0] would use the program name
+
+d = float(sys.argv[1])
+# Need to give value for r
+r = d/2
+
+vol = 4/3 * math.pi * r**3
+
+print(vol)
+
+# repeating strings
+
+n = 'N'
+
+n50 = n * 50
+
+print(n50)
+
+# escape characters
+
+new_lines = 'a\nword\nfor\nthe\nwise'
+
+print(new_lines)
+
+tab = "chicken\tnoodle\tsoup\tis\tnice"
+
+print(tab)
+
+# indexing
+
+seq1 = 'HIS POWER LEVEL IS OVER 9000'
+
+ch1 = seq1[0]
+ch5 = seq1[4]
+print(ch1)
+print(ch5)
+
+last_ch = seq1[-1]
+pen_ul= seq1[-2]
+
+# slicing
+
+char1to5= seq1[:5]
+print(char1to5)
+
+char2to6= seq1[1:6]
+print(char2to6)
+
+char_10toend= seq1[10:99]
+print(char_10toend)
+
+# important string editing commands
+.replace('A','N') - replaces string with strings
+.splt() - splits in the orientation you want
+.join() - joins lines/info together
+.upper() - upper case
+.lower() - lower case

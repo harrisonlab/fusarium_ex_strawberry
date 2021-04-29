@@ -6,13 +6,14 @@
 # Do both
 # Had to cp and edit blast_pipe - slight error in directories
 
-for Assembly in $(ls F.oxysporum_fsp_cepae/Fus2_canu_new/final/final_genes_combined.gene.fasta); do
-  Strain=$(echo $Assembly| rev | cut -d '/' -f3 | rev)
-  Organism=$(echo $Assembly | rev | cut -d '/' -f4 | rev)
+for Assembly in $(ls repeat_masked/F.oxysporum_fsp_fragariae/15-074/15-074_contigs_unmasked.fa); do
+  Strain=$(echo $Assembly| rev | cut -d '/' -f2 | rev)
+  Organism=$(echo $Assembly | rev | cut -d '/' -f3 | rev)
   echo "$Organism - $Strain"
   Query=../oldhome/groups/harrisonlab/project_files/fusarium/analysis/blast_homology/six_genes/six-appended_parsed.fa
   ProgDir=/home/gomeza/git_repos/scripts/bioinformatics_tools/Feature_analysis
-  sbatch $ProgDir/blast_pipe.sh $Query dna $Assembly
+  OutDir=analysis/blast_homology/$Organism/$Strain
+  sbatch $ProgDir/blast_pipe.sh $Query dna $Assembly $OutDir
 done
 
 # To turn dna from DNA to proteins use this but use full paths
