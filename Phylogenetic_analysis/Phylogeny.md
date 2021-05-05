@@ -33,15 +33,31 @@ assembly/F.oxysporum_fsp_fragariae/15-074/busco_sordariomycetes_obd10/15-074_con
     echo $Busco
     OutDir=analysis/popgen/busco_phylogeny/$Busco
     mkdir -p $OutDir
-    for Fasta in $(ls assembly/flye/F.oxysporum_fsp_fragariae/DSA14_003/pilon/busco_sordariomycetes_obd10/rounds/pilon_10/run_sordariomycetes_odb10/busco_sequences/single_copy_busco_sequences/$Busco*.fna); do
-    Strain=$(echo $Fasta | rev | cut -f9 -d '/' | rev)
-    Organism=$(echo $Fasta | rev | cut -f10 -d '/' | rev)
+    for Fasta in $(ls repeat_masked/F.oxysporum_fsp_fragariae/DSA14_003/ncbi_edits_repmask/busco_sordariomycetes_obd10/DSA14_003_contigs_unmasked/run_sordariomycetes_odb10/busco_sequences/single_copy_busco_sequences/$Busco*.fna); do
+    Strain=$(echo $Fasta | rev | cut -f8 -d '/' | rev)
+    Organism=$(echo $Fasta | rev | cut -f9 -d '/' | rev)
     FileName=$(basename $Fasta)
     cat $Fasta | sed "s/:.*.fasta:/:"$Organism"_"$Strain":/g" > $OutDir/"$Organism"_"$Strain"_"$Busco".fasta
     done
     cat $OutDir/*_*_"$Busco".fasta > $OutDir/"$Busco"_appended.fasta
     SingleBuscoNum=$(cat $OutDir/"$Busco"_appended.fasta | grep '>' | wc -l)
     printf "$Busco\t$SingleBuscoNum\n" >> analysis/popgen/busco_phylogeny/single_hits_15xStraw.txt
+    done
+
+Repeat for next gen seq
+    for Busco in $(cat NextGenSeq/analysis/popgen/busco_phylogeny/all_buscos_*.txt); do
+    echo $Busco
+    OutDir=analysis/popgen/busco_phylogeny/$Busco
+    mkdir -p $OutDir
+    for Fasta in $(ls NextGenSeq/assembly/flye/F.oxysporum_fsp_fragariae/DSA14_003/pilon/busco_sordariomycetes_obd10/rounds/pilon_10/run_sordariomycetes_odb10/busco_sequences/single_copy_busco_sequences/$Busco*.fna); do
+    Strain=$(echo $Fasta | rev | cut -f9 -d '/' | rev)
+    Organism=$(echo $Fasta | rev | cut -f10 -d '/' | rev)
+    FileName=$(basename $Fasta)
+    cat $Fasta | sed "s/:.*.fasta:/:"$Organism"_"$Strain":/g" > $OutDir/"$Organism"_"$Strain"_"$Busco"_NGS.fasta
+    done
+    cat $OutDir/*_*_"$Busco".fasta > $OutDir/"$Busco"_appended_NGS.fasta
+    SingleBuscoNum=$(cat $OutDir/"$Busco"_appended_NGS.fasta | grep '>' | wc -l)
+    printf "$Busco\t$SingleBuscoNum\n" >> NextGenSeq/analysis/popgen/busco_phylogeny/single_hits_NGS.txt
     done
 
 Check for multiple hits
