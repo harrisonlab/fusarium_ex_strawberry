@@ -91,7 +91,7 @@ Command line usage
     AlignDir=analysis/popgen/busco_phylogeny/alignments
     CurDir=$PWD
     cd $AlignDir
-    ProgDir=/home/akinya/fusarium_ex_strawberry/ProgScripts/Genome_alignment
+    ProgDir=/home/akinya/git_repos/fusarium_ex_strawberry/ProgScripts/Genome_alignment
     sbatch $ProgDir/Mafft.sh
     cd $CurDir
 
