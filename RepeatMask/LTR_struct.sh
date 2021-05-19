@@ -26,9 +26,9 @@ fi
 mkdir -p $WorkDir
 cd $WorkDir
 
-cp $CurPath/$InFile "$Strain"_contigs_unmasked.fa
-BuildDatabase -name "$Strain"_RepMod "$Strain"_contigs_unmasked.fa
-RepeatModeler -pa 10 -ninja_dir /scratch/software/NINJA-0.97-cluster_only/NINJA -LTRStruct -database “$Strain”_RepMod
+cp $CurPath/$InFile $Strain_contigs_unmasked.fa
+BuildDatabase -name $Strain_RepMod $Strain_contigs_unmasked.fa
+RepeatModeler -pa 10 -ninja_dir /scratch/software/NINJA-0.97-cluster_only/NINJA -LTRStruct -database $Strain_RepMod
 
 mkdir -p $OutDir
 rm -r $WorkDir/RM*
