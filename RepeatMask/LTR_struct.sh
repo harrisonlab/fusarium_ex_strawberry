@@ -4,10 +4,10 @@
 #SBATCH --mem-per-cpu=30G
 #SBATCH --cpus-per-task=24
 
-#ProgDir=/home/gomeza/git_repos/scripts/bioinformatics_tools/Repeat_masking
-#BestAssembly=assembly/SMARTdenovo/F.oxysporum_fsp_fragariae/DSA14_003/pilon/pilon_10_renamed.fasta
-#OutDir=repeat_masked/F.oxysporum_fsp_fragariae/DSA14_003/SMARTdenovo/ncbi_edits_repmask
-#sbatch $ProgDir/rep_modeling.sh $BestAssembly $OutDir
+#ProgDir=/home/akinya/git_repos/fusarium_ex_strawberry/RepeatMask
+#BestAssembly=repeat_masked/F.oxysporum_fsp_fragariae/DSA15_041/ncbi_edits_repmask/DSA15_041_contigs_unmasked.fa
+#OutDir=repeat_masked/F.oxysporum_fsp_fragariae/DSA15_041/ncbi_edits_repmask
+#sbatch $ProgDir/LTR_struct.sh $BestAssembly $OutDir
 
 InFile=$1
 Organism=$(echo $InFile | rev | cut -d "/" -f4 | rev)
@@ -26,6 +26,8 @@ fi
 mkdir -p $WorkDir
 cd $WorkDir
 
+cp $CurPath/$InFile "$Strain"_contigs_unmasked.fa
+BuildDatabase -name "$Strain"_RepMod "$Strain"_contigs_unmasked.fa
 RepeatModeler -pa 10 -ninja_dir /scratch/software/NINJA-0.97-cluster_only/NINJA -LTRStruct -database “$Strain”_RepMod
 
 mkdir -p $OutDir
