@@ -29,7 +29,7 @@ Set path where rmblastn and makeblastdb are found, e.g. /home/USER_ID/miniconda3
 
 output location - /analysis/blast_homology/Organism/strain
 change blast output to xyz.tsv and open in excel
-wc -l command gives number of what ou're looking for
+wc -l command gives number of what you're looking for'
 
     less *_unmasked.fa.TPSI.allHits.chains.bestPerLocus.gff3 | grep 'TY1_Copia' | grep 'E=0.0' | wc -l
 
@@ -42,6 +42,11 @@ Running repeat modeler to find LTR structure
     srun --partition himem --time 0-06:00:00 --mem-per-cpu 40G --cpus-per-task 24 --pty bash
 
     RepeatModeler -pa 10 -ninja_dir /scratch/software/NINJA-0.97-cluster_only/NINJA -LTRStruct -database “$Strain”_RepMod
+or run like this:
+    ProgDir=/home/akinya/git_repos/fusarium_ex_strawberry/RepeatMask
+    BestAssembly=repeat_masked/F.oxysporum_fsp_fragariae/DSA15_041/ncbi_edits_repmask/DSA15_041_contigs_unmasked.fa
+    OutDir=repeat_masked/F.oxysporum_fsp_fragariae/DSA15_041/ncbi_edits_repmask
+    sbatch $ProgDir/LTR_struct.sh $BestAssembly $OutDir
 
 Onecodetofindthemall/README
 
