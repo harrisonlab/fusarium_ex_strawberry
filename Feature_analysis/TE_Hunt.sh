@@ -55,7 +55,10 @@ Make files executable
     chmod u+x one_code_to_find_them_all.pl
 
 Usage
-    ./build_dictionary.pl --rm filename [--unknown] [--fuzzy] > output
+  /home/akinya/git_repos/fusarium_ex_strawberry/Perl_scripts/Onecodetofindthemall//build_dictionary.pl --rm filename [--unknown] [--fuzzy] > output
+
+  e.g.
+  /home/akinya/git_repos/fusarium_ex_strawberry/Perl_scripts/Onecodetofindthemall//build_dictionary.pl --rm filename --unknown > output
 
 --rm filename
 Indicates the code to run on RepeatMasker output file filename. If filename is a directory, all .out files inside this directory and all sub-directories (recursively) will be scanned.
@@ -65,7 +68,7 @@ Indicates to the code that the RepeatMasker output file passed in the --rm optio
 Indicates to the code to be less stringent in the criterions used to match names between corresponding subparts. May be useful to reconstruct all internal-LTR pairs in the data, but with a much higher proportion of false positives
 
 Usage:
-    ./one_code_to_find_them_all.pl --rm filename --ltr file_dictionary [--length file_length] [--strict] [--choice] [--dry-run]  [--fasta file_fasta [--flanking X]] [--insert Y]
+    /home/akinya/git_repos/fusarium_ex_strawberry/Perl_scripts/Onecodetofindthemall/one_code_to_find_them_all.pl --rm filename --ltr file_dictionary [--length file_length] [--strict] [--choice] [--dry-run]  [--fasta file_fasta [--flanking X]] [--insert Y]
 
 ltr.csv and .transposons.csv) report the copies found
 Score                   the score reported by RepeatMasker in the input file.
@@ -84,6 +87,11 @@ Pos_Repeat_End  the end of the actual sequence relative to the reference
 Pos_Repeat_End  the count of bases in the reference located after the end of the matching actual sequence
 ID                              the RepeatMasker fragment ID
 Num_Assembled   the number of fragments merged or assembled into this copy
+
+e.g.
+mkdir -p $Strain/OFA_strict
+cd OFA_Strict
+/home/akinya/git_repos/fusarium_ex_strawberry/Perl_scripts/Onecodetofindthemall/one_code_to_find_them_all.pl --rm ../*_transposonmasked.out --ltr ../output --strict
 
 # to get contig sizes xargs faidx --transform chromsizes Fus2_canu_new_contigs_unmasked1.fa < contigs.txt
 # Merging gene prediciton with TE prediciton

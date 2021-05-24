@@ -20,14 +20,14 @@ srun --partition long --mem-per-cpu 10G --cpus-per-task 10 --pty bash
 # Create a folder for each busco gene
 mkdir temp_busco
 printf "" > analysis/popgen/busco_phylogeny/single_hits.txt
-  for Busco in $(cat analysis/popgen/busco_phylogeny/all_buscos_*.txt); do
+  for Busco in $(cat analysis/popgen/busco_phylogeny_2/all_buscos_*.txt); do
   echo $Busco
-  OutDir=analysis_VP/popgen/busco_phylogeny_2/$Busco
+  OutDir=analysis/popgen/busco_phylogeny_2/$Busco
   mkdir -p $OutDir
   # Move all single copy genes to each folder and rename gene headers
-    for Fasta in $(ls gene_pred/busco/$Organism/$Strain/*/*/*/*/single_copy_busco_sequences/$Busco*.fna); do
-      Strain=$(echo $Fasta | rev | cut -f7 -d '/' | rev)
-      Organism=$(echo $Fasta | rev | cut -f8 -d '/' | rev)
+    for Fasta in $(ls NextGenSeq/assembly/flye/F.oxysporum_fsp_fragariae/DSA14_003/busco_sordariomycetes_obd10/assembly/run_sordariomycetes_odb10/busco_sequences/single_copy_busco_sequences/$Busco.fna); do
+      Strain=DSA14_003
+      Organism=F.oxysporum_fsp_fragariae
       FileName=$(basename $Fasta)
       contig=$(cat $Fasta | grep '>' | sed 's/ <unknown description>//g' | sed 's/>//g')
       echo ">$Busco:$Strain:$contig" > temp_busco/"$Busco"_"$Strain"_new_names.txt
@@ -39,7 +39,7 @@ printf "" > analysis/popgen/busco_phylogeny/single_hits.txt
   # Create fasta file containing all busco for alignment
   cat $OutDir/*_*_"$Busco".fasta > $OutDir/"$Busco"_appended.fasta
   SingleBuscoNum=$(cat $OutDir/"$Busco"_appended.fasta | grep '>' | wc -l)
-  printf "$Busco\t$SingleBuscoNum\n" >> analysis/popgen/busco_phylogeny/single_hits.txt
+  printf "$Busco\t$SingleBuscoNum\n" >> analysis/popgen/busco_phylogeny_2/single_hits.txt
   done
 rm -r temp_busco
 

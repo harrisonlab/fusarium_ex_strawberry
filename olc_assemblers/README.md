@@ -417,7 +417,7 @@ Have 2 paths to choose from to run scripts if either doesn't work
 
     ProgDir=/home/gomeza/git_repos/scripts/bioinformatics_tools/Repeat_masking
     BestAssembly=Assembly2/flye/F.oxysporum_fsp_lactucae/race_1/pilon/pilon_10_renamed.fasta
-    OutDir=repeat_masked/F.oxysporum_fsp_lactucae/race_1/flye/ncbi_edits_repmask
+    OutDir=Repeat_masked_2/F.oxysporum_fsp_lactucae/race_1/miniasm/ncbi_edits_repmask
     sbatch $ProgDir/rep_modeling.sh $BestAssembly $OutDir
     sbatch $ProgDir/transposonPSI.sh $BestAssembly $OutDir
 
