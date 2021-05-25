@@ -20,7 +20,7 @@ mkdir -p $WorkDir
 cp $reference $WorkDir
 cp $query $WorkDir
 cd $WorkDir
-ragtag=/home/bourquif/miniconda2/pkgs/ragtag-1.1.1-pyh7b7c402_0/python-scripts/ragtag.py
+ragtag=/home/akinya/miniconda3/envs/Ragtag/bin/ragtag.py
 #$ragtag correct \
 #-u \
 #$reference \
