@@ -14,6 +14,7 @@
 # dorplot
 
 paf=$1
+Strain=$(echo $paf_file | rev | cut -f2 -d '/' | rev)
 outdir=$2
 
 
@@ -26,12 +27,12 @@ cp $paf $WorkDir
 cd $WorkDir
 
 
-dotplot=/home/connellj/git_repos/emr_repos/Fv_C-variants/Dotplot_analysis/
+dotplot=/home/akinya/git_repos/fusarium_ex_strawberry/genome_aligners
 $dotplot/pafCoordsDotPlotly.R \
 -i $paf \
 -o paf_plot \
--m 2000 \
--q 50000 \
+-m 100 \
+-q 500 \
 -k 10 \
 -s -t -l -p 12
 
