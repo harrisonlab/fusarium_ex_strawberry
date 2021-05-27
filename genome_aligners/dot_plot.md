@@ -21,7 +21,7 @@ Run like so using FULL PATHS
 
 
 ## Create the dot plot
-    for paf_file in $(NextGenSeq/Genome_synteny/*/*_minimap.paf); do
+    for paf_file in $(ls -d /projects/fusarium_ex_strawberry/NextGenSeq/Genome_synteny/*/*_minimap.paf); do
     Strain=$(echo $paf_file | rev | cut -f2 -d '/' | rev)
     outdir=/projects/fusarium_ex_strawberry/NextGenSeq/Genome_synteny/$Strain
     echo $Strain
