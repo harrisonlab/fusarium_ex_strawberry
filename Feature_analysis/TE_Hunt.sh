@@ -39,7 +39,7 @@ To grep 2 lines
 
 Running repeat modeler to find LTR structure
     screen -a
-    srun --partition himem --time 0-06:00:00 --mem-per-cpu 40G --cpus-per-task 24 --pty bash
+    srun --partition himem --time 0-12:00:00 --mem-per-cpu 40G --cpus-per-task 24 --pty bash
 
     RepeatModeler -pa 10 -ninja_dir /scratch/software/NINJA-0.97-cluster_only/NINJA -LTRStruct -database “$Strain”_RepMod
 or run like this:
@@ -55,10 +55,10 @@ Make files executable
     chmod u+x one_code_to_find_them_all.pl
 
 Usage
-  /home/akinya/git_repos/fusarium_ex_strawberry/Perl_scripts/Onecodetofindthemall//build_dictionary.pl --rm filename [--unknown] [--fuzzy] > output
+  /home/akinya/git_repos/fusarium_ex_strawberry/Perl_scripts/Onecodetofindthemall/build_dictionary.pl --rm filename [--unknown] [--fuzzy] > output
 
   e.g.
-  /home/akinya/git_repos/fusarium_ex_strawberry/Perl_scripts/Onecodetofindthemall//build_dictionary.pl --rm filename --unknown > output
+  /home/akinya/git_repos/fusarium_ex_strawberry/Perl_scripts/Onecodetofindthemall/build_dictionary.pl --rm filename --unknown > output
 
 --rm filename
 Indicates the code to run on RepeatMasker output file filename. If filename is a directory, all .out files inside this directory and all sub-directories (recursively) will be scanned.

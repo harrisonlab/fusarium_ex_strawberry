@@ -134,10 +134,21 @@ You can run this in a few ways:
     # use Hi-C to resolve conflicts
     ragtag.py merge -b hic.bam query.fasta out_*/*.agp
 
-The running script is like this 
+The running script is like this
     reference_genome=/projects/path/to/reference/genome
     query_genome=/projects/path/to/query/genome
     Outdir=/projects/*/ragtag_output
     mkdir -p $Outdir
     progdir=/home/akinya/git_repos/fusarium_ex_strawberry/ProgScripts/Genome_alignment
     sbatch $progdir/ragtag.sh $reference_genome $query_genome $Outdir
+
+    or
+    ragtag.py scaffold -u -C DSA14_003_contigs_NGS_unmasked.fa DSA14_003_contigs_unmasked.fa
+    ragtag.py correct -u -C DSA14_003_contigs_NGS_unmasked.fa DSA14_003_contigs_unmasked.fa
+
+Chr0_RagTag produced by ragtag are reads that could not be aligned to reference. May have to manually map them
+  so...
+  # create a txt file with contig name
+  nano Chr0_RagTag_14.txt
+Cut the DNA sequence out into a new file
+  faidx -d '|' DSA14_003.scaffolds.fasta $(tr '\n' ' ' < Chr0_RagTag_14.txt) > Chr0_RagTag_14.fasta
