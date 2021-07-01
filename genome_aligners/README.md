@@ -152,3 +152,17 @@ Chr0_RagTag produced by ragtag are reads that could not be aligned to reference.
   nano Chr0_RagTag_14.txt
 Cut the DNA sequence out into a new file
   faidx -d '|' DSA14_003.scaffolds.fasta $(tr '\n' ' ' < Chr0_RagTag_14.txt) > Chr0_RagTag_14.fasta
+
+Repeat mask then do TE analysis
+/projects/fusarium_ex_strawberry/ragtag/ragtag_output_Straw465
+/projects/fusarium_ex_strawberry/ragtag/ragtag_output_15-074
+/ragtag/ragtag_output_DSA14/DSA14_003.scaffolds.fasta
+ragtag/ragtag_output_DSA15/DSA15_041.scaffolds.fasta
+
+  ProgDir=/home/akinya/git_repos/fusarium_ex_strawberry/RepeatMask
+  BestAssembly=ragtag/ragtag_output_Straw465/Straw465.scaffolds.fasta
+  Organism=F.oxysporum_fsp_fragariae
+  Strain=Straw465
+  OutDir=ragtag/ragtag_output_Straw465/repeat_masked/
+  sbatch $ProgDir/rep_modeling_ragtag.sh $BestAssembly $Organism $Strain $OutDir
+  sbatch $ProgDir/transposonPSI_ragtag.sh $BestAssembly $Organism $Strain $OutDir
