@@ -47,6 +47,13 @@ or run like this:
     BestAssembly=repeat_masked/F.oxysporum_fsp_fragariae/DSA15_041/ncbi_edits_repmask/DSA15_041_contigs_unmasked.fa
     OutDir=repeat_masked/F.oxysporum_fsp_fragariae/DSA15_041/ncbi_edits_repmask
     sbatch $ProgDir/LTR_struct.sh $BestAssembly $OutDir
+or run like this:
+    ProgDir=/home/akinya/git_repos/fusarium_ex_strawberry/RepeatMask
+    BestAssembly=
+    Organism=
+    Strain=
+    OutDir=repeat_masked/F.oxysporum_fsp_fragariae/DSA15_041/ncbi_edits_repmask
+    sbatch $ProgDir/LTR_struct_Foc.sh $BestAssembly $Organism $Strain $OutDir
 
 Onecodetofindthemall/README
 
@@ -58,7 +65,9 @@ Usage
   /home/akinya/git_repos/fusarium_ex_strawberry/Perl_scripts/Onecodetofindthemall/build_dictionary.pl --rm filename [--unknown] [--fuzzy] > output
 
   e.g.
-  /home/akinya/git_repos/fusarium_ex_strawberry/Perl_scripts/Onecodetofindthemall/build_dictionary.pl --rm filename --unknown > output
+  /home/akinya/git_repos/fusarium_ex_strawberry/Perl_scripts/Onecodetofindthemall/build_dictionary.pl --rm directory --unknown > output
+
+  # /home/akinya/git_repos/fusarium_ex_strawberry/Perl_scripts/Onecodetofindthemall/build_dictionary.pl --rm repeat_masked/ --unknown > output
 
 --rm filename
 Indicates the code to run on RepeatMasker output file filename. If filename is a directory, all .out files inside this directory and all sub-directories (recursively) will be scanned.
