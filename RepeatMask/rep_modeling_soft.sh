@@ -23,17 +23,17 @@
 Usage="sbatch rep_modeling.sh <assembled_contigs.fa> [<output_directory>]"
 
 InFile=$1
-Organism=$(echo $InFile | rev | cut -d "/" -f4 | rev)
-Strain=$(echo $InFile | rev | cut -d "/" -f3 | rev)
-Assembly=$(echo $InFile | rev | cut -d "/" -f2 | rev)
+Organism=$2
+Strain=$3
+Assembly=ncbi_edits
 
 CurPath=$PWD
 WorkDir=$TMPDIR/${SLURM_JOB_USER}_${SLURM_JOBID}
 
-if [ $2 ]; then
-  OutDir=$CurPath/$2
+if [ $4 ]; then
+  OutDir=$CurPath/$4
 else
-  OutDir=$CurPath/repeat_masked/$Organism/$Strain/"$Assembly"_repmask
+  OutDir=$CurPath/Repeat_masked_2/$Organism/$Strain/miniasm/"$Assembly"_repmask
 fi
 
 mkdir -p $WorkDir
