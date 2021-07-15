@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 #SBATCH -J braker
 #SBATCH --partition=long
-#SBATCH --mem-per-cpu=6G
+#SBATCH --mem-per-cpu=10G
 #SBATCH --cpus-per-task=16
 
 

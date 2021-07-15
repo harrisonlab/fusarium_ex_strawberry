@@ -10,15 +10,15 @@
 #sbatch $ProgDir/LTR_struct.sh $BestAssembly $OutDir
 
 InFile=$1
-Organism=F.oxysporum_fsp_cepae
-Strain=Fus2
+Organism=$2
+Strain=$3
 Assembly=ncbi_edits
 
 CurPath=$PWD
 WorkDir=$TMPDIR/${SLURM_JOB_USER}_${SLURM_JOBID}
 
-if [ $2 ]; then
-  OutDir=$CurPath/$2
+if [ $4 ]; then
+  OutDir=$CurPath/$4
 else
   OutDir=$CurPath/repeat_masked/$Organism/$Strain/"$Assembly"_repmask
 fi
