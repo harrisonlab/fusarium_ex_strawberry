@@ -468,7 +468,7 @@ Gives number of masked N's in sequence  - Take physical and digital note of the 
     # Number of masked bases:
     # miniasm - 11417581     SDEN- 1358959
     # flye - 9530627
-
+    # Assembly 2 flye masked bases: 9814130
 ## Hard Mask
 Hard masking  means transforming every nucleotide identified as a repeat to an 'N' or 'X'.
 
@@ -670,6 +670,23 @@ Got this error:
     --GENEMARK_PATH=/home/gomeza/prog/genemark/gmes_linux_64 \
 --BAMTOOLS_PATH=/home/gomeza/miniconda3/envs/gene_pred/bin \
 BRAKER CRASHED afte 5 mins of editing paths
+
+Or run manually in a screen
+    screen -r 21
+    srun --partition himem --time 0-18:00:00 --mem-per-cpu 20G --cpus-per-task 24 --pty bash
+    cd /projects/fusarium_EX_Lactucae/
+    conda activate Repenv
+    
+    braker.pl \
+   --GENEMARK_PATH=/home/akinya/miniconda3/envs/Repenv/opt/genemark_es/gmes_petap \
+   --BAMTOOLS_PATH=/home/akinya/miniconda3/envs/Repenv/bin \
+   --overwrite \
+   --fungus \
+   --gff3 \
+   --softmasking on \
+ --species=F.oxysporum_fsp_lactucae_race_1_braker_V3 \
+ --genome=Repeat_masked_2/F.oxysporum_fsp_lactucae/race_1/miniasm/ncbi_edits_repmask/race_1_contigs_softmasked_repeatmasker_TPSI_appended.fa \
+ --bam=alignment/star/F.oxysporum_fsp_lactucae/race_1_V2/concatenated_V2/concatenated.bam
 
 ## StringTie
 
