@@ -468,7 +468,9 @@ Gives number of masked N's in sequence  - Take physical and digital note of the 
     # Number of masked bases:
     # miniasm - 11417581     SDEN- 1358959
     # flye - 9530627
-    # Assembly 2 flye masked bases: 9814130
+    # Assembly 2
+    # - flye masked bases: 9814130 - miniasm 11458986
+
 ## Hard Mask
 Hard masking  means transforming every nucleotide identified as a repeat to an 'N' or 'X'.
 
@@ -666,6 +668,18 @@ Then copy the .gm_key file like so:
         sbatch $ProgDir/braker_fungi.sh $Assembly $OutDir $AcceptedHits $GeneModelName
       done
 
+For redone next gen seq stuff, use following paths
+      for Assembly in $(ls Repeat_masked_2/F.oxysporum_fsp_lactucae/race_1/miniasm/ncbi_edits_repmask/race_1_contigs_softmasked_repeatmasker_TPSI_appended.fa); do
+      Strain=$(echo $Assembly| rev | cut -d '/' -f4 | rev)
+      Organism=$(echo $Assembly | rev | cut -d '/' -f5 | rev)
+      echo "$Organism - $Strain"
+      OutDir=gene_pred_V2/braker/$Organism/$Strain/miniasm
+      AcceptedHits=alignment/star/F.oxysporum_fsp_lactucae/race_1/miniasm/concatenated/concatenated.bam
+      GeneModelName="$Organism"_"$Strain"_braker_miniasm
+      ProgDir=/home/akinya/git_repos/fusarium_ex_strawberry/ProgScripts/
+      sbatch $ProgDir/braker_fungi.sh $Assembly $OutDir $AcceptedHits $GeneModelName
+    done
+    
 Got this error:
     failed to execute: perl /home/gomeza/prog/genemark/gmes_linux_64/gmes_petap.pl --sequence=/tmp/akinya_614617/braker/F.oxysporum_fsp_fragariae_DSA14_003_braker_flye/genome.fa --ET=/tmp/akinya_614617/braker/F.oxysporum_fsp_fragariae_DSA14_003_braker_flye/hintsfile.gff --cores=1 --fungus --soft 1000 1>/tmp/akinya_614617/braker/F.oxysporum_fsp_fragariae_DSA14_003_braker_flye/GeneMark-ET.stdout 2>/tmp/akinya_614617/braker/F.oxysporum_fsp_fragariae_DSA14_003_braker_flye/errors/GeneMark-ET.stderr
 
@@ -734,9 +748,20 @@ Merge with Braker to give final gene model set
         OutDir=gene_pred/stringtie/$Organism/$Strain/flye/concatenated_prelim
         mkdir -p $OutDir
         AcceptedHits=alignment/star/F.oxysporum_fsp_lactucae/race_1/concatenated/concatenated.bam
-        ProgDir=/home/akinya/git_repos/assembly_fusarium_ex/ProgScripts
+        ProgDir=/home/akinya/git_repos/fusarium_ex_strawberry/ProgScripts/Genome_alignment
         sbatch $ProgDir/stringtie.sh $AcceptedHits $OutDir
        done
+or
+    for Assembly in $(ls Repeat_masked_2/F.oxysporum_fsp_lactucae/race_1/miniasm/ncbi_edits_repmask/race_1_contigs_unmasked.fa); do
+      Strain=$(echo $Assembly| rev | cut -d '/' -f4 | rev)
+      Organism=$(echo $Assembly| rev | cut -d '/' -f5 | rev)
+      echo "$Organism - $Strain"
+      OutDir=gene_pred_V2/stringtie/$Organism/$Strain/miniasm/concatenated_prelim
+      mkdir -p $OutDir
+      AcceptedHits=alignment/star/F.oxysporum_fsp_lactucae/race_1/miniasm/concatenated/concatenated.bam
+      ProgDir=/home/akinya/git_repos/fusarium_ex_strawberry/ProgScripts/Genome_alignment
+      sbatch $ProgDir/stringtie.sh $AcceptedHits $OutDir
+     done
 
 ## Codingquarry
 
