@@ -218,7 +218,7 @@ Run on each assembly
       Strain=$(echo $Assembly| rev | cut -d '/' -f2 | rev)
       Organism=$(echo $Assembly | rev | cut -d '/' -f3 | rev)
       echo "$Organism - $Strain"
-      ProgDir=/home/akinya/git_repos/fusarium_ex_strawberry/ProgScripts
+      ProgDir=/home/akinya/git_repos/fusarium_ex_strawberry/ProgScripts/quality_check
       BuscoDB=$(ls -d /projects/dbBusco/sordariomycetes_odb10)
       OutDir=$(dirname $Assembly)/busco_sordariomycetes_obd10
       sbatch $ProgDir/busco.sh $Assembly $BuscoDB $OutDir
@@ -234,10 +234,10 @@ Need to do for Miniasm*, Flye* and SMARTdenovo* output files
 #Run in condaenv with racon installed (olc_assemblers) - *=complete
 
     for Assembly in $(ls assembly/SMARTdenovo/F.oxysporum_fsp_lactucae/race_1/race_1_smartdenovo.dmo.lay.utg); do
-        ReadsFq=$(ls raw_dna/FoL_CONC_trim.fastq.gz)
+        ReadsFq=$(ls raw_dna/FoL_CONC_trim.fastq.gz) # new isolate data raw_dna/Fof_15-004/FoF_15-004_C_trim.fastq.gz
         Iterations=10
         OutDir=$(dirname $Assembly)"/racon_$Iterations"
-        ProgDir=~/git_repos/assembly_fusarium_ex/ProgScripts
+        ProgDir=/home/akinya/git_repos/fusarium_ex_strawberry/ProgScripts/NGS_assembly
         sbatch $ProgDir/racon.sh $Assembly $ReadsFq $Iterations $OutDir
       done
 
