@@ -57,6 +57,7 @@ Use command below if you are working in the same directory as the raw sequence r
 Run in conda env that has minimap2 and bbmap
 
     rename.sh qin=33 in=Fof14RT_trim.fastq.gz out=Fof14RT_renamed.fasta prefix=Fof14
+    #rename.sh qin=33 in=FoF_15-004_C_trim.fastq.gz out=FoF_15-004_C_trim_renamed.fasta prefix=Fof_15-004
 
 ## Step 4a
 #Run minimap2
@@ -83,18 +84,22 @@ Can run like this instead: miniasm -f trimmed_renamed.fasta FolR1_fastq_allfiles
 # Flye assembly
 ####################
 
-    for TrimReads in $(ls raw_dna/Fof14RT.fastq.gz); do
+    for TrimReads in $(ls raw_dna/Fof14RT.fastq.gz); do #FoF_15-004_C_trim_renamed.fasta
       Organism=F.oxysporum_fsp_fragariae
       Strain=DSA14_003
        Prefix="$Strain"_flye;     
        TypeSeq=nanoraw;
        OutDir=assembly/flye/$Organism/$Strain/;
        mkdir -p $OutDir;
-       Size=60m; # size= Expected genome size
-       ProgDir=/home/gomeza/git_repos/scripts/bioinformatics_tools/Genome_assemblers/;
+       Size=60m; # size=52 Expected genome size
+       ProgDir=/home/gomeza/git_repos/scripts/bioinformatics_tools/Genome_assemblers/; #ProgDir=/home/akinya/git_repos/fusarium_ex_strawberry/olc_assemblers/flye.sh
        sbatch $ProgDir/flye.sh $TrimReads $Prefix $OutDir $Size $TypeSeq;
      done
 
+or
+    java -ea -Xmx1g -cp /home/gomeza/miniconda3/envs/olc_assemblers/opt/bbmap-38.79-0/current/ jgi.RenameReads in=raw_dna/Fof_15-004/FoF_15-004_C_trim.fastq.gz out=assembly/SMARTdenovo/F.oxysporum_fsp_fragariae/15-004/15-004_smartdenovoreads_rename.fasta prefix=15-004_smartdenovo qin=33
+followed by:
+    flye --nano-corr assembly/SMARTdenovo/F.oxysporum_fsp_fragariae/15-004/15-004_smartdenovoreads_rename.fasta --out-dir assembly/SMARTdenovo/F.oxysporum_fsp_fragariae/15-004 --genome-size 52m --threads 8
 
 # SMARTDenovo assembly
 ######################

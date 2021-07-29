@@ -85,7 +85,7 @@ For all concatenated reads run:
             Prefix="$Strain"_miniasm
             OutDir=assembly/miniasm/$Organism/$Strain #Assembly2
             mkdir -p $OutDir
-            ProgDir=/home/gomeza/git_repos/scripts/bioinformatics_tools/Genome_assemblers
+            ProgDir=/home/gomeza/git_repos/scripts/bioinformatics_tools/Genome_assemblers # /home/akinya/git_repos/fusarium_ex_strawberry/olc_assemblers
             sbatch $ProgDir/miniasm.sh $TrimReads $Prefix $OutDir
           done
 
@@ -679,7 +679,7 @@ For redone next gen seq stuff, use following paths
       ProgDir=/home/akinya/git_repos/fusarium_ex_strawberry/ProgScripts/
       sbatch $ProgDir/braker_fungi.sh $Assembly $OutDir $AcceptedHits $GeneModelName
     done
-    
+
 Got this error:
     failed to execute: perl /home/gomeza/prog/genemark/gmes_linux_64/gmes_petap.pl --sequence=/tmp/akinya_614617/braker/F.oxysporum_fsp_fragariae_DSA14_003_braker_flye/genome.fa --ET=/tmp/akinya_614617/braker/F.oxysporum_fsp_fragariae_DSA14_003_braker_flye/hintsfile.gff --cores=1 --fungus --soft 1000 1>/tmp/akinya_614617/braker/F.oxysporum_fsp_fragariae_DSA14_003_braker_flye/GeneMark-ET.stdout 2>/tmp/akinya_614617/braker/F.oxysporum_fsp_fragariae_DSA14_003_braker_flye/errors/GeneMark-ET.stderr
 
@@ -807,6 +807,24 @@ Do segments one at a time for peace of mind
     	mkdir -p $AddDir
     	mkdir -p $FinalDir
 
+      or
+
+      BrakerGff=$(ls -d gene_pred_V2/braker/F.oxysporum_fsp_lactucae/race_1/miniasm/F.oxysporum_fsp_lactucae_race_1_braker_miniasm/augustus.gff3)
+     Strain=$(echo $BrakerGff| rev | cut -d '/' -f4 | rev)
+    Organism=$(echo $BrakerGff | rev | cut -d '/' -f5 | rev)
+    echo "$Organism - $Strain"
+    Assembly=$(ls NextGenSeq/Repeat_masked_2/F.oxysporum_fsp_lactucae/race_1/miniasm/ncbi_edits_repmask/race_1_contigs_softmasked_repeatmasker_TPSI_appended.fa)
+    CodingQuarryGff=NextGenSeq/gene_pred_V2/codingquary/F.oxysporum_fsp_lactucae/race_1/miniasm/out/PredictedPass.gff3
+    PGNGff=NextGenSeq/gene_pred_V2/codingquary/F.oxysporum_fsp_lactucae/race_1/miniasm/out/PGN_predictedPass.gff3
+    AddDir=gene_pred_V2/codingquary/$Organism/$Strain/miniasm/additional
+    FinalDir=gene_pred_V2/codingquary/$Organism/$Strain/miniasm/final
+    AddGenesList=$AddDir/additional_genes.txt
+    AddGenesGff=$AddDir/additional_genes.gff
+    FinalGff=$AddDir/combined_genes.gff
+    mkdir -p $AddDir
+    mkdir -p $FinalDir
+
+
 Create a list with the additional transcripts in CondingQuarry gff (and CQPM) vs Braker gene models
 For first line had to put direct paths for -a and -b
 
@@ -852,13 +870,15 @@ Check the final number of genes
 
 For flye:
 Braker: 19605 CQ: 1295 combined: 20900
+For Miniasm:
+Braker: 19783 CQ: 1626 combined: 21409
 
 ## Gene renaming
 Run line by line
 Run in conda env (Repenv)
 
     #Remove duplicate and rename genes
-    GffAppended=$(ls -d gene_pred/codingquary/F.oxysporum_fsp_lactucae/race_1/final/final_genes_appended.gff3)
+    GffAppended=$(ls -d gene_pred/codingquary/F.oxysporum_fsp_lactucae/race_1/final/final_genes_appended.gff3) # or gene_pred_V2/codingquary/F.oxysporum_fsp_lactucae/race_1/miniasm/final/final_genes_appended.gff3
     Strain=$(echo $GffAppended | rev | cut -d '/' -f3 | rev)
     Organism=$(echo $GffAppended | rev | cut -d '/' -f4 | rev)
     echo "$Organism - $Strain"
