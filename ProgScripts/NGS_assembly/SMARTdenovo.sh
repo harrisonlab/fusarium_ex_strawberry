@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #SBATCH -J SMARTdenovo
-#SBATCH --partition=long
+#SBATCH --partition=himem
 #SBATCH --mem-per-cpu=20G
 #SBATCH --cpus-per-task=10
 

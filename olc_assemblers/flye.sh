@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #SBATCH -J fye
-#SBATCH --partition=long
+#SBATCH --partition=himem
 #SBATCH --mem-per-cpu=8G
 #SBATCH --cpus-per-task=24
 
@@ -44,7 +44,7 @@ prefix=$Prefix
 
 
 flye --nano-raw miniasm_test/OutDir/Hg199_miniasm_rename.fasta  \
---out-dir flye/OutDir --genome-size 37m --threads 8
+--out-dir $WorkDir --genome-size 37m --threads 8
 
   # Run Flyr
 

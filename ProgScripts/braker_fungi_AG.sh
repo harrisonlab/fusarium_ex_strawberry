@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #SBATCH -J braker
-#SBATCH --partition=himem
+#SBATCH --partition=long
 #SBATCH --mem-per-cpu=10G
 #SBATCH --cpus-per-task=16
 
@@ -27,8 +27,8 @@ cp $CurDir/$AcceptedHits alignedRNA.bam
 
 
 braker.pl \
-  --GENEMARK_PATH=/home/akinya/miniconda3/envs/Repenv/opt/genemark_es/gmes_petap \
-  --BAMTOOLS_PATH=/home/akinya/miniconda3/envs/Repenv/bin \
+  --GENEMARK_PATH=/home/gomeza/prog/genemark/gmes_linux_64 \
+  --BAMTOOLS_PATH=/home/gomeza/miniconda3/envs/gene_pred/bin \
   --overwrite \
   --fungus \
   --gff3 \
