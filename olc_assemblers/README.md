@@ -151,6 +151,13 @@ size= Expected genome size
                 sbatch $ProgDir/flye.sh $TrimReads $Prefix $OutDir $Size $TypeSeq;
               done
 
+              or
+
+              java -ea -Xmx1g -cp /home/gomeza/miniconda3/envs/olc_assemblers/opt/bbmap-38.79-0/current/ jgi.RenameReads in=raw_DNA/Folac_R4/Folac_R4_trim.fastq.gz out=Assembly2/flye/F.oxysporum_fsp_lactucae/race_4/race_4_flye_renamed.fasta prefix=race_4_flye qin=33
+              Next do:
+              flye --nano-corr Assembly2/flye/F.oxysporum_fsp_lactucae/race_4/race_4_flye_renamed.fasta --out-dir Assembly2/flye/F.oxysporum_fsp_lactucae/race_4 --genome-size 60m --threads 8
+              or
+              flye --nano-raw Assembly2/flye/F.oxysporum_fsp_lactucae/race_4/race_4_flye_renamed.fasta --out-dir Assembly2/flye/F.oxysporum_fsp_lactucae/race_4 --genome-size 64m --threads 8
 ########################
 # SMARTDenovo assembly
 ########################
@@ -172,7 +179,7 @@ Could run like this:
       ProgDir=/home/gomeza/git_repos/scripts/bioinformatics_tools/Genome_assemblers
       sbatch $ProgDir/SMARTdenovo.sh $TrimReads $Prefix $OutDir
     done
-     or
+Or
      for TrimReads in $(ls raw_dna/FoL_CONC_trim.fastq.gz); do
        Organism=F.oxysporum_fsp_lactucae
        Strain=race_1
@@ -182,6 +189,17 @@ Could run like this:
        ProgDir=/home/gomeza/git_repos/scripts/bioinformatics_tools/Genome_assemblers
        sbatch $ProgDir/SMARTdenovo.sh $TrimReads $Prefix $OutDir
      done
+Or for FOlR4 basecalled
+     for TrimReads in $(ls raw_DNA/Folac_R4/Folac_R4_trim.fastq.gz); do
+     Organism=F.oxysporum_fsp_lactucae
+     Strain=race_4
+     Prefix="$Strain"_smartdenovo
+     OutDir=Assembly2/SMARTdenovo/$Organism/$Strain
+     mkdir -p $OutDir
+     ProgDir=/home/akinya/git_repos/fusarium_ex_strawberry/ProgScripts/NGS_assembly
+     sbatch $ProgDir/SMARTdenovo.sh $TrimReads $Prefix $OutDir
+     done
+
 
 #output = race_1_smartdenovo.dmo.lay.utg
 
@@ -317,6 +335,14 @@ If split or remove contigs is needed, provide FCSreport file by NCBI.
       ProgDir=/home/gomeza/git_repos/scripts/bioinformatics_tools/Genome_assemblers
       sbatch $ProgDir/medaka.sh $Assembly $ReadsFq $OutDir
     done
+    or
+    for Assembly in $(ls assembly/flye/F.oxysporum_fsp_fragariae/15-004/racon_10/assembly_racon_round_6.fasta); do
+    ReadsFq=$(ls raw_dna/Fof_15-004/FoF_15-004_C_trim.fastq.gz);
+    OutDir=assembly/flye/F.oxysporum_fsp_fragariae/15-004/medaka;
+    ProgDir=/home/gomeza/git_repos/scripts/bioinformatics_tools/Genome_assemblers;
+    sbatch $ProgDir/medaka.sh $Assembly $ReadsFq $OutDir;
+    done
+
 
 Run QC checks with QUAST and BUSCO again to see any changes
 

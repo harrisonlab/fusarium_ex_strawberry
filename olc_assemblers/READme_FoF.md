@@ -9,7 +9,7 @@
 
 ## Step 1
 #Open a screen - scrren -r
-Login to node srun --partition long --time 0-18:00:00 --mem-per-cpu 20G --cpus-per-task 24 --pty bash
+Login to node srun --partition himem --time 0-6:00:00 --mem-per-cpu 20G --cpus-per-task 24 --pty bash
 
 #Concatenate sequence reads first
 Use command below if you are working in the same directory as the raw sequence reads
@@ -41,16 +41,16 @@ Use command below if you are working in the same directory as the raw sequence r
 ## Step 3 Run in olc_assemblers conda shell
 #If script doesn't work, see below
 
-    for TrimReads in $(ls raw_dna/Fof14RT.fastq.gz); do
+  >  for TrimReads in $(ls raw_dna/Fof14RT.fastq.gz); do
       Organism=F.oxysporum_fsp_fragariae
       Strain=DSA14_003
       Prefix="$Strain"_miniasm
       OutDir=assembly/miniasm/$Organism/$Strain
       mkdir -p $OutDir
-      ProgDir=/home/akinya/git_repos/fusarium_ex_strawberry/ProgScripts
+      ProgDir=/home/akinya/git_repos/fusarium_ex_strawberry/ProgScripts/NGS_assembly
       sbatch $ProgDir/miniasm.sh $TrimReads $Prefix $OutDir
   done
-
+    # script above no longer works due to errors with inputs - need to fix
 ## Step 3a
 #Need to rename all reads
 
@@ -188,6 +188,17 @@ Run for each round of each assembly:
           sbatch $ProgDir/sub_quast.sh $Assembly $OutDir
         done
 
+For isolate 15-004:
+    # assembly/miniasm/F.oxysporum_fsp_fragariae/15-004/racon_10/Fof_15_miniasm_racon_round_10.fasta
+    # assembly/SMARTdenovo/F.oxysporum_fsp_fragariae/15-004/racon_10/15-004_smartdenovo_racon_round_10.fasta
+    for Assembly in $(ls assembly/flye/F.oxysporum_fsp_fragariae/15-004/racon_10/assembly_racon_round_2.fasta); do
+    Strain=$(echo $Assembly | rev | cut -f3 -d '/' | rev)
+    Organism=$(echo $Assembly | rev | cut -f4 -d '/' | rev)
+    OutDir=assembly/flye/$Organism/$Strain/racon_10/ncbi_edits/round_2
+    sbatch $ProgDir/sub_quast.sh $Assembly $OutDir
+    done
+
+
 Run in correct conda env (BUSCOenv)
 Run for each round of each assembly:
 *assembly/flye/F.oxysporum_fsp_fragariae/DSA14_003/racon_10/assembly_racon_round_1.fasta
@@ -198,11 +209,22 @@ Run for each round of each assembly:
       Strain=$(echo $Assembly| rev | cut -d '/' -f3 | rev)
       Organism=$(echo $Assembly | rev | cut -d '/' -f4 | rev)
       echo "$Organism - $Strain"
-      ProgDir=/home/akinya/git_repos/fusarium_ex_strawberry/ProgScripts
+      ProgDir=/home/akinya/git_repos/fusarium_ex_strawberry/ProgScripts/quality_check
       BuscoDB=$(ls -d /projects/dbBusco/sordariomycetes_odb10)
       OutDir=assembly/miniasm/F.oxysporum_fsp_fragariae/DSA14_003/racon_10/busco_sordariomycetes_obd10/round_1
       sbatch $ProgDir/busco.sh $Assembly $BuscoDB $OutDir
     done
+ for 15-004
+     for Assembly in $(ls assembly/miniasm/F.oxysporum_fsp_fragariae/15-004/racon_10/Fof_15_miniasm_racon_round_1.fasta); do
+     Strain=$(echo $Assembly| rev | cut -d '/' -f3 | rev)
+     Organism=$(echo $Assembly | rev | cut -d '/' -f4 | rev)
+     echo "$Organism - $Strain"
+     ProgDir=/home/akinya/git_repos/fusarium_ex_strawberry/ProgScripts/quality_check
+     BuscoDB=$(ls -d /projects/dbBusco/sordariomycetes_odb10)
+     echo $Assembly
+     OutDir=assembly/miniasm/F.oxysporum_fsp_fragariae/15-004/racon_10/busco_sordariomycetes_obd10/round_*
+     sbatch $ProgDir/busco.sh $Assembly $BuscoDB $OutDir
+     done
 
 Select iteration from each assembly with the best BUSCO scores for the next step
 
@@ -241,6 +263,15 @@ It outperforms graph-based methods operating on basecalled data, and can be comp
       ProgDir=/home/gomeza/git_repos/scripts/bioinformatics_tools/Genome_assemblers
       sbatch $ProgDir/medaka.sh $Assembly $ReadsFq $OutDir
     done
+
+    or
+      for Assembly in $(ls assembly/SMARTdenovo/F.oxysporum_fsp_fragariae/15-004/racon_10/15-004_smartdenovo_racon_round_5_renamed.fasta); do
+      ReadsFq=$(ls raw_dna/Fof_15-004/FoF_15-004_C_trim.fastq.gz)
+      OutDir=assembly/SMARTdenovo/F.oxysporum_fsp_fragariae/15-004/medaka
+      ProgDir=/home/gomeza/git_repos/scripts/bioinformatics_tools/Genome_assemblers
+      sbatch $ProgDir/medaka.sh $Assembly $ReadsFq $OutDir
+    done
+
 
 Run BUSCO and quast on medaka and pick best 1 out of 3 for pilon polishing
 
