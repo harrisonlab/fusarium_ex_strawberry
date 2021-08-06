@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #SBATCH -J racon
-#SBATCH --partition=long
+#SBATCH --partition=himem
 #SBATCH --mem-per-cpu=16G
 #SBATCH --cpus-per-task=12
 
