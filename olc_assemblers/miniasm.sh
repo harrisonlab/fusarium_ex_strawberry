@@ -1,63 +1,45 @@
-#!/usr/bin/env bash
-#SBATCH -J miniasm
-#SBATCH --partition=himem
-#SBATCH --mem-per-cpu=16G
-#SBATCH --cpus-per-task=16
+# For ONT long read sequences use miniasm to assemble genome
+# Run in a screen and a node in the
+#Run in olc_assemblers conda shell
 
-# Assemble Long read data using miniasm
+# If script doesn't work, see below
+for TrimReads in $(ls FAL_trim.fastq.gz); do
+    Organism=F.oxysporum_fsp_lactucae
+    Strain=race_1
+    Prefix="$Strain"_miniasm
+    OutDir=assembly/miniasm/$Organism/$Strain
+    mkdir -p $OutDir
+    ProgDir=/home/akinya/git_repos/fusarium_ex_strawberry/ProgScripts
+    sbatch $ProgDir/miniasm.sh $TrimReads $Prefix $OutDir
+  done
 
-Usage="miniasm.sh <read.fa> <outfile_prefix> <output_directory>"
-echo "$Usage"
-
-# ---------------
 # Step 1
-# Collect inputs
-# ---------------
+# Login to node srun --partition himem --time 0-06:00:00 --mem-per-cpu 40G --cpus-per-task 24 --pty bash
+# Concatenate sequence reads first
+#Use command below if you are working in the same directory as the raw sequence reads
 
-RawReads=$1
-Prefix=$2
-OutDir=$3
-echo  "Running miniasm with the following inputs:"
-echo "FastaIn - $RawReads"
-echo "Prefix - $Prefix"
-echo "OutDir - $OutDir"
+cat *fastq | gzip -cf > FAL69458.fastq.gz
 
-CurPath=$PWD
-WorkDir=$TMPDIR/${SLURM_JOB_USER}_${SLURM_JOBID}
-mkdir -p $WorkDir
-cd $WorkDir
-
-Raw=$(basename $RawReads)
-cp $CurPath/$RawReads $Raw
-
-# ---------------
 # Step 2
-# Rename reads
-# ---------------
+#Run Porechop before assembly
+/scratch/software/Porechop-0.2.3/porechop-runner.py -i FAL69458.fastq.gz -o FAL_trim.fastq.gz --threads 16 > FAL_trim_log.txt
 
-rename.sh in=$Raw out="$Prefix"_rename.fasta prefix=$Prefix
-
-# ---------------
 # Step 3
-# Fast all-against-all overlap of raw reads
-# ---------------
+#Need to rename all reads
+rename.sh qin=33 in=FAL_trim.fastq.gz out=trimmed_renamed.fasta prefix=FolR1
 
-minimap2 -x ava-ont -t8 "$Prefix"_rename.fasta "$Prefix"_rename.fasta | gzip -1 > $Prefix.paf.gz
-
-# ---------------
 # Step 4
-# Concatenate pieces of read sequences to generate the final sequences
-# ---------------
+#Run minimap2
+#Need to run read against itself. IT IS NEEDED. it is going to do self mapping
+#Fast all-against-all overlap of raw reads
 
+home/gomeza/prog/minimap2/minimap2 -x ava-ont -t8 trimmed_renamed.fasta trimmed_renamed.fasta | gzip -1 > FolR1_fastq_allfiles.paf.gz
+
+# Step 5
+# Concatenate pieces of read sequences to generate the final sequences
+# Can run like this instead: miniasm -f trimmed_renamed.fasta FolR1_fastq_allfiles.paf.gz > reads.gfa
 miniasm -f "$Prefix"_rename.fasta $Prefix.paf.gz > reads.gfa
 
-# ---------------
-# Step 5
+# Step 6
 # Convert gfa file to fasta file
-# ---------------
-
 awk '/^S/{print ">"$2"\n"$3}' reads.gfa | fold > $Prefix.fa
-
-cp -r $WorkDir/* $CurPath/$OutDir/.
-
-rm -r $WorkDir
